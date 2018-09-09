@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="android,android 源码分析,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="ViewPager 在 Android 开发中是最常用的控件之一，最近刚好有时间，于是看了一下它的源码，顺便做个笔记记录一下。 看源码，我们一般会带着问题去看，这样效果可能会更好一些。看 ViewPager 源码，我主要是想弄清一下的几个问题。 – 1.疑问 ViewPager 是直接继承 ViewGroup 的，继承 ViewGroup 的自定义控件要在 onMeasure() 和 onLayo">
+<meta name="keywords" content="android,android 源码分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ViewPager 源码简要分析">
+<meta property="og:url" content="http://yxhuang.com/2018/02/25/viewpager-source-code-note/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="ViewPager 在 Android 开发中是最常用的控件之一，最近刚好有时间，于是看了一下它的源码，顺便做个笔记记录一下。 看源码，我们一般会带着问题去看，这样效果可能会更好一些。看 ViewPager 源码，我主要是想弄清一下的几个问题。 – 1.疑问 ViewPager 是直接继承 ViewGroup 的，继承 ViewGroup 的自定义控件要在 onMeasure() 和 onLayo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-21T23:56:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ViewPager 源码简要分析">
+<meta name="twitter:description" content="ViewPager 在 Android 开发中是最常用的控件之一，最近刚好有时间，于是看了一下它的源码，顺便做个笔记记录一下。 看源码，我们一般会带着问题去看，这样效果可能会更好一些。看 ViewPager 源码，我主要是想弄清一下的几个问题。 – 1.疑问 ViewPager 是直接继承 ViewGroup 的，继承 ViewGroup 的自定义控件要在 onMeasure() 和 onLayo">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yxhuang.com/2018/02/25/viewpager-source-code-note/">
+
+
+
+
+
+  <title>ViewPager 源码简要分析 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxhuang.com/2018/02/25/viewpager-source-code-note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ViewPager 源码简要分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-25T14:51:15+08:00">
+                2018-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>ViewPager 在 Android 开发中是最常用的控件之一，最近刚好有时间，于是看了一下它的源码，顺便做个笔记记录一下。</p>
+<p>看源码，我们一般会带着问题去看，这样效果可能会更好一些。看 ViewPager 源码，我主要是想弄清一下的几个问题。</p>
+<p>–</p>
+<h3 id="1-疑问"><a href="#1-疑问" class="headerlink" title="1.疑问"></a>1.疑问</h3><ul>
+<li>ViewPager 是直接继承 ViewGroup 的，继承 ViewGroup 的自定义控件要在 onMeasure() 和 onLayout() 方法中对 childView 进行处理的，ViewPager 是如何做的？</li>
+<li>ViewPager 是如何计算滑动的距离，并滑动到相应的位置？</li>
+<li>ViewPager 是如何处理点击事件的拦截，并处理相应的事件冲突的？</li>
+<li>ViewPager#setOffscreenPageLimit(int limit) 是如何实现界面缓存数量的限制的？</li>
+</ul>
+<p>-</p>
+<h3 id="2-分析"><a href="#2-分析" class="headerlink" title="2. 分析"></a>2. 分析</h3><p>入口 setAdapter –&gt; onMeasure / populate –&gt; onLayout</p>
+<h4 id="1-对-setAdapter-…-的分析"><a href="#1-对-setAdapter-…-的分析" class="headerlink" title="1. 对 setAdapter(…) 的分析"></a>1. 对 setAdapter(…) 的分析</h4><p>ViewPager#setAdapter(PagerAdapter adapter) 是对 ViewPager 分析的入口，这个方法里面的代码比较简单，我们只需要知道如果是第一次布局，它会调用 requestLayout() 对 ViewPager 重新进行布局。</p>
+<h4 id="2-对-onMeasure-…-的分析"><a href="#2-对-onMeasure-…-的分析" class="headerlink" title="2. 对 onMeasure(…) 的分析"></a>2. 对 onMeasure(…) 的分析</h4><p>先看分析代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 1.存储 ViewPager 自身的测量宽高</span></span><br><span class="line">       setMeasuredDimension(getDefaultSize(<span class="number">0</span>, widthMeasureSpec),</span><br><span class="line">               getDefaultSize(<span class="number">0</span>, heightMeasureSpec));</span><br><span class="line"></span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> measuredWidth = getMeasuredWidth();</span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> maxGutterSize = measuredWidth / <span class="number">10</span>;   </span><br><span class="line">       mGutterSize = Math.min(maxGutterSize, mDefaultGutterSize);  <span class="comment">// 间隔（槽）的尺寸？？？</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">// Children are just made to fill our space.</span></span><br><span class="line">       <span class="comment">// ChildView 的宽高， 要减去两边 padding 的距离</span></span><br><span class="line">       <span class="keyword">int</span> childWidthSize = measuredWidth - getPaddingLeft() - getPaddingRight();</span><br><span class="line">       <span class="keyword">int</span> childHeightSize = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// ChildView 是 decorview 的时候，一般涉及不到 可忽略</span></span><br><span class="line">        ....</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 获取在 MeasureSpec.EXACTLY 去条件下，childview 的 MeasureSpec</span></span><br><span class="line">       mChildWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidthSize, MeasureSpec.EXACTLY);</span><br><span class="line">       mChildHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeightSize, MeasureSpec.EXACTLY);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Make sure we have created all fragments that we need to have shown.</span></span><br><span class="line">       mInLayout = <span class="keyword">true</span>;</span><br><span class="line">       populate();   <span class="comment">// 2. 这个方法很重要</span></span><br><span class="line">       mInLayout = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Page views next.   </span></span><br><span class="line">       <span class="comment">// 3. 对 childView 的 measure </span></span><br><span class="line">       size = getChildCount();</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">           <span class="keyword">final</span> View child = getChildAt(i);</span><br><span class="line">           <span class="keyword">if</span> (child.getVisibility() != GONE) &#123;</span><br><span class="line"></span><br><span class="line">               ....</span><br><span class="line"></span><br><span class="line">               <span class="keyword">final</span> LayoutParams lp = (LayoutParams) child.getLayoutParams();</span><br><span class="line">               <span class="keyword">if</span> (lp == <span class="keyword">null</span> || !lp.isDecor) &#123;   <span class="comment">// ChildView 不是 DecorView</span></span><br><span class="line">                   <span class="comment">// 获取 ChildView 的 widthSpec</span></span><br><span class="line">                   <span class="keyword">final</span> <span class="keyword">int</span> widthSpec = MeasureSpec.makeMeasureSpec(</span><br><span class="line">                           (<span class="keyword">int</span>) (childWidthSize * lp.widthFactor), MeasureSpec.EXACTLY);</span><br><span class="line">                   <span class="comment">// childView 自身的测量</span></span><br><span class="line">                   child.measure(widthSpec, mChildHeightMeasureSpec);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>具体的分析在上面的源码已经加了注释，主要是：<br>. 存储 ViewPager 自身测量的宽高.<br>. 调用 populate() 方法，稍后分析.<br>. 对 childView 进行测量，这是继承 ViewGroup 自定义 View 都要做的.</p>
+<h4 id="3-对-papulate-…-分析"><a href="#3-对-papulate-…-分析" class="headerlink" title="3. 对 papulate(…) 分析"></a>3. 对 papulate(…) 分析</h4><p>注释的源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">populate</span><span class="params">(<span class="keyword">int</span> newCurrentItem)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">// mOffscreenPageLimit 默认是 1</span></span><br><span class="line">        <span class="comment">// 设置页数限制，［startPos, endPos］=&gt;［mCurItem - pageLimit, mCurItem + pageLimit] （很好的越界判断方法，可以借用）</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> pageLimit = mOffscreenPageLimit;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> startPos = Math.max(<span class="number">0</span>, mCurItem - pageLimit);</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> N = mAdapter.getCount();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> endPos = Math.min(N - <span class="number">1</span>, mCurItem + pageLimit);</span><br><span class="line"></span><br><span class="line">        ... </span><br><span class="line"></span><br><span class="line">        <span class="comment">// Locate the currently focused item or add it if needed.</span></span><br><span class="line">        <span class="keyword">int</span> curIndex = -<span class="number">1</span>;</span><br><span class="line">        ItemInfo curItem = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (curIndex = <span class="number">0</span>; curIndex &lt; mItems.size(); curIndex++) &#123;</span><br><span class="line">            <span class="keyword">final</span> ItemInfo ii = mItems.get(curIndex);</span><br><span class="line">            <span class="keyword">if</span> (ii.position &gt;= mCurItem) &#123;</span><br><span class="line">                <span class="keyword">if</span> (ii.position == mCurItem) curItem = ii;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;                                           <span class="comment">// 这两段写法可以借鉴，先从 List 中取，如果取到的结果为空，</span></span><br><span class="line">        											   <span class="comment">//  则生成一个并存放到 List 中，并返回。这样下次取的时候就可以用了</span></span><br><span class="line">        											   <span class="comment">// 这样避免了一次生成多个对象，减少了申请内存空间的分配，减少内存抖动。</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (curItem == <span class="keyword">null</span> &amp;&amp; N &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            curItem = addNewItem(mCurItem, curIndex);  <span class="comment">// 里面会调用 Adapter.instantiateItem(ViewGroup container, int position)</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Fill 3x the available width or up to the number of offscreen</span></span><br><span class="line">        <span class="comment">// pages requested to either side, whichever is larger.</span></span><br><span class="line">        <span class="comment">// If we have no current item we have no work to do.</span></span><br><span class="line">        <span class="keyword">if</span> (curItem != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 左边的 ChildView</span></span><br><span class="line">            <span class="keyword">float</span> extraWidthLeft = <span class="number">0</span>.f;</span><br><span class="line">            <span class="keyword">int</span> itemIndex = curIndex - <span class="number">1</span>;</span><br><span class="line">            ItemInfo ii = itemIndex &gt;= <span class="number">0</span> ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> clientWidth = getClientWidth();</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">float</span> leftWidthNeeded = clientWidth &lt;= <span class="number">0</span> ? <span class="number">0</span> :</span><br><span class="line">                    <span class="number">2</span>.f - curItem.widthFactor + (<span class="keyword">float</span>) getPaddingLeft() / (<span class="keyword">float</span>) clientWidth;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> pos = mCurItem - <span class="number">1</span>; pos &gt;= <span class="number">0</span>; pos--) &#123;</span><br><span class="line">                <span class="keyword">if</span> (extraWidthLeft &gt;= leftWidthNeeded &amp;&amp; pos &lt; startPos) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (ii == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (pos == ii.position &amp;&amp; !ii.scrolling) &#123;</span><br><span class="line">                        mItems.remove(itemIndex);</span><br><span class="line">                        mAdapter.destroyItem(<span class="keyword">this</span>, pos, ii.object);  <span class="comment">// 销毁 View</span></span><br><span class="line">                        <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                            Log.i(TAG, <span class="string">"populate() - destroyItem() with pos: "</span> + pos</span><br><span class="line">                                    + <span class="string">" view: "</span> + ((View) ii.object));</span><br><span class="line">                        &#125;</span><br><span class="line">                        itemIndex--;</span><br><span class="line">                        curIndex--;</span><br><span class="line">                        ii = itemIndex &gt;= <span class="number">0</span> ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ii != <span class="keyword">null</span> &amp;&amp; pos == ii.position) &#123;</span><br><span class="line">                    extraWidthLeft += ii.widthFactor;</span><br><span class="line">                    itemIndex--;</span><br><span class="line">                    ii = itemIndex &gt;= <span class="number">0</span> ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    ii = addNewItem(pos, itemIndex + <span class="number">1</span>);</span><br><span class="line">                    extraWidthLeft += ii.widthFactor;</span><br><span class="line">                    curIndex++;</span><br><span class="line">                    ii = itemIndex &gt;= <span class="number">0</span> ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 右边的 ChildView</span></span><br><span class="line">            <span class="keyword">float</span> extraWidthRight = curItem.widthFactor;</span><br><span class="line">            itemIndex = curIndex + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (extraWidthRight &lt; <span class="number">2</span>.f) &#123;</span><br><span class="line">                ii = itemIndex &lt; mItems.size() ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">final</span> <span class="keyword">float</span> rightWidthNeeded = clientWidth &lt;= <span class="number">0</span> ? <span class="number">0</span> :</span><br><span class="line">                        (<span class="keyword">float</span>) getPaddingRight() / (<span class="keyword">float</span>) clientWidth + <span class="number">2</span>.f;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> pos = mCurItem + <span class="number">1</span>; pos &lt; N; pos++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (extraWidthRight &gt;= rightWidthNeeded &amp;&amp; pos &gt; endPos) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (ii == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (pos == ii.position &amp;&amp; !ii.scrolling) &#123;</span><br><span class="line">                            mItems.remove(itemIndex);</span><br><span class="line">                            mAdapter.destroyItem(<span class="keyword">this</span>, pos, ii.object);  <span class="comment">// 销毁 View</span></span><br><span class="line">                            <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                                Log.i(TAG, <span class="string">"populate() - destroyItem() with pos: "</span> + pos</span><br><span class="line">                                        + <span class="string">" view: "</span> + ((View) ii.object));</span><br><span class="line">                            &#125;</span><br><span class="line">                            ii = itemIndex &lt; mItems.size() ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ii != <span class="keyword">null</span> &amp;&amp; pos == ii.position) &#123;</span><br><span class="line">                        extraWidthRight += ii.widthFactor;</span><br><span class="line">                        itemIndex++;</span><br><span class="line">                        ii = itemIndex &lt; mItems.size() ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        ii = addNewItem(pos, itemIndex);</span><br><span class="line">                        itemIndex++;</span><br><span class="line">                        extraWidthRight += ii.widthFactor;</span><br><span class="line">                        ii = itemIndex &lt; mItems.size() ? mItems.get(itemIndex) : <span class="keyword">null</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 计算页面的偏移量, 计算 ItemInfo.offset 的值</span></span><br><span class="line">            calculatePageOffsets(curItem, curIndex, oldCurInfo);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        mAdapter.setPrimaryItem(<span class="keyword">this</span>, mCurItem, curItem != <span class="keyword">null</span> ? curItem.object : <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">        mAdapter.finishUpdate(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>populate(…) 主要做了：<br>. 设置了缓存界面数量的限制.<br>. 生成 ItemInfo, ItemInfo 是对 childView 的包装，方便 ViewPager 进行管理.<br>. 对左边和右边的 childView 进行处理.<br>. 对用 calculatePageOffsets，计算界面的偏移量，通过计算  ItemInfo.offset 的值，得出偏移量.</p>
+<h4 id="4-对-onLayout-…-分析"><a href="#4-对-onLayout-…-分析" class="headerlink" title="4. 对 onLayout(…) 分析"></a>4. 对 onLayout(…) 分析</h4><p>onLaout(…) 中是按普通 ViewGroup 对每个 childView 进行 layout 即可</p>
+<h4 id="5-其他重要的方法"><a href="#5-其他重要的方法" class="headerlink" title="5. 其他重要的方法"></a>5. 其他重要的方法</h4><ul>
+<li><p>scrollToItem(…) 滑动<br>使用 Scroller 来完成滑动的</p>
+</li>
+<li><p>onInterceptTouchEvent() 处理事件拦截<br>只有在拖动的情况下才会进行拦截.</p>
+</li>
+<li><p>预加载的问题 ViewPager#setOffscreenPageLimit<br>默认是 1.<br>在 populate(…) 方法中计算 starPos 和 endPos 用到了</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> pageLimit = mOffscreenPageLimit;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> startPos = Math.max(<span class="number">0</span>, mCurItem - pageLimit);</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> N = mAdapter.getCount();</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> endPos = Math.min(N - <span class="number">1</span>, mCurItem + pageLimit);</span><br></pre></td></tr></table></figure>
+<p>形成了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[startPos, currenPos, endPos]</span><br></pre></td></tr></table></figure>
+<p>-</p>
+<h3 id="3-其他收获"><a href="#3-其他收获" class="headerlink" title="3. 其他收获"></a>3. 其他收获</h3><p>. 下面的代码写法可以借鉴，先从 List 中取，如果取到的结果为空，则生成一个并存放到 List 中，并返回。这样下次取的时候就可以用了这样避免了一次生成多个对象，减少了申请内存空间的分配，减少内存抖动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> curIndex = -<span class="number">1</span>;</span><br><span class="line">ItemInfo curItem = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">for</span> (curIndex = <span class="number">0</span>; curIndex &lt; mItems.size(); curIndex++) &#123;</span><br><span class="line">    <span class="keyword">final</span> ItemInfo ii = mItems.get(curIndex);</span><br><span class="line">    <span class="keyword">if</span> (ii.position &gt;= mCurItem) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ii.position == mCurItem) curItem = ii;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (curItem == <span class="keyword">null</span> &amp;&amp; N &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    curItem = addNewItem(mCurItem, curIndex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ItemInfo <span class="title">addNewItem</span><span class="params">(<span class="keyword">int</span> position, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    ItemInfo ii = <span class="keyword">new</span> ItemInfo();</span><br><span class="line">    ii.position = position;</span><br><span class="line">    ii.object = mAdapter.instantiateItem(<span class="keyword">this</span>, position);</span><br><span class="line">    ii.widthFactor = mAdapter.getPageWidth(position);</span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= mItems.size()) &#123;</span><br><span class="line">        mItems.add(ii);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        mItems.add(index, ii);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ii;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>另外 Arrays.sor() 排序使用到了 DulPivotQuickSort.sort() 快速排序算法。有时间要去研究一下。</li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android-android-源码分析/" rel="tag"># android,android 源码分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/11/MachineLearing-KNN/" rel="next" title="K-近邻算法">
+                <i class="fa fa-chevron-left"></i> K-近邻算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/03/ListView-source-code-note/" rel="prev" title="ListView 源码分析">
+                ListView 源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-疑问"><span class="nav-number">1.</span> <span class="nav-text">1.疑问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-分析"><span class="nav-number">2.</span> <span class="nav-text">2. 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-对-setAdapter-…-的分析"><span class="nav-number">2.1.</span> <span class="nav-text">1. 对 setAdapter(…) 的分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-对-onMeasure-…-的分析"><span class="nav-number">2.2.</span> <span class="nav-text">2. 对 onMeasure(…) 的分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-对-papulate-…-分析"><span class="nav-number">2.3.</span> <span class="nav-text">3. 对 papulate(…) 分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-对-onLayout-…-分析"><span class="nav-number">2.4.</span> <span class="nav-text">4. 对 onLayout(…) 分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-其他重要的方法"><span class="nav-number">2.5.</span> <span class="nav-text">5. 其他重要的方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-其他收获"><span class="nav-number">3.</span> <span class="nav-text">3. 其他收获</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

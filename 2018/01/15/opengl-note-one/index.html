@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="opengl,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="本文笔记摘自于 ：https://learnopengl-cn.github.io/01%20Getting%20started/08%20Coordinate%20Systems/ 绘制正方形和圆形1. 为什么需要将坐标复制进缓冲区（Buffer）里面因为 Java 代码是运行在虚拟机中的，会有垃圾回收功能，所以，需要将坐标参照缓冲区里面。 2. 投影，相机位置, 变换矩阵（1）.变换矩阵因为">
+<meta name="keywords" content="opengl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenGL 入门笔记（一）">
+<meta property="og:url" content="http://yxhuang.com/2018/01/15/opengl-note-one/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="本文笔记摘自于 ：https://learnopengl-cn.github.io/01%20Getting%20started/08%20Coordinate%20Systems/ 绘制正方形和圆形1. 为什么需要将坐标复制进缓冲区（Buffer）里面因为 Java 代码是运行在虚拟机中的，会有垃圾回收功能，所以，需要将坐标参照缓冲区里面。 2. 投影，相机位置, 变换矩阵（1）.变换矩阵因为">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yxhuang.com/2018/01/15/opengl-note-one/transition.jpg">
+<meta property="og:image" content="http://yxhuang.com/2018/01/15/opengl-note-one/z_project.png">
+<meta property="og:image" content="http://yxhuang.com/2018/01/15/opengl-note-one/t_project.png">
+<meta property="og:updated_time" content="2018-01-15T15:31:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenGL 入门笔记（一）">
+<meta name="twitter:description" content="本文笔记摘自于 ：https://learnopengl-cn.github.io/01%20Getting%20started/08%20Coordinate%20Systems/ 绘制正方形和圆形1. 为什么需要将坐标复制进缓冲区（Buffer）里面因为 Java 代码是运行在虚拟机中的，会有垃圾回收功能，所以，需要将坐标参照缓冲区里面。 2. 投影，相机位置, 变换矩阵（1）.变换矩阵因为">
+<meta name="twitter:image" content="http://yxhuang.com/2018/01/15/opengl-note-one/transition.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yxhuang.com/2018/01/15/opengl-note-one/">
+
+
+
+
+
+  <title>OpenGL 入门笔记（一） | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxhuang.com/2018/01/15/opengl-note-one/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenGL 入门笔记（一）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-15T22:49:03+08:00">
+                2018-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文笔记摘自于 ：<a href="https://learnopengl-cn.github.io/01%20Getting%20started/08%20Coordinate%20Systems/" target="_blank" rel="noopener">https://learnopengl-cn.github.io/01%20Getting%20started/08%20Coordinate%20Systems/</a></p>
+<h3 id="绘制正方形和圆形"><a href="#绘制正方形和圆形" class="headerlink" title="绘制正方形和圆形"></a>绘制正方形和圆形</h3><h5 id="1-为什么需要将坐标复制进缓冲区（Buffer）里面"><a href="#1-为什么需要将坐标复制进缓冲区（Buffer）里面" class="headerlink" title="1. 为什么需要将坐标复制进缓冲区（Buffer）里面"></a>1. 为什么需要将坐标复制进缓冲区（Buffer）里面</h5><p>因为 Java 代码是运行在虚拟机中的，会有垃圾回收功能，所以，需要将坐标参照缓冲区里面。</p>
+<h4 id="2-投影，相机位置-变换矩阵"><a href="#2-投影，相机位置-变换矩阵" class="headerlink" title="2. 投影，相机位置, 变换矩阵"></a>2. 投影，相机位置, 变换矩阵</h4><h5 id="（1）-变换矩阵"><a href="#（1）-变换矩阵" class="headerlink" title="（1）.变换矩阵"></a>（1）.变换矩阵</h5><p>因为 OpenGL 中的坐标是[-1, 1]，所以需要将坐标变换成 OpengGL 的坐标。<br>The projection matrix recalculates the coordinates of your graphics so that they map correctly to Android device screens.<br>The camera view matrix creates a transformation  that renders objects from a specific eye position.</p>
+<p>在 OpenGL 中，要将坐标变换为标准化设备坐标，既每个坐标顶点的 x, y, z 坐标都在[-1, 1] 之间，这个过程需要几个坐标系统。</p>
+<p>. 局部空间（Local Space） 或者成为物体空间（Object Space）<br>. 世界空间（World Space）<br>. 观察空间 (View Space) 或者成为视觉空间 (Eye Space)<br>. 裁剪空间 (Clip Space)<br>. 屏幕空间 (Screen Space)</p>
+<p>坐标的转换过程<br><img src="/2018/01/15/opengl-note-one/transition.jpg" width="80%" height="60%"></p>
+<ol>
+<li>局部坐标是对象相对于局部原点的坐标，也是物体起始的坐标；</li>
+<li>下一步是将局部坐标变换为世界空间坐标，这些坐标相对于世界的全局原点，它们会和其他物体一起相对于世界原点进行摆放；</li>
+<li>接下来是将世界坐标变换为观察空间坐标，使得每个坐标都是从摄像机或者说观察者的角度进行观察的；</li>
+<li>在观察空间之后，将其投影到裁剪坐标。裁剪坐标会被处理至[-1, 1] 的范围内，并判断哪些顶点将会出现在屏幕上；</li>
+<li>通过视口变换（Viewport Transform）的过程，将裁剪坐标变换为屏幕坐标。视口变换将位于 [-1, 1] 范围的坐标变换到由 glViewport 函数所定义的坐标范围内。将最终的坐标传入光栅器，使其转变为片段。</li>
+</ol>
+<h5 id="局部空间-Local-Space"><a href="#局部空间-Local-Space" class="headerlink" title="局部空间 (Local Space)"></a>局部空间 (Local Space)</h5><p>局部空间是指物体所在坐标空间，即对象最开始所在的地方，模型的所有点都是在局部空间中。</p>
+<h5 id="世界空间-（World-Space）"><a href="#世界空间-（World-Space）" class="headerlink" title="世界空间 （World Space）"></a>世界空间 （World Space）</h5><p>当把物体放入到游戏世界空间中，那么物体的坐标将会从局部坐标变换为世界坐标，这个变换是由 Model Matrix 实现的。</p>
+<h5 id="观察空间-（View-Space）"><a href="#观察空间-（View-Space）" class="headerlink" title="观察空间 （View Space）"></a>观察空间 （View Space）</h5><p>观察空间也被称为 Opengl 的 Camera, 它是从摄像机的视角所得到的空间，将世界空间坐标转化为用户视野前方的坐标而产生的结果。这个过程是将特定的对象，进过一系列的位移，旋转完成才。这个过程由 View Matrix 实现。</p>
+<h5 id="裁剪空间-（Clip-Space）"><a href="#裁剪空间-（Clip-Space）" class="headerlink" title="裁剪空间 （Clip Space）"></a>裁剪空间 （Clip Space）</h5><p>OpenGL 期待所有的坐标都落在一个特定的范围之内，范围之外的点都被裁剪掉。将指定范围内的坐标转化为标准化设备坐标的范围[-1, 1], 这个过程由投影矩阵 Projection Matrix 实现。</p>
+<h5 id="2-投影"><a href="#2-投影" class="headerlink" title="(2). 投影"></a>(2). 投影</h5><p>投影分为正投影和透视投影<br>. 正投影<br>    正投影是一个类似立方体的平头截体，是一个裁剪空间，在这个空间之外的顶点都会被裁剪掉。<br>    <img src="/2018/01/15/opengl-note-one/z_project.png" width="70%" height="50%"></p>
+<p>创建正投影矩阵</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glm::orthon(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f)</span><br></pre></td></tr></table></figure>
+<p>   第一，第二个参数是平头截体的左右坐标；<br>   第三，第四个参数是平头截体的顶部和顶部；<br>   第五，第六个参数是近平面和远平面的距离；</p>
+<p>. 透视投影<br>   <img src="/2018/01/15/opengl-note-one/t_project.png" width="70%" height="50%"><br>在透视投影中，顶点坐标的每个分量都会除以它的 w 分量，距离观察者越远顶点坐标就会越小。<br>创建透视投影坐标：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glm:mat4 proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)</span><br></pre></td></tr></table></figure>
+<p> fov 值表示视野（Field of View），并设置了观察空间的大小。通常设为 45.0f;<br> 第二个参数是宽高比；<br> 第三、第四个参数是平头截体的近和远平面，通常设置近距离为 0.1f, 远距离设为 100.0f;</p>
+<h5 id="坐标组合在一起"><a href="#坐标组合在一起" class="headerlink" title="坐标组合在一起"></a>坐标组合在一起</h5><p>模型矩阵，观察矩阵和投影矩阵组合在一起，转变成裁剪坐标：</p>
+<p> V<sub>clip</sub> = M<sub>projection</sub> <em> M<sub>view</sub> </em> V<sub>local</sub></p>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/opengl/" rel="tag"># opengl</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/12/android-normal-bug/" rel="next" title="Android 开发中踩的坑">
+                <i class="fa fa-chevron-left"></i> Android 开发中踩的坑
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/11/MachineLearing-KNN/" rel="prev" title="K-近邻算法">
+                K-近邻算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#绘制正方形和圆形"><span class="nav-number">1.</span> <span class="nav-text">绘制正方形和圆形</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-为什么需要将坐标复制进缓冲区（Buffer）里面"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 为什么需要将坐标复制进缓冲区（Buffer）里面</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-投影，相机位置-变换矩阵"><span class="nav-number">1.1.</span> <span class="nav-text">2. 投影，相机位置, 变换矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#（1）-变换矩阵"><span class="nav-number">1.1.1.</span> <span class="nav-text">（1）.变换矩阵</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#局部空间-Local-Space"><span class="nav-number">1.1.2.</span> <span class="nav-text">局部空间 (Local Space)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#世界空间-（World-Space）"><span class="nav-number">1.1.3.</span> <span class="nav-text">世界空间 （World Space）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#观察空间-（View-Space）"><span class="nav-number">1.1.4.</span> <span class="nav-text">观察空间 （View Space）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#裁剪空间-（Clip-Space）"><span class="nav-number">1.1.5.</span> <span class="nav-text">裁剪空间 （Clip Space）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-投影"><span class="nav-number">1.1.6.</span> <span class="nav-text">(2). 投影</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#坐标组合在一起"><span class="nav-number">1.1.7.</span> <span class="nav-text">坐标组合在一起</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

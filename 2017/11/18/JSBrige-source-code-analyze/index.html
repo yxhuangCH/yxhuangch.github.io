@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="android,">
 
 
 
@@ -96,17 +96,21 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="JsBrige 作为 Android 与 js 交互的一个开源库，很多地方都用得到，最近有时间，看了一下源码，现在做一个简要的分析记录。JsBrige 的地址 https://github.com/lzyzsd/JsBridge JS 调用 Native 方法 的过程. 调用 BridgeWebView#registerHandler 进行注册；(Native). web 调用 WebViewJa">
+<meta name="keywords" content="android">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yxhuang.com/2017/08/15/hello-world/index.html">
+<meta property="og:title" content="JSBrige 源码简要分析">
+<meta property="og:url" content="http://yxhuang.com/2017/11/18/JSBrige-source-code-analyze/index.html">
 <meta property="og:site_name" content="yxhuang">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="JsBrige 作为 Android 与 js 交互的一个开源库，很多地方都用得到，最近有时间，看了一下源码，现在做一个简要的分析记录。JsBrige 的地址 https://github.com/lzyzsd/JsBridge JS 调用 Native 方法 的过程. 调用 BridgeWebView#registerHandler 进行注册；(Native). web 调用 WebViewJa">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-08-15T15:56:07.000Z">
+<meta property="og:image" content="http://yxhuang.com/2017/11/18/JSBrige-source-code-analyze/jsbrige1.png">
+<meta property="og:image" content="http://yxhuang.com/2017/11/18/JSBrige-source-code-analyze/jsbrige2.png">
+<meta property="og:updated_time" content="2017-11-18T13:49:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="JSBrige 源码简要分析">
+<meta name="twitter:description" content="JsBrige 作为 Android 与 js 交互的一个开源库，很多地方都用得到，最近有时间，看了一下源码，现在做一个简要的分析记录。JsBrige 的地址 https://github.com/lzyzsd/JsBridge JS 调用 Native 方法 的过程. 调用 BridgeWebView#registerHandler 进行注册；(Native). web 调用 WebViewJa">
+<meta name="twitter:image" content="http://yxhuang.com/2017/11/18/JSBrige-source-code-analyze/jsbrige1.png">
 
 
 
@@ -135,13 +139,13 @@
 
 
 
-  <link rel="canonical" href="http://yxhuang.com/2017/08/15/hello-world/">
+  <link rel="canonical" href="http://yxhuang.com/2017/11/18/JSBrige-source-code-analyze/">
 
 
 
 
 
-  <title>Hello World | yxhuang</title>
+  <title>JSBrige 源码简要分析 | yxhuang</title>
   
 
 
@@ -278,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxhuang.com/2017/08/15/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yxhuang.com/2017/11/18/JSBrige-source-code-analyze/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yxhuang">
@@ -295,7 +299,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hello World</h1>
+          <h1 class="post-title" itemprop="name headline">JSBrige 源码简要分析</h1>
         
 
         <div class="post-meta">
@@ -307,8 +311,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-15T23:56:07+08:00">
-                2017-08-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-18T20:42:11+08:00">
+                2017-11-18
               </time>
             
 
@@ -345,15 +349,15 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <p>JsBrige 作为 Android 与 js 交互的一个开源库，很多地方都用得到，最近有时间，看了一下源码，现在做一个简要的分析记录。<br>JsBrige 的地址 <a href="https://github.com/lzyzsd/JsBridge" target="_blank" rel="noopener">https://github.com/lzyzsd/JsBridge</a><br><br></p>
+<h4 id="JS-调用-Native-方法-的过程"><a href="#JS-调用-Native-方法-的过程" class="headerlink" title="JS 调用 Native 方法 的过程"></a>JS 调用 Native 方法 的过程</h4><p>. 调用 BridgeWebView#registerHandler 进行注册；(Native)<br><br>. web 调用 WebViewJavascriptBridge.callHandler, 方法名与 第一步注册的方法名一致；(js) <br><br>. WebViewJavascriptBridge#_doSend() 改变 iframe.src；j<br><br>. 导致 WebViewClient#shouldOverrideUrlLoading() 重新加载; n<br><br>. BridgeWebView#flushMessageQueue –&gt; BridgeWebView#loadUrl() 将重新加载 url 将 _fetchQueue 回传到 js; n<br><br>. WebViewJavascriptBridge#_fetchQueue() 改变 ifram.src 将数据回传 native; js<br><br>. WebViewClient#shouldOverrideUrlLoaqueueMessageding() –&gt; BridgeWebView#handlerReturnData(); n<br><br>    . 根据回传的数据，将第一步注册的方法取出，调用其对应的 CallBackFunction#onCallBack 回到方法； n<br><br>    . 将 map 中注册的方法移除；n</p>
+<p><br></p>
+<h4 id="Native-调用-js-方法的过程"><a href="#Native-调用-js-方法的过程" class="headerlink" title="Native 调用 js 方法的过程"></a>Native 调用 js 方法的过程</h4><p>. WebViewJavascriptBridge#registerHandler() 注册 function name; j<br><br>    . BridgeWebView#callHandler() 将与js 约定好的 function name 穿进去； n<br><br>    . BridgeWebView#dosend() –&gt; BridgeWebView#queueMessage()<br>        –&gt; BridgeWebView#dispatchMessage() 将 javascript:WebViewJavascriptBridge._handleMessageFromNative 与 function name 整合<br>        –&gt; 调用 webview#loadUrl() 将数据传导 js ; n<br><br>    . WebViewJavascriptBridge#_dispatchMessageFromNative, 找到 相应的 function name<br>      –&gt; responseCallback –&gt; WebViewJavascriptBridge#_doSend() 将信息回传会 native ; js<br><br>    . 最后回调 onCallBack；</p>
+<h4 id="JS-调用-Native-方法过程的流程图"><a href="#JS-调用-Native-方法过程的流程图" class="headerlink" title="JS 调用 Native 方法过程的流程图"></a>JS 调用 Native 方法过程的流程图</h4><p><img src="/2017/11/18/JSBrige-source-code-analyze/jsbrige1.png" width="100%" height="70%"></p>
+<p><br></p>
+<h4 id="Native-调用-js-方法的过程的流程图"><a href="#Native-调用-js-方法的过程的流程图" class="headerlink" title="Native 调用 js 方法的过程的流程图"></a>Native 调用 js 方法的过程的流程图</h4><p><img src="/2017/11/18/JSBrige-source-code-analyze/jsbrige2.png" width="100%" height="70%"></p>
+<p><br></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>JsBrige 没有利用常规的 @JavascriptInterface 来进行 Android 与 js 的交互，而是采用 url 带参，拦截的方式，这不失为一种新的方法。</p>
       
     </div>
     
@@ -376,6 +380,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+        </div>
+      
 
       
       
@@ -385,14 +395,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/09/28/Android-ndk-CMakeLists/" rel="next" title="Android Ndk CMakeLists 开发常见的错误">
+                <i class="fa fa-chevron-left"></i> Android Ndk CMakeLists 开发常见的错误
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/08/20/Hello-GuangZhou/" rel="prev" title="Hello GuangZhou">
-                Hello GuangZhou <i class="fa fa-chevron-right"></i>
+              <a href="/2017/12/12/android-normal-bug/" rel="prev" title="Android 开发中踩的坑">
+                Android 开发中踩的坑 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -523,7 +537,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#JS-调用-Native-方法-的过程"><span class="nav-number">1.</span> <span class="nav-text">JS 调用 Native 方法 的过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Native-调用-js-方法的过程"><span class="nav-number">2.</span> <span class="nav-text">Native 调用 js 方法的过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JS-调用-Native-方法过程的流程图"><span class="nav-number">3.</span> <span class="nav-text">JS 调用 Native 方法过程的流程图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Native-调用-js-方法的过程的流程图"><span class="nav-number">4.</span> <span class="nav-text">Native 调用 js 方法的过程的流程图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
