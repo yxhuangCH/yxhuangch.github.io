@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>http://yxhuang.com/2018/06/17/miniprogram-note/</loc>
+        <lastmod>2018-06-17T06:16:53.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>http://yxhuang.com/2018/02/25/viewpager-source-code-note/</loc>
         <lastmod>2018-03-21T23:56:05.000Z</lastmod>
         <changefreq>weekly</changefreq>
