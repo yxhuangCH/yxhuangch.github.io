@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yxhuangch.github.io/2018/09/12/java-annotation/</loc>
+    
+    <lastmod>2018-09-12T15:22:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yxhuangch.github.io/2018/09/09/JavaPoet-Annotation-in-android/</loc>
     
     <lastmod>2018-09-09T15:14:45.000Z</lastmod>
