@@ -4,6 +4,23 @@
 
     
   <url>
+    <loc>https://yxhuangch.github.io/2019/01/07/ReentrantLock_synchronized%E4%B8%8EReadWriteLock/</loc>
+    <lastmod>2019-01-07T14:27:00.128Z</lastmod>
+    <data>
+        <display>
+        <title>ReentrantLock、synchronized 与 ReadWriteLock</title>
+        <pubTime>2019-01-07T14:22:41.000Z</pubTime>
+        
+        <tag>java</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://yxhuangch.github.io/2018/11/24/java-reflect/</loc>
     <lastmod>2018-11-24T09:09:53.144Z</lastmod>
     <data>
