@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="#AspectJ 在 Android 中的使用在介绍 AspectJ 之前，我们先看看常见的几种编程架构思想。  面向对象编程 Object Oriented Programming 面向过程编程 Procedure Oriented Programming 面向切面编程 Aspect Oriented Programming  面向对象、面向过程、面向切面， 这三种是我们常见的三种编程架构思想，">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AspectJ在Android中的使用">
+<meta property="og:url" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="#AspectJ 在 Android 中的使用在介绍 AspectJ 之前，我们先看看常见的几种编程架构思想。  面向对象编程 Object Oriented Programming 面向过程编程 Procedure Oriented Programming 面向切面编程 Aspect Oriented Programming  面向对象、面向过程、面向切面， 这三种是我们常见的三种编程架构思想，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_3.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_4.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_5.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_3.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_6.png">
+<meta property="og:updated_time" content="2019-06-29T10:33:52.809Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AspectJ在Android中的使用">
+<meta name="twitter:description" content="#AspectJ 在 Android 中的使用在介绍 AspectJ 之前，我们先看看常见的几种编程架构思想。  面向对象编程 Object Oriented Programming 面向过程编程 Procedure Oriented Programming 面向切面编程 Aspect Oriented Programming  面向对象、面向过程、面向切面， 这三种是我们常见的三种编程架构思想，">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/aspectj_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/">
+
+
+
+
+
+  <title>AspectJ在Android中的使用 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2019/06/29/AspectJ在Android中的使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AspectJ在Android中的使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-29T18:25:01+08:00">
+                2019-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>#AspectJ 在 Android 中的使用<br>在介绍 AspectJ 之前，我们先看看常见的几种编程架构思想。</p>
+<ul>
+<li>面向对象编程 Object Oriented Programming</li>
+<li>面向过程编程 Procedure Oriented Programming</li>
+<li>面向切面编程 Aspect Oriented Programming</li>
+</ul>
+<p>面向对象、面向过程、面向切面， 这三种是我们常见的三种编程架构思想，在日常的编程中， OOP 是 Android 开发中最常见的，其他的两种比较少见。</p>
+<h3 id="一、AOP"><a href="#一、AOP" class="headerlink" title="一、AOP"></a>一、AOP</h3><p>AOP 是面向切面编程，它在我们的日志系统、权限管理方面有着比较好的应用。<br>在项目中，我们的很多功能都是分散到各个模块，例如日志打印，AOP 的目标就是要把这些功能集中起来，放到一个统一的地方来控制和管理。</p>
+<h3 id="二、AspectJ"><a href="#二、AspectJ" class="headerlink" title="二、AspectJ"></a>二、AspectJ</h3><p>AOP 是一种编程的思想，在具体的编程中需要实际的工具去实现这套思想。 AspectJ 就是这样的一个工具。使用 AspectJ 有两种方式</p>
+<ul>
+<li><ol>
+<li>完全使用 AspectJ 的语言开发；</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>使用 AspectJ 注解，完全的使用纯 Java 开发</li>
+</ol>
+</li>
+</ul>
+<p>我们后续讲的，基本上都是以 AspectJ 注解的方法，同时在最后也会附上 AspectJ 和 AspectJ 注解的等价。</p>
+<h4 id="1-AspectJ-语法"><a href="#1-AspectJ-语法" class="headerlink" title="1.AspectJ 语法"></a>1.AspectJ 语法</h4><p>这里只是介绍简单的一些概念，如果想要去了解深入的用法，可参考文后的链接，去官网查看。</p>
+<h5 id="1-JoinPoint"><a href="#1-JoinPoint" class="headerlink" title="1. JoinPoint"></a>1. JoinPoint</h5><p>JoinPoint: A particular point in a program that might be the target of code injection.<br>JoinPoint 简单一点说就是程序运行时要执行一些动作的点。</p>
+<p> AspectJ 中可以选择的 JoinPoint</p>
+<table>
+<thead>
+<tr>
+<th>JoinPoint</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>method call</td>
+<td>函数调用</td>
+<td>例如调用 Log.e( )</td>
+</tr>
+<tr>
+<td>method execution</td>
+<td>函数执行</td>
+<td>例如 Log.e( ) 的执行内部。<br> method call 是调用某个函数的地方<br> execution 是某个函数执行的内部</td>
+</tr>
+<tr>
+<td>constructor call</td>
+<td>构造函数调用</td>
+<td>和 method call 类似</td>
+</tr>
+<tr>
+<td>constructor execution</td>
+<td>构造函数执行</td>
+<td>和 method execution 类似</td>
+</tr>
+<tr>
+<td>field get</td>
+<td>获取某个变量</td>
+<td>例如读取 MainActivity.mTest 成员</td>
+</tr>
+<tr>
+<td>field set</td>
+<td>设置某个变量</td>
+<td>例如设置 MainActivity.mTest 成员</td>
+</tr>
+<tr>
+<td>pre-initialization</td>
+<td>Object 在构造函数中做的一些工作</td>
+<td></td>
+</tr>
+<tr>
+<td>initialization</td>
+<td>Object 在构造函数中做的工作</td>
+<td></td>
+</tr>
+<tr>
+<td>static initialization</td>
+<td>类初始化</td>
+<td>例如类的 static{}</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>异常处理</td>
+<td>例如 try catch(xxx) 中，对应 catch 内的执行</td>
+</tr>
+<tr>
+<td>advice execution</td>
+<td>AspectJ 的内容</td>
+</tr>
+</tbody>
+</table>
+<p>JoinPoint 的选择要结合下面的 Pointcuts 表达式来看</p>
+<h5 id="2-Pointcut"><a href="#2-Pointcut" class="headerlink" title="2. Pointcut"></a>2. Pointcut</h5><p>Pointcut: An expression which tell a code injection tool where to inject a particular piece of code<br>Pointcut 简单的说就是从一堆的 JoinPoint 中挑选感兴趣的 JoinPoint 的表达式。</p>
+<p>例如</p>
+<blockquote>
+<pre><code>pointcut anyCall(): call(* *.println(..)) &amp;&amp; !within(TestAspect);
+</code></pre></blockquote>
+<p>在 AspectJ 的语言中定义一个 Pointcout 需要用关键词 <em>pointcut</em> .<br>上面的这里是</p>
+<ul>
+<li>pointcut: 是定一个 Pointcut 的关键词</li>
+<li>anyCall(): 是 Pointcut 的名称</li>
+<li>call : 表示 JoinPoint 的类型为 call</li>
+<li>第一个 ‘*‘ 号是返回值， ‘*’ 代表是任意返回值； 第二个 ‘*’ 号代表是包名，‘*’ 代表是任意包名,这边表明我们是选择任意包名下的 println 函数；在 （..） 中指定参数类型，‘..’ 通配符表示任意类型；</li>
+<li>&amp;&amp;！ 表示组合条件，有 &amp;&amp;， || 以及 ！</li>
+<li>within(TestAspect): within 是 JoinPoint 间接选择过滤的一个方法，后面会讲到。 ！within(TestAspect) 表示调用者的类型不是 TestAspect.</li>
+</ul>
+<h5 id="3-JointPoint-的选择"><a href="#3-JointPoint-的选择" class="headerlink" title="3. JointPoint 的选择"></a>3. JointPoint 的选择</h5><p>JointPoint 的选择有分成直接选择和间接选择两种方式</p>
+<ul>
+<li>JointPoint 的直接选择就是通过和 Pointcut 的语法一一对应关系中选择；</li>
+<li>JointPoint 的间接选择就是通过一些通配符进行筛选过滤的选择，上面例子中的 within 就是间接选择的一种。</li>
+</ul>
+<h6 id="1-JointPoint-直接选择"><a href="#1-JointPoint-直接选择" class="headerlink" title="1.JointPoint 直接选择"></a>1.JointPoint 直接选择</h6><p>JoinPoint 的选择策略和 Pointcut 的语法对应关系</p>
+<table>
+<thead>
+<tr>
+<th>JoinPoint Category</th>
+<th>Pointcut Syntax</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Method execution</td>
+<td>execution(MethodSignature)</td>
+</tr>
+<tr>
+<td>Method call</td>
+<td>call(MethodSignature)</td>
+</tr>
+<tr>
+<td>Constructor execution</td>
+<td>execution(ConstructorSignature)</td>
+</tr>
+<tr>
+<td>Constructor call</td>
+<td>call(ConstructorSignature)</td>
+</tr>
+<tr>
+<td>Class initialization</td>
+<td>staticinitialization(TypeSignature)</td>
+</tr>
+<tr>
+<td>Field read access</td>
+<td>get(FieldSignature)</td>
+</tr>
+<tr>
+<td>Field write access</td>
+<td>set(FieldSignature)</td>
+</tr>
+<tr>
+<td>Exception handler execution</td>
+<td>handler(TypeSignature)</td>
+</tr>
+<tr>
+<td>Object initialization</td>
+<td>initialization(ConstructorSignature)</td>
+</tr>
+<tr>
+<td>Object pre-initialization</td>
+<td>preinitialization(ConstructorSignature)</td>
+</tr>
+<tr>
+<td>Advice execution</td>
+<td>adviceexecution()</td>
+</tr>
+</tbody>
+</table>
+<p>JoinPoint 的策略的选择对应着不同 Pointcut，特别是 Pointcut 里面有着不同的 Signature。</p>
+<p>以下有详细的说明：</p>
+<p><strong>Method Signature 表达式</strong><br>语法</p>
+<blockquote>
+<p>@注解 访问权限 返回值的类型 包名.函数名(参数)<br>例子：<br>@before(“execution(* android.app.Activity.on**(..))”);</p>
+</blockquote>
+<ul>
+<li>注解：  是可选项; 这里是 @before,关于注解的在后面 Adivce 中有更详细的说明</li>
+<li>访问权限: 可选项; 有 public, private, protected 类型；例子没有设置</li>
+<li>返回值的类型: 与普通函数的返回值类型是一样的，如果不限定类型，用通配符 <em> 表示。例子中是 </em></li>
+<li><p>包名.函数名：用于查找匹配的函数，可以使用通配符<br>  <br> 通配符的类型</p>
+<ul>
+<li>‘ * ‘表示用于匹配处 . 号之外的任意字符；</li>
+<li>‘ .. ‘ 表示任意子 package</li>
+<li><p>‘ + ‘号表示子类</p>
+<p><br> 例子：</p>
+<ul>
+<li>java.*.Data: 可以表示 java.sql.Data ，也可以表示 java.util.Date;</li>
+<li>Test* : 表示Test开头的函数，可以表示 TestBase, 也可以表示 TestDervied</li>
+<li>java..* : 表示 java 任意子类</li>
+<li>java..*Model+: 表示 Java 任意 package 中名字以 Model 结尾的子类，比如 TabelModel, TreeModel 等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>函数参数<br>参数有不同的型式</p>
+<ul>
+<li>(int, char): 表示参数只有两个， 并且第一个参数是 int, 第二个参数是 char;</li>
+<li>(String, ..): 表示参数至少有一个。并且第一个参数是 String, 后面参数类型不限。在参数匹配中， .. 代表任意参数个数和类型；</li>
+<li>（Oject …）: 表示不定个数的参数，并且类型都是 Object, 这里的 … 不是通配符，而是 java 中不定参数的意思；</li>
+</ul>
+</li>
+</ul>
+<p><strong>Constructor Signature 表达式</strong><br>和 Method Signature 类似<br>            不同点：<br>                构造函数没有返回值，并且函数名必须叫 new<br>例子：</p>
+<blockquote>
+<p>public *..TestDeived.new(..)</p>
+</blockquote>
+<ul>
+<li>public: 表示选择 public 访问权限的</li>
+<li>*.. : 代表任意包名</li>
+<li>TestDeived.new: 代表 TestDerived 的构造函数</li>
+<li>(..): 代表参数个数和类型都是任意的 </li>
+</ul>
+<p><strong>Field Signature表达式</strong><br>语法</p>
+<blockquote>
+<p>@注解 访问权限 类型 类名.成员变量名</p>
+</blockquote>
+<ul>
+<li>@注解和访问权限是可选的</li>
+<li>类型：成员变量类型， * 表示任意类型</li>
+<li>类名.成员变量名： 成员变量名可以是*， 代表任意成员变量</li>
+</ul>
+<p>例子, 用 AspectJ 打印成员变量赋值前后的值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TraceAspect.java　set field 的切面</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String POINTCUT_FILEED =</span><br><span class="line">        <span class="string">"set(int org.android10.viewgroupperformance.activity.MainActivity.mTest) &amp;&amp; args(newValue) &amp;&amp; target(t)"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Before</span>(POINTCUT_FILEED)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFiled</span><span class="params">(JoinPoint joinPoint, Object newValue, Object t)</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line">    Object object = joinPoint.getThis();</span><br><span class="line"></span><br><span class="line">    FieldSignature fieldSignature = (FieldSignature) joinPoint.getSignature();</span><br><span class="line">    String fileName = fieldSignature.getName();</span><br><span class="line">    Field field = fieldSignature.getField();</span><br><span class="line">    field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    Class clazz = fieldSignature.getFieldType();</span><br><span class="line">    String clazzName = clazz.getSimpleName();</span><br><span class="line"></span><br><span class="line">    Object oldValue = field.get(t);</span><br><span class="line"></span><br><span class="line">    Log.i(<span class="string">"MainActivity"</span>, <span class="string">"\nonFiled value = "</span> + newValue.toString() + <span class="string">"\n fieldSignature ="</span> + fieldSignature.toString()</span><br><span class="line">                + <span class="string">"\nfield = "</span> + field.toString() + <span class="string">" +  \nFileName = "</span> + fileName</span><br><span class="line">                + <span class="string">"\nclazzName = "</span> + clazzName + <span class="string">" \noldValue = "</span> + oldValue.toString() );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 MainActivity.java 中</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onResume();</span><br><span class="line">        mTest = <span class="number">100</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打印结果</p>
+<blockquote>
+<p>onFiled value = 100<br>     fieldSignature =int org.android10.viewgroupperformance.activity.MainActivity.mTest<br>    field = private int org.android10.viewgroupperformance.activity.MainActivity.mTest +<br>    FileName = mTest<br>    clazzName = int<br>    oldValue = -1</p>
+</blockquote>
+<p><strong>TypeSignature表达式</strong><br>    例子：<br>    staticinitlization(test..TestBase): 表示 TestBase 类的 static block<br>handler(NullPointException): 表示 catch 到 NullPointerException 的 JPoin</p>
+<h6 id="2-JointPoint-间接选择"><a href="#2-JointPoint-间接选择" class="headerlink" title="2.JointPoint 间接选择"></a>2.JointPoint 间接选择</h6><p>JointPoint 的直接选择是通过 Signature 信息匹配的，除此之外还有其他的方式，这些方式都可以归类到间接选择</p>
+<table>
+<thead>
+<tr>
+<th>关键词</th>
+<th>说明</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>within(TypePattern)</td>
+<td>TypePattern 表示 package 或者类<br> TypePattern 可以使用通配符</td>
+<td>表示某个 Package 或者类中的 Point<br>within(Test): Test　类中（包括内部类）所有的 JointPoint</td>
+</tr>
+<tr>
+<td>withcode(Constructor Signature\</td>
+<td>Method Signature)</td>
+<td>表示某个构造函数或其他函数执行过程涉及到的 JointPoint</td>
+<td>withinCode(<em> Test.testMethod(..))<br>表示 testMethod 涉及的 JointPoint<br>withinCode(</em>.Test.new(..))<br>表示 Test 的构造函数涉及的 JointPoint</td>
+</tr>
+<tr>
+<td>cflow(pointcuts)</td>
+<td>cflow 表示 call flow<br>cflow 的条件是一个 pointcut</td>
+<td>cflow(call Test.testMethod)<br>表示调用 Test.testMethod 函数是所包含的 JointPoint,包含 testMethod 的 call 这个 JointPoint 本身</td>
+</tr>
+<tr>
+<td>cflowbelow(pointcuts)</td>
+<td>cflowbelow 表示不包含自身的 cflow</td>
+<td>cflowbelow(call Test.testMethod)<br>表示调用 Test.testMethod 函数是所包含的 JointPoint, <strong><em>不包含</em></strong> testMethod 的 call 这个 JointPoint 本身</td>
+</tr>
+<tr>
+<td>this(Type)</td>
+<td>JointPoint 的 this 对象是 Type 类型</td>
+<td>JPoint是代码段（不论是函数，异常处理，static block），从语法上说，它都属于一个类。如果这个类的类型是Type标示的类型，则和它相关的JPoint将全部被选中。</td>
+</tr>
+<tr>
+<td>target(Type)</td>
+<td>JoinPoint 的 target 对象是 Type 类型</td>
+<td>和this相对的是target。不过target一般用在call的情况。call一个函数，这个函数可能定义在其他类。比如testMethod是TestDerived类定义的。那么target(TestDerived)就会搜索到调用testMethod的地方。但是不包括testMethod的execution JointPoint</td>
+</tr>
+<tr>
+<td>args(TypeSignature)</td>
+<td>用来对 JointPoint 的参数进行条件搜索</td>
+<td>例如 arg(int, ..)<br>表示第一个参数是 int, 后面参数个数和类型不限的 JointPoint</td>
+</tr>
+</tbody>
+</table>
+<h6 id="3-call-与-execution-区别"><a href="#3-call-与-execution-区别" class="headerlink" title="3.call 与 execution 区别"></a>3.call 与 execution 区别</h6><p>当 call 捕获 joinPoint 时，捕获的签名方法的<strong>调用点</strong>;execution 捕获 joinPoint 时，捕获的则是<strong>执行点</strong>。<br>两个的区别在于一个是 ”调用点“， 一个是 ”执行点“</p>
+<p>对于 call 来讲</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">call(Before)</span><br><span class="line">Pointcut &#123;</span><br><span class="line">    Pointcut Method</span><br><span class="line">&#125;</span><br><span class="line">call(After)</span><br></pre></td></tr></table></figure>
+<p>对于 execution 来说</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Pointcut &#123;</span><br><span class="line">   Execution(Before)</span><br><span class="line">   Pointcut Method</span><br><span class="line">   Execution(After)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="3-AspectJ-注解的等价"><a href="#3-AspectJ-注解的等价" class="headerlink" title="3.AspectJ 注解的等价"></a>3.AspectJ 注解的等价</h6><p>AspectJ 提供了相应的注解，注解的方式和 AspectJ 语言编写是等效的。我们在 Android 中一般也是采用注解的方式</p>
+<p><strong>Aspect</strong></p>
+<blockquote>
+<pre><code>public aspect Foo{}
+</code></pre><p>等效<br>@Aspect<br>public class Foo{}</p>
+</blockquote>
+<p><strong>call</strong></p>
+<blockquote>
+<p>@Pointcut(“call(<em> </em>.<em>(..))”)<br>    void anyCall(){}<br>    等效<br>    pointcut anyCall(): call(</em> <em>.</em>(..))</p>
+</blockquote>
+<p>要绑定参数的时候，只需要将参数作为备注解的方法的参数即可</p>
+<blockquote>
+<p>@Pointcut(“call(<em> </em>.<em>(int)) &amp;&amp; arg(i) &amp;&amp; target(callee)”)<br>    void anyCall(int i, Fool callee){}<br>    等效<br>    pointcut anyCall(int i, Foo callee): call(</em> <em>.</em>(int)) &amp;&amp; arg(i) &amp;&amp; target(callee){};<br>说明要先定义参数 int i, Foo callee</p>
+</blockquote>
+<p><strong>before</strong></p>
+<blockquote>
+<p>@Before(“call(<em> org.android10.viewgroupperformance.activity..</em>(..)) &amp;&amp; this(foo)”)<br>public void callFromFoo(Foo foo){}<br>等效<br>before(Foo foo): call(<em> org.android10.viewgroupperformance.activity..</em>(..)) &amp;&amp; this(foo){}</p>
+</blockquote>
+<p><strong>returning</strong></p>
+<blockquote>
+<p>@AfterReturning(pointcut=”call(Foo+.new(..))”, returning=”f”)<br>public void itsAFoo(foo f){}<br>等效<br>after returning(Foo f): call(Foo+.new(..)){}</p>
+</blockquote>
+<p>其他的表达式也是类似的</p>
+<h5 id="4-Advice"><a href="#4-Advice" class="headerlink" title="4. Advice"></a>4. Advice</h5><p>Advice: Advice defines pieces of aspect implementation that execute at well-defined points in the execution of the program.</p>
+<p>通过前面的 Pointcuts 找到了相应的 JointPoint, 需要对这些 JointPoint 最一些事情，相当于对 JointPoint 进行 hook, 这就是 advice 要做的事。</p>
+<p>advice 的分类</p>
+<table>
+<thead>
+<tr>
+<th>关键词</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>before()</td>
+<td>before advice</td>
+<td>表示在 JointPoint 执行之前要干 的事</td>
+</tr>
+<tr>
+<td>after()</td>
+<td>after advice</td>
+<td>表示在 JointPoint 执行之后要干的事</td>
+</tr>
+<tr>
+<td>after(): returning(返回值类型)<br>after():throwing(异常类型)</td>
+<td>returning 和 throwing 后面都可以指定具体的类型，如果不指定则匹配类型不限制</td>
+<td>假设 JointPoint 是一个函数调用<br>那么函数调用执行完有两种方式退出<br>一个是正常的 return, 另一个是抛异常<br>after() 默认包括 returing 和 throwing 两种情况</td>
+</tr>
+<tr>
+<td>返回值类型<br> around()</td>
+<td>around 替代原来的 JointPoint</td>
+<td>around 替代了原来的 JointPoint，如果要执行原 JointPoint 的话，需要调用 procced</td>
+</tr>
+</tbody>
+</table>
+<p>例子：<br>我们需要在 Activity 中的 onResume 方法调用前后输出</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MainActivity.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onResume();</span><br><span class="line">    Log.i(TAG, <span class="string">"--- onResume---"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// TraceAspect.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String POINTCUT_ONMETHOD =</span><br><span class="line">        <span class="string">"execution(* android.app.Activity.on**(..))"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Before</span>(POINTCUT_ONMETHOD)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">beforeOnMethod</span><span class="params">(JoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">    MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();</span><br><span class="line">    String className = methodSignature.getDeclaringType().getSimpleName();</span><br><span class="line">    String methodName = methodSignature.getName();</span><br><span class="line">    Log.i(className, <span class="string">"before "</span> + methodName + <span class="string">" log"</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@After</span>(POINTCUT_ONMETHOD)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMethLog</span><span class="params">(JoinPoint joinPoint)</span></span>&#123;</span><br><span class="line">    MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();</span><br><span class="line">    String className = methodSignature.getDeclaringType().getSimpleName();</span><br><span class="line">    String methodName = methodSignature.getName();</span><br><span class="line">    Log.i(className, <span class="string">"after "</span> + methodName + <span class="string">" log"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看输出</p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_1.png" width="80%" height="100%"></p>
+<p>改成 Around 的方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TraceAspect.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String POINTCUT_ONMETHOD =</span><br><span class="line">        <span class="string">"execution(* android.app.Activity.on**(..))"</span>;</span><br><span class="line"><span class="meta">@Pointcut</span>(POINTCUT_ONMETHOD)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">annotationOnMethodTrace</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Around</span>(<span class="string">"annotationOnMethodTrace()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">weaveOnMethodJoinPoint</span><span class="params">(ProceedingJoinPoint joinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">  MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();</span><br><span class="line">  String className = methodSignature.getDeclaringType().getSimpleName();</span><br><span class="line">  String methodName = methodSignature.getName();</span><br><span class="line"></span><br><span class="line">  Log.i(<span class="string">"MainActivity"</span>, <span class="string">"before joinPoint proceed className = "</span> + className + <span class="string">" methodName = "</span> + methodName);</span><br><span class="line"></span><br><span class="line">  Object result  = joinPoint.proceed();</span><br><span class="line">  Log.i(<span class="string">"MainActivity"</span>, <span class="string">"after joinPoint proceed className = "</span> + className + <span class="string">" methodName = "</span> + methodName);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_2.png" width="80%" height="100%"></p>
+<p>从上面例子的输出我们可以看到 around 等价于 before + after, 另外 JointPoint#proceed 是原来的 JointPoint，在这里是 onResume 方法， 输出中的 <em>“— onResume—”</em> 就是在 onResume 中打印的。</p>
+<h5 id="5-参数传递和-JointPoint-信息"><a href="#5-参数传递和-JointPoint-信息" class="headerlink" title="5. 参数传递和 JointPoint 信息"></a>5. 参数传递和 JointPoint 信息</h5><p>经过前面的几个步骤，我们已经拿到了 JointPoint,但是我们经常需要对一些 advice 传入参数，然后进行处理的。例如如果传入的参数不合法，就不用调 JointPoint#proceed 方法处理了。</p>
+<p><strong>参数传递</strong></p>
+<p>advice 参数的方法由  <strong><em>this, target(), args()</em></strong></p>
+<ul>
+<li><strong>this(Type or Id):</strong> 捕获当前对象（被绑定 this）实例执行的连接点 – 实例由 Type 或者 Id 描述</li>
+<li><strong>target(Type or Id):</strong> 捕获目标对象（被应用与对象上的调用和属性操作）实例的连接点 – 实例由 Type 和 Id 描述（必须绑定和封装后放入通知或者切点定义）。它不匹配任何静态的调用、应用和设置成员。</li>
+<li><strong>args(Type or Id):</strong>  捕获具有适当类型样式的实例连接点</li>
+</ul>
+<p>下面是例子说明<br>我们在 MainActivity 定义一个成员变量 mTest, 初始值为 -1，在 OnResume() 方法对它进行赋值，用 target 和 args 对 mTest 赋值前后的值进行监听</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MainActivity.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> mTest = -<span class="number">1</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onResume();</span><br><span class="line">    Log.i(TAG, <span class="string">"--- onResume---"</span>);</span><br><span class="line">    mTest = <span class="number">100</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// TraceAspect.java</span></span><br><span class="line"><span class="comment">//　set field 的切面</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String POINTCUT_FILEED =</span><br><span class="line">        <span class="string">"set(int org.android10.viewgroupperformance.activity.MainActivity.mTest) &amp;&amp; args(newValue) &amp;&amp; target(t)"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Before</span>(POINTCUT_FILEED)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFiled</span><span class="params">(JoinPoint joinPoint, Object newValue, Object t)</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line"></span><br><span class="line">    FieldSignature fieldSignature = (FieldSignature) joinPoint.getSignature();</span><br><span class="line">    String fileName = fieldSignature.getName();</span><br><span class="line">    Field field = fieldSignature.getField();</span><br><span class="line">    field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    Class clazz = fieldSignature.getFieldType();</span><br><span class="line">    String clazzName = clazz.getSimpleName();</span><br><span class="line"></span><br><span class="line">    Object oldValue = field.get(t);</span><br><span class="line"></span><br><span class="line">    Log.i(<span class="string">"MainActivity"</span>,</span><br><span class="line">               <span class="string">"\nonFiled value = "</span> + newValue.toString()</span><br><span class="line">                    + <span class="string">"\ntarget = "</span> + t.toString()</span><br><span class="line">                    + <span class="string">"\n fieldSignature ="</span> + fieldSignature.toString()</span><br><span class="line">                    + <span class="string">"\nfield = "</span> + field.toString()</span><br><span class="line">                    + <span class="string">"\nFileName = "</span> + fileName</span><br><span class="line">                    + <span class="string">"\nclazzName = "</span> + clazzName</span><br><span class="line">                    + <span class="string">" \noldValue = "</span> + oldValue.toString() );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们看看输出</p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_3.png" width="80%" height="100%"></p>
+<p>定义切面表达式使用 <em>args(newValue) &amp;&amp; target(t)</em> 它们的参数值 <em>newValue, t</em>,必须要和方法中的定义的对的上 </p>
+<blockquote>
+<p>public void onFiled(JoinPoint joinPoint, Object newValue, Object t)</p>
+</blockquote>
+<p><strong>JointPoint 信息</strong><br>在 advice 中我们可以拿到 JointPoint 的信息，一般包含</p>
+<ul>
+<li><p>JointPoint 对象信息：例如参数、前面之类的</p>
+<blockquote>
+<p>JoinPoint.getSignature() 包含有</p>
+<ol>
+<li>MethodSignature 方法的签名</li>
+<li>FieldSignature 成员变量的签名</li>
+<li>ConstructorSignature 构造函数的签名</li>
+<li>InitializerSignature 初始化的签名</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<p>不同的签名对应不同的场景</p>
+<ul>
+<li>JointPoint 源代码部分的信息，例如类型、所处的位置</li>
+<li>JointPoint 静态部分信息</li>
+</ul>
+<p>例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Around</span>(<span class="string">"methodAnnotatedWithDebugTrace() || constructorAnnotatedDebugTrace()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">weaveJoinPoint</span><span class="params">(ProceedingJoinPoint joinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    <span class="comment">// joint 对象信息</span></span><br><span class="line">    MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();</span><br><span class="line">    String className = methodSignature.getDeclaringType().getSimpleName();</span><br><span class="line">    String methodName = methodSignature.getName();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 源代码部分信息</span></span><br><span class="line">    SourceLocation sourceLocation = joinPoint.getSourceLocation();</span><br><span class="line">    String fileName = sourceLocation.getFileName();</span><br><span class="line">    <span class="keyword">int</span> line = sourceLocation.getLine();</span><br><span class="line">    String soucreClassName = sourceLocation.getWithinType().getName();</span><br><span class="line">    DebugLog.log(className, <span class="string">"\nfileName = "</span> + fileName + <span class="string">"\nline = "</span> + line + <span class="string">"\nsoucreClassName = "</span> + soucreClassName);</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 静态部分</span></span><br><span class="line">    JoinPoint.StaticPart staticPart = joinPoint.getStaticPart();</span><br><span class="line">        </span><br><span class="line"><span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更详细的信息参考文档<br><a href="https://www.eclipse.org/aspectj/doc/released/runtime-api/index.html" target="_blank" rel="noopener">https://www.eclipse.org/aspectj/doc/released/runtime-api/index.html</a></p>
+<p>总结一下，使用 AspectJ 的步骤：</p>
+<blockquote>
+<ol>
+<li>设置 Pointcut 的表达式</li>
+<li>选择相应的 advice</li>
+<li>对 JointPoint 或参数进行相应的处理</li>
+</ol>
+</blockquote>
+<h3 id="三、AspectJ-集成在-Android-studio-中"><a href="#三、AspectJ-集成在-Android-studio-中" class="headerlink" title="三、AspectJ 集成在 Android studio 中"></a>三、AspectJ 集成在 Android studio 中</h3><p>前面已经介绍完了 AspectJ, 那接下来看看在 Android 中的实际使用；<br>实例代码是在这个例子上进行修改的<a href="https://github.com/android10/Android-AOPExample" target="_blank" rel="noopener">Android-AOPExample</a>。</p>
+<h4 id="1-Library-库依赖方式使用"><a href="#1-Library-库依赖方式使用" class="headerlink" title="1. Library 库依赖方式使用"></a>1. Library 库依赖方式使用</h4><p>项目的结构如下</p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_4.png" width="60%" height="40%"></p>
+<p>在 library 项目 gintoinc 的 build.gradle 文件要添加 aspectj 的依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath &apos;com.android.tools.build:gradle:2.1.0&apos;</span><br><span class="line">    classpath &apos;org.aspectj:aspectjtools:1.8.1&apos;  // aspectjtools</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &apos;com.android.library&apos;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">  mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">  compile &apos;org.aspectj:aspectjrt:1.8.1&apos;  // aspectjrt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">  compileSdkVersion 21</span><br><span class="line">  buildToolsVersion &apos;21.1.2&apos;</span><br><span class="line"></span><br><span class="line">  lintOptions &#123;</span><br><span class="line">    abortOnError false</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// -showWeaveInfo，输出编织过程信息</span><br><span class="line">// -1.5 设置规范1.5，匹配java1.5</span><br><span class="line">// -inpath class文件目录或者jar包， 源字节码，需要处理的类</span><br><span class="line">// -aspectpath  定义的切面类</span><br><span class="line">// -d 存放编辑产生的class文件</span><br><span class="line">// -classpath ，所有class文件，源class，java包，编织时需要用到的一些处理类</span><br><span class="line">android.libraryVariants.all &#123; variant -&gt;</span><br><span class="line">  LibraryPlugin plugin = project.plugins.getPlugin(LibraryPlugin)</span><br><span class="line">  JavaCompile javaCompile = variant.javaCompile</span><br><span class="line">  javaCompile.doLast &#123;</span><br><span class="line">    String[] args = [&quot;-showWeaveInfo&quot;,</span><br><span class="line">                     &quot;-1.5&quot;,</span><br><span class="line">                     &quot;-inpath&quot;, javaCompile.destinationDir.toString(),</span><br><span class="line">                     &quot;-aspectpath&quot;, javaCompile.classpath.asPath,</span><br><span class="line">                     &quot;-d&quot;, javaCompile.destinationDir.toString(),</span><br><span class="line">                     &quot;-classpath&quot;, javaCompile.classpath.asPath,</span><br><span class="line">                     &quot;-bootclasspath&quot;, plugin.project.android.bootClasspath.join(File.pathSeparator)]</span><br><span class="line"></span><br><span class="line">    MessageHandler handler = new MessageHandler(true);</span><br><span class="line">    new Main().run(args, handler)</span><br><span class="line"></span><br><span class="line">    def log = project.logger</span><br><span class="line">    for (IMessage message : handler.getMessages(null, true)) &#123;</span><br><span class="line">      switch (message.getKind()) &#123;</span><br><span class="line">        case IMessage.ABORT:</span><br><span class="line">        case IMessage.ERROR:</span><br><span class="line">        case IMessage.FAIL:</span><br><span class="line">          log.error message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">        case IMessage.WARNING:</span><br><span class="line">        case IMessage.INFO:</span><br><span class="line">          log.info message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">        case IMessage.DEBUG:</span><br><span class="line">          log.debug message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在引用库工程的工程 build.gradle 也要进行相应的配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">import org.aspectj.bridge.IMessage</span><br><span class="line">import org.aspectj.bridge.MessageHandler</span><br><span class="line">import org.aspectj.tools.ajc.Main</span><br><span class="line"></span><br><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath &apos;org.aspectj:aspectjtools:1.8.1&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &apos;com.android.application&apos;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">  mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">  compile project(&apos;:gintonic&apos;)</span><br><span class="line">  compile &apos;org.aspectj:aspectjrt:1.8.1&apos;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">  compileSdkVersion 21</span><br><span class="line">  buildToolsVersion &apos;21.1.2&apos;</span><br><span class="line"></span><br><span class="line">  defaultConfig &#123;</span><br><span class="line">    applicationId &apos;android10.org.viewgroupperformance&apos;</span><br><span class="line">    minSdkVersion 15</span><br><span class="line">    targetSdkVersion 21</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  lintOptions &#123;</span><br><span class="line">    abortOnError true</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">final def log = project.logger</span><br><span class="line">final def variants = project.android.applicationVariants</span><br><span class="line"></span><br><span class="line">variants.all &#123; variant -&gt;</span><br><span class="line">  if (!variant.buildType.isDebuggable()) &#123;</span><br><span class="line">    log.debug(&quot;Skipping non-debuggable build type &apos;$&#123;variant.buildType.name&#125;&apos;.&quot;)</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  JavaCompile javaCompile = variant.javaCompile</span><br><span class="line">  javaCompile.doLast &#123;</span><br><span class="line">    String[] args = [&quot;-showWeaveInfo&quot;,</span><br><span class="line">                     &quot;-1.5&quot;,</span><br><span class="line">                     &quot;-inpath&quot;, javaCompile.destinationDir.toString(),</span><br><span class="line">                     &quot;-aspectpath&quot;, javaCompile.classpath.asPath,</span><br><span class="line">                     &quot;-d&quot;, javaCompile.destinationDir.toString(),</span><br><span class="line">                     &quot;-classpath&quot;, javaCompile.classpath.asPath,</span><br><span class="line">                     &quot;-bootclasspath&quot;, project.android.bootClasspath.join(File.pathSeparator)]</span><br><span class="line">    log.debug &quot;ajc args: &quot; + Arrays.toString(args)</span><br><span class="line"></span><br><span class="line">    MessageHandler handler = new MessageHandler(true);</span><br><span class="line">    new Main().run(args, handler);</span><br><span class="line">    for (IMessage message : handler.getMessages(null, true)) &#123;</span><br><span class="line">      switch (message.getKind()) &#123;</span><br><span class="line">        case IMessage.ABORT:</span><br><span class="line">        case IMessage.ERROR:</span><br><span class="line">        case IMessage.FAIL:</span><br><span class="line">          log.error message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">        case IMessage.WARNING:</span><br><span class="line">          log.warn message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">        case IMessage.INFO:</span><br><span class="line">          log.info message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">        case IMessage.DEBUG:</span><br><span class="line">          log.debug message.message, message.thrown</span><br><span class="line">          break;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>文章<a href="https://fernandocejas.com/2014/08/03/aspect-oriented-programming-in-android/" target="_blank" rel="noopener">Aspect Oriented Programming in Android</a> 是通过注解去查看方法执行的时间，我们在这个基础上进行修改，去监听一个成员变量赋值变化的监听。</p>
+<p>我们需要监听 <em>MainActivity</em> 中 <em>mTest</em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> mTest = -<span class="number">1</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onResume();</span><br><span class="line">    Log.i(TAG, <span class="string">"--- onResume---"</span>);</span><br><span class="line">    mTest = <span class="number">100</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>第一步. 设置 Pointcut 的表达式</strong><br>在 <em>TraceAspect.java</em>中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//　set field 的切面</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String POINTCUT_FILEED =</span><br><span class="line">           <span class="string">"set(int org.android10.viewgroupperformance.activity.MainActivity.mTest) &amp;&amp; args(newValue) &amp;&amp; target(t)"</span>;</span><br></pre></td></tr></table></figure>
+<p>根据 JoinPoint 的选择策略和 Pointcut 的语法对应关系，成员变量选择的 <em>set</em>, 参数传递的监听使用 <em>args(newValue) &amp;&amp; target(t)</em></p>
+<p><strong>第二步. 选择相应的 advice</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Before</span>(POINTCUT_FILEED)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFiled</span><span class="params">(JoinPoint joinPoint, Object newValue, Object t)</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们选择的是 <em>Before</em>, 注意在第一步  args(newValue) &amp;&amp; target(t) 中的 <em>newValue 和 t</em> 是要在 advice 函数中定义的 <em>Object newValue, Object t</em>.</p>
+<p><strong>第三步. 对 JointPoint 或参数进行相应的处理</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Before</span>(POINTCUT_FILEED)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFiled</span><span class="params">(JoinPoint joinPoint, Object newValue, Object t)</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line"></span><br><span class="line">    FieldSignature fieldSignature = (FieldSignature) joinPoint.getSignature();</span><br><span class="line">    String fileName = fieldSignature.getName();</span><br><span class="line">    Field field = fieldSignature.getField();</span><br><span class="line">    field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    Class clazz = fieldSignature.getFieldType();</span><br><span class="line">    String clazzName = clazz.getSimpleName();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取旧的值</span></span><br><span class="line">    Object oldValue = field.get(t);</span><br><span class="line"></span><br><span class="line">    Log.i(<span class="string">"MainActivity"</span>,</span><br><span class="line">               <span class="string">"\nonFiled value = "</span> + newValue.toString()</span><br><span class="line">                    + <span class="string">"\ntarget = "</span> + t.toString()</span><br><span class="line">                    + <span class="string">"\n fieldSignature ="</span> + fieldSignature.toString()</span><br><span class="line">                    + <span class="string">"\nfield = "</span> + field.toString()</span><br><span class="line">                    + <span class="string">"\nFileName = "</span> + fileName</span><br><span class="line">                    + <span class="string">"\nclazzName = "</span> + clazzName</span><br><span class="line">                    + <span class="string">" \noldValue = "</span> + oldValue.toString() );</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 JoinPoint 获取相应的信息。</p>
+<p>在 build 之后，在 app/intermediates/classes/debug 目录下的 </p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_5.png" width="60%" height="40%"></p>
+<p>MainActivity.class 文件中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onResume();</span><br><span class="line">    Log.i(<span class="string">"MainActivity"</span>, <span class="string">"--- onResume---"</span>);</span><br><span class="line">    <span class="keyword">byte</span> var1 = <span class="number">100</span>;</span><br><span class="line">    JoinPoint var3 = Factory.makeJP(ajc$tjp_2, <span class="keyword">this</span>, <span class="keyword">this</span>, Conversions.intObject(var1));</span><br><span class="line">    TraceAspect.aspectOf().onFiled(var3, Conversions.intObject(var1), <span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">this</span>.mTest = var1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们发现上面生成了一下代码，这些生成的代码就是 AspectJ 根据我们前面设置的 Pointcut 和 adive 生成的。</p>
+<p>输出<br>在 build 之后，在 app/intermediates/classes/debug 目录下的 </p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_3.png" width="70%" height="100%"></p>
+<h4 id="2-Plugin-插件方式使用"><a href="#2-Plugin-插件方式使用" class="headerlink" title="2. Plugin 插件方式使用"></a>2. Plugin 插件方式使用</h4><p>如果是多个 Module 都依赖 AspectJ, 可以写成 plugin 插件的型式</p>
+<p><img src="/2019/06/29/AspectJ在Android中的使用/aspectj_6.png" width="40%" height="50%"></p>
+<p>关于如果使用 Android studio 的 Plugin 插件，可以去查看相关资料</p>
+<p>项目的 build.gradle</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenCentral()</span><br><span class="line">        // 本地仓库</span><br><span class="line">        maven &#123;</span><br><span class="line">            url uri(&apos;repo&apos;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &apos;com.android.tools.build:gradle:2.1.0&apos;</span><br><span class="line">        // 引入插件</span><br><span class="line">        classpath &apos;com.yxhuang:autotrack.android:1.0.1&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">      maven &#123;</span><br><span class="line">          url &apos;https://maven.google.com/&apos;</span><br><span class="line">          name &apos;Google&apos;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//task wrapper(type: Wrapper) &#123;</span><br><span class="line">//  gradleVersion = &apos;2.12&apos;</span><br><span class="line">//&#125;</span><br><span class="line">task clean(type: Delete) &#123;</span><br><span class="line">    delete rootProject.buildDir</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>gintonic 的 build.gradle 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">    //　本地代码仓</span><br><span class="line">    maven&#123;</span><br><span class="line">      url uri(&apos;../repo&apos;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath &apos;com.android.tools.build:gradle:2.1.0&apos;</span><br><span class="line">    classpath &apos;com.yxhuang:autotrack.android:1.0.1&apos; // 引用插件</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &apos;com.android.library&apos;</span><br><span class="line">apply plugin: &apos;com.yxhuang.android&apos; // 引用插件</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">  mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">  compileSdkVersion 21</span><br><span class="line">  buildToolsVersion &apos;21.1.2&apos;</span><br><span class="line"></span><br><span class="line">  lintOptions &#123;</span><br><span class="line">    abortOnError false</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>app module 的 build.gradle 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;com.android.application&apos;</span><br><span class="line">apply plugin: &apos;com.yxhuang.android&apos;  //引入插件</span><br><span class="line"></span><br><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line"></span><br><span class="line">    //　本地代码仓</span><br><span class="line">    maven&#123;</span><br><span class="line">      url uri(&apos;../repo&apos;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath &apos;com.yxhuang:autotrack.android:1.0.1&apos; //引入插件</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">  mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">  compile project(&apos;:gintonic&apos;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">  compileSdkVersion 21</span><br><span class="line">  buildToolsVersion &apos;21.1.2&apos;</span><br><span class="line"></span><br><span class="line">  defaultConfig &#123;</span><br><span class="line">    applicationId &apos;android10.org.viewgroupperformance&apos;</span><br><span class="line">    minSdkVersion 15</span><br><span class="line">    targetSdkVersion 21</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  lintOptions &#123;</span><br><span class="line">    abortOnError true</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体的代码可以去 github <a href="https://github.com/yxhuangCH/AndroidAopDemo" target="_blank" rel="noopener">AndroidAopDemo</a> 选择 tag v2 即可。</p>
+<h3 id="四、参考"><a href="#四、参考" class="headerlink" title="四、参考"></a>四、参考</h3><ul>
+<li>1.<a href="https://blog.csdn.net/innost/article/details/49387395" target="_blank" rel="noopener">深入理解Android之AOP</a></li>
+<li>2.<a href="https://fernandocejas.com/2014/08/03/aspect-oriented-programming-in-android/" target="_blank" rel="noopener">Aspect Oriented Programming in Android</a></li>
+<li>3.《Android 全埋点解决方案》第 8 章，<em>AppClick 全埋点方案5：AspectJ</em></li>
+<li>4.极客时间专栏《Android 开发高手课》第 27 讲， <em>编译插桩的三种方法： AspectJ, ASM, ReDex</em></li>
+<li>5.<a href="https://www.eclipse.org/aspectj/doc/next/adk15notebook/index.html" target="_blank" rel="noopener">AspectJ 官方手册</a></li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/glide-source-spimple-analyze/" rel="next" title="Glide 源码简要分析">
+                <i class="fa fa-chevron-left"></i> Glide 源码简要分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、AOP"><span class="nav-number">1.</span> <span class="nav-text">一、AOP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、AspectJ"><span class="nav-number">2.</span> <span class="nav-text">二、AspectJ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-AspectJ-语法"><span class="nav-number">2.1.</span> <span class="nav-text">1.AspectJ 语法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-JoinPoint"><span class="nav-number">2.1.1.</span> <span class="nav-text">1. JoinPoint</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Pointcut"><span class="nav-number">2.1.2.</span> <span class="nav-text">2. Pointcut</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-JointPoint-的选择"><span class="nav-number">2.1.3.</span> <span class="nav-text">3. JointPoint 的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-JointPoint-直接选择"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">1.JointPoint 直接选择</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-JointPoint-间接选择"><span class="nav-number">2.1.3.2.</span> <span class="nav-text">2.JointPoint 间接选择</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-call-与-execution-区别"><span class="nav-number">2.1.3.3.</span> <span class="nav-text">3.call 与 execution 区别</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-AspectJ-注解的等价"><span class="nav-number">2.1.3.4.</span> <span class="nav-text">3.AspectJ 注解的等价</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-Advice"><span class="nav-number">2.1.4.</span> <span class="nav-text">4. Advice</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-参数传递和-JointPoint-信息"><span class="nav-number">2.1.5.</span> <span class="nav-text">5. 参数传递和 JointPoint 信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、AspectJ-集成在-Android-studio-中"><span class="nav-number">3.</span> <span class="nav-text">三、AspectJ 集成在 Android studio 中</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Library-库依赖方式使用"><span class="nav-number">3.1.</span> <span class="nav-text">1. Library 库依赖方式使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Plugin-插件方式使用"><span class="nav-number">3.2.</span> <span class="nav-text">2. Plugin 插件方式使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、参考"><span class="nav-number">4.</span> <span class="nav-text">四、参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
