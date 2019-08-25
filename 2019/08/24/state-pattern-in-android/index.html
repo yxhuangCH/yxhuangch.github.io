@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="序言最近项目的首页弹窗进行调整，要加几个弹窗，而且还是要按顺序弹出的。原来的只有悬浮窗权限弹窗和存储权限弹窗，用一两个标志位就可以解决了。现在加了隐私协议弹窗和青少年模式弹窗，变成了四个弹窗，如果还是按照原来的方法，即加标志位解决，逻辑机会变得非常复杂，也很容易出 Bug. 经过调研，发现可以用 state 转态模式去解决这个问题。 下面我们先看看 state 转态模式 State 状态态模式意图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="State 模式在 Android 多弹窗的应用">
+<meta property="og:url" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="序言最近项目的首页弹窗进行调整，要加几个弹窗，而且还是要按顺序弹出的。原来的只有悬浮窗权限弹窗和存储权限弹窗，用一两个标志位就可以解决了。现在加了隐私协议弹窗和青少年模式弹窗，变成了四个弹窗，如果还是按照原来的方法，即加标志位解决，逻辑机会变得非常复杂，也很容易出 Bug. 经过调研，发现可以用 state 转态模式去解决这个问题。 下面我们先看看 state 转态模式 State 状态态模式意图">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/state_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/state_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/state_4.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/state_3.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/state_dialog_demo.gif">
+<meta property="og:updated_time" content="2019-08-25T04:03:05.446Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="State 模式在 Android 多弹窗的应用">
+<meta name="twitter:description" content="序言最近项目的首页弹窗进行调整，要加几个弹窗，而且还是要按顺序弹出的。原来的只有悬浮窗权限弹窗和存储权限弹窗，用一两个标志位就可以解决了。现在加了隐私协议弹窗和青少年模式弹窗，变成了四个弹窗，如果还是按照原来的方法，即加标志位解决，逻辑机会变得非常复杂，也很容易出 Bug. 经过调研，发现可以用 state 转态模式去解决这个问题。 下面我们先看看 state 转态模式 State 状态态模式意图">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/state_2.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/">
+
+
+
+
+
+  <title>State 模式在 Android 多弹窗的应用 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">State 模式在 Android 多弹窗的应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-24T10:03:43+08:00">
+                2019-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><p>最近项目的首页弹窗进行调整，要加几个弹窗，而且还是要按顺序弹出的。原来的只有悬浮窗权限弹窗和存储权限弹窗，用一两个标志位就可以解决了。现在加了隐私协议弹窗和青少年模式弹窗，变成了四个弹窗，如果还是按照原来的方法，即加标志位解决，逻辑机会变得非常复杂，也很容易出 Bug.</p>
+<p>经过调研，发现可以用 state 转态模式去解决这个问题。</p>
+<p>下面我们先看看 state 转态模式</p>
+<h2 id="State-状态态模式"><a href="#State-状态态模式" class="headerlink" title="State 状态态模式"></a>State 状态态模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p><strong>State</strong> is a behavioral design pattern that lets an object alter its behavior when its internal state changes. It appears as if the object changed its class.<br>允许一个对象在其内部状态改变时改变它的行为，对象看起来似乎修改了它的类</p>
+<p>State 模式与状态机有着类似的地方，都是从一个状态切换到另一个状态<br><img src="/2019/08/24/state-pattern-in-android/state_2.png" width="50%" height="50%"></p>
+<p>State 模式的类图</p>
+<p><img src="/2019/08/24/state-pattern-in-android/state_1.png" width="80%" height="70%"><br>图片来源 <a href="https://refactoring.guru/design-patterns/state" target="_blank" rel="noopener">design-patterns: State</a></p>
+<h3 id="参与者"><a href="#参与者" class="headerlink" title="参与者"></a>参与者</h3><h4 id="Context-上下文"><a href="#Context-上下文" class="headerlink" title="Context 上下文"></a>Context 上下文</h4><ul>
+<li>定义 Client 感兴趣的接口 </li>
+<li>维护一个 ConcreteState 子类的实例，这个实例是当前的 state</li>
+</ul>
+<h4 id="State-状态"><a href="#State-状态" class="headerlink" title="State 状态"></a>State 状态</h4><p> 定义接口以封装与 Context 的一个特定状态相关的行为. </p>
+<h4 id="ConcreteState-具体状态类"><a href="#ConcreteState-具体状态类" class="headerlink" title="ConcreteState 具体状态类"></a>ConcreteState 具体状态类</h4><p>每一个子类实现一个与 Context 的一个状态相关的行为</p>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ol>
+<li><p>Context 将状态相关的请求委托给当前的 ConcreteState 对象处理</p>
+</li>
+<li><p>Context 可以将自身作为一个参数传递给 state, 让 state 可以访问到 Context</p>
+</li>
+<li><p>Context 是 client 使用的主要接口， 一般情况下 client 不需要直接与 state 打交道</p>
+</li>
+<li><p>Context 或 ConcreteState 子类都可以决定 next state, 以及设置转态转换的条件</p>
+</li>
+</ol>
+<h3 id="适用性"><a href="#适用性" class="headerlink" title="适用性"></a>适用性</h3><ol>
+<li><p>一个对象的行为取决于它的状态，并且必须在运行时刻根据状态改变它的行为</p>
+</li>
+<li><p>一个操作中含有庞大的分支条件，并且这些分支依赖该对象的状态</p>
+</li>
+</ol>
+<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><ol>
+<li><p>确定 Context 上下文</p>
+</li>
+<li><p>确定 state 的接口</p>
+</li>
+<li><p>继承 state 接口，实现具体 state 类</p>
+</li>
+<li><p>在 Context 中，用一个成员变量指向当前的状态，并且提供对外方法可以设置这个值</p>
+</li>
+</ol>
+<ol start="5">
+<li>初始化一个开始的 State 并传进 context。</li>
+</ol>
+<h2 id="State-模式在-Android-中的应用"><a href="#State-模式在-Android-中的应用" class="headerlink" title="State 模式在 Android 中的应用"></a>State 模式在 Android 中的应用</h2><p>回到我们文章开头的问题，我们想要把弹窗顺序的弹出，刚好和 state 模式中的状态切换是一致的。 第一个弹窗弹窗后，切换到另一个状态，下个弹窗是否弹出，完全取决于所在的状态。这样就可以减少一堆的标志位判断了。</p>
+<p>这样说比较抽象，可以结合下面的例子来看;</p>
+<h3 id="需求："><a href="#需求：" class="headerlink" title="需求："></a>需求：</h3><p>在第一个弹窗之后，点击确认或者取消；<br>弹窗第二个弹窗，点击第二个弹窗的确认或者取消，弹窗第三个弹窗；<br>点击第三个弹窗，结束；</p>
+<h3 id="StateDialog-的设计"><a href="#StateDialog-的设计" class="headerlink" title="StateDialog 的设计"></a>StateDialog 的设计</h3><p>下面是类图</p>
+<p><img src="/2019/08/24/state-pattern-in-android/state_4.png" width="70%" height="70%"></p>
+<p><strong>DialogContext</strong> 是上下文，用来存储当前 DialogState，在 nextDialogState 方法设置下个状态</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DialogContext</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> BaseDialogState mCurrentDialogState;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Activity mActivity;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DialogContext</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        mActivity = activity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextDialogState</span><span class="params">(BaseDialogState baseDialogState)</span> </span>&#123;</span><br><span class="line">        mCurrentDialogState = baseDialogState;</span><br><span class="line">        mCurrentDialogState.setDialogContext(<span class="keyword">this</span>); <span class="comment">//　将自身作为参数传递给　DialogState</span></span><br><span class="line">        mCurrentDialogState.handle(); <span class="comment">// 同时调用 DialogState#handle 方法</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Activity <span class="title">getActivity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mActivity;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mCurrentDialogState != <span class="keyword">null</span>)&#123;</span><br><span class="line">            mCurrentDialogState.onResume();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>BaseDialogState</strong> 是做弹窗的基类，提供 nextDialogState 和  handle 方法<br>在 handle 方法里面进行自身逻辑的处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseDialogState</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"DialogState"</span>;</span><br><span class="line">    <span class="keyword">protected</span> DialogContext mDialogContext;</span><br><span class="line">    <span class="keyword">protected</span> Activity mActivity;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDialogContext</span><span class="params">(DialogContext dialogContext)</span> </span>&#123;</span><br><span class="line">        mDialogContext = dialogContext;</span><br><span class="line">        mActivity = dialogContext.getActivity();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 进行自身逻辑处理</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置下一个 state</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">nextDialogState</span><span class="params">()</span></span>; </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>IDialogStateManager</strong> 和它的实现类 <strong>DialogStateManager</strong> 是 Activity 连接 DialogContext 的中介，相当于 Client。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IDialogStateManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(Activity activity)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">start</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// DialogStateManager.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DialogStateManager</span> <span class="keyword">implements</span> <span class="title">IDialogStateManager</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DialogContext mDialogContext;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> mIsStarted; <span class="comment">// 首次启动</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        mDialogContext = <span class="keyword">new</span> DialogContext(activity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mDialogContext != <span class="keyword">null</span> &amp;&amp; !mIsStarted)&#123;</span><br><span class="line">            mIsStarted = <span class="keyword">true</span>;</span><br><span class="line">            <span class="comment">// 设置第一个 state</span></span><br><span class="line">            mDialogContext.nextDialogState(<span class="keyword">new</span> DialogOneState());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mDialogContext.onResume();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="调用过程"><a href="#调用过程" class="headerlink" title="调用过程"></a>调用过程</h3><p>在 MainActivity 调用 DialogStateManager，进行管理</p>
+<p>调用的时序图<br><img src="/2019/08/24/state-pattern-in-android/state_3.png" width="70%" height="70%"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> TextView mTvStartDialog;</span><br><span class="line">    <span class="keyword">private</span> IDialogStateManager mDialogStateManager;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        mTvStartDialog = (TextView) findViewById(R.id.tv_start);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 创建 DialogStateManager 并进行初始化</span></span><br><span class="line">        mDialogStateManager = <span class="keyword">new</span> DialogStateManager();</span><br><span class="line">        mDialogStateManager.init(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        mTvStartDialog.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                mDialogStateManager.start(); <span class="comment">// 启动状态</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onResume();</span><br><span class="line">        mDialogStateManager.onResume();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后我们看调用的效果</p>
+<p><img src="/2019/08/24/state-pattern-in-android/state_dialog_demo.gif" width="70%" height="70%"></p>
+<p>完整的代码已上传到 <a href="https://github.com/yxhuangCH/AndroidDemo/tree/master/StateDialogDemo" target="_blank" rel="noopener">github</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>《设计模式 可复用面向对象软件的基础》第 5 章， 5.8 State （转态）</li>
+<li><a href="https://refactoring.guru/design-patterns/state" target="_blank" rel="noopener">design-patterns: State</a></li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/07/android-aspectj-limit-click/" rel="next" title="Android 使用 Aspectj 限制快速点击">
+                <i class="fa fa-chevron-left"></i> Android 使用 Aspectj 限制快速点击
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#State-状态态模式"><span class="nav-number">2.</span> <span class="nav-text">State 状态态模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#意图"><span class="nav-number">2.1.</span> <span class="nav-text">意图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参与者"><span class="nav-number">2.2.</span> <span class="nav-text">参与者</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Context-上下文"><span class="nav-number">2.2.1.</span> <span class="nav-text">Context 上下文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#State-状态"><span class="nav-number">2.2.2.</span> <span class="nav-text">State 状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ConcreteState-具体状态类"><span class="nav-number">2.2.3.</span> <span class="nav-text">ConcreteState 具体状态类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协作"><span class="nav-number">2.3.</span> <span class="nav-text">协作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#适用性"><span class="nav-number">2.4.</span> <span class="nav-text">适用性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现过程"><span class="nav-number">2.5.</span> <span class="nav-text">实现过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#State-模式在-Android-中的应用"><span class="nav-number">3.</span> <span class="nav-text">State 模式在 Android 中的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#需求："><span class="nav-number">3.1.</span> <span class="nav-text">需求：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StateDialog-的设计"><span class="nav-number">3.2.</span> <span class="nav-text">StateDialog 的设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用过程"><span class="nav-number">3.3.</span> <span class="nav-text">调用过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
