@@ -4,13 +4,32 @@
 
     
   <url>
-    <loc>https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/</loc>
-    <lastmod>2019-08-25T04:03:05.446Z</lastmod>
+    <loc>https://yxhuangch.github.io/2019/10/02/pattarns-summary/</loc>
+    <lastmod>2019-10-02T02:58:18.324Z</lastmod>
     <data>
         <display>
-        <title>State 模式在 Android 多弹窗的应用</title>
+        <title>设计模式总结</title>
+        <pubTime>2019-10-02T02:56:53.000Z</pubTime>
+        
+        <tag>design patterns</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/</loc>
+    <lastmod>2019-08-25T06:49:35.901Z</lastmod>
+    <data>
+        <display>
+        <title>State 状态模式在 Android 多弹窗的应用</title>
         <pubTime>2019-08-24T02:03:43.000Z</pubTime>
         
+        <tag>android</tag>
+         
          
            
         </display>
