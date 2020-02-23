@@ -110,7 +110,7 @@
 <meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_4.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_5.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_6.png">
-<meta property="og:updated_time" content="2020-02-23T01:02:48.142Z">
+<meta property="og:updated_time" content="2020-02-23T03:48:22.105Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="软件设计原则（一）： 依赖倒置原则">
 <meta name="twitter:description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
@@ -385,6 +385,27 @@
 <p>图6中间的虚线代表着软件架构中的抽象层与具体实现层的边界。所有跨越这条边界源码级别的依赖关系都应该是单向的，即具体实现层依赖抽象层。</p>
 <p>抽象接口层包含了应用的所有高阶业务规则，具体实现层则包括了这些业务规则需要做的具体操作及其相关的细节信息。</p>
 <p>图6中控制流跨越边界（虚线）的方向与源代码依赖关系跨越该边界的反向相反，源代码依赖用于是控制流方向反向，这就是依赖倒置。</p>
+<h3 id="依赖导致原则"><a href="#依赖导致原则" class="headerlink" title="依赖导致原则"></a>依赖导致原则</h3><ul>
+<li>高层次的模块不应该依赖于低层次的模块，两者都应该依赖于抽象接口</li>
+<li>抽象接口不应该依赖于具体实现，而具体实现则应该依赖于抽象接口</li>
+</ul>
+<p>高层：业务逻辑<br>底层：UI,底层配置（数据库等）</p>
+<p>高层模块不依赖低层模块，而是依赖抽象接口，这个接口是由高层模块定义，低层模块实现</p>
+<p>应用规则：</p>
+<ul>
+<li><ol>
+<li>应用代码多使用抽象接口，尽量避免使用多变的具体实现类</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>不要继承具体类，除非是抽象类</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>不要重写 override, 包含具体实现的函数</li>
+</ol>
+</li>
+</ul>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
 <li><a href="https://book.douban.com/subject/30333919/" target="_blank" rel="noopener">《架构整洁之道》</a>第11章：DIP 依赖反转原则</li>
 <li><a href="https://time.geekbang.org/column/article/179282" target="_blank" rel="noopener">极客时间-李智慧·后端技术面试38讲</a>  12 | 软件设计的依赖倒置原则：如何不依赖代码却可以复用它的功能</li>
@@ -564,7 +585,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用依赖倒置实现高层模块复用"><span class="nav-number">1.</span> <span class="nav-text">使用依赖倒置实现高层模块复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">2.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用依赖倒置实现高层模块复用"><span class="nav-number">1.</span> <span class="nav-text">使用依赖倒置实现高层模块复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">2.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖导致原则"><span class="nav-number">3.</span> <span class="nav-text">依赖导致原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
