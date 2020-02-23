@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="软件设计,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
+<meta name="keywords" content="软件设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软件设计原则（一）： 依赖倒置原则">
+<meta property="og:url" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_3.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_4.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_5.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_6.png">
+<meta property="og:updated_time" content="2020-02-23T01:02:48.142Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="软件设计原则（一）： 依赖倒置原则">
+<meta name="twitter:description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/">
+
+
+
+
+
+  <title>软件设计原则（一）： 依赖倒置原则 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">软件设计原则（一）： 依赖倒置原则</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-23T08:59:24+08:00">
+                2020-02-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>如何不依赖代码却可以复用它的功能</p>
+</blockquote>
+<p>在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。</p>
+<p><img src="/2020/02/23/denpendence-inversion-principle/dip_1.png" width="70%" height="70%"><br>图1</p>
+<p>这是我们正常的软件设计。</p>
+<p>但是这样的设计会带来一些问题。</p>
+<p>策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。</p>
+<p>出现了上述问题，可能会想到定义策略层和工具层的接口，毕竟接口比实现更问题。</p>
+<p>所以，会变成下面的设计关系。</p>
+<p><img src="/2020/02/23/denpendence-inversion-principle/dip_2.png" width="70%" height="70%"><br>图2</p>
+<p>Policy layer 层依赖的是方法层的 MechanismService 接口，而方法层会依赖工具层的 UtilityService 接口。这是通常的编程习惯，底层模块有自己的接口，高层模块依赖低层模块提供的接口。</p>
+<p>但是我们下面不是用这种方式，而是用依赖倒置设计原则去重构。</p>
+<p>###依赖倒置的设计原则</p>
+<p>按照依赖倒置原则，接口的所有权是被倒置的，也就是说，接口被定义在高层模块，高层模块拥有接口，低层模块实现接口。不是高层模块依赖低层模块的接口，而是低层模块依赖高层模块的接口，从而实现依赖关系的倒置。</p>
+<p><img src="/2020/02/23/denpendence-inversion-principle/dip_3.png" width="70%" height="70%"><br>图3</p>
+<p>在上面的依赖层次中，每一层的接口都被高层模块定义，由低层模块实现，高层模块完全不依赖底层模块。这样低层模块的改动不会影响高层模块，高层模块的复用也不会完全依赖低层模块。</p>
+<h3 id="使用依赖倒置实现高层模块复用"><a href="#使用依赖倒置实现高层模块复用" class="headerlink" title="使用依赖倒置实现高层模块复用"></a>使用依赖倒置实现高层模块复用</h3><p>依赖倒置原则也适用于一个类向另一个类发送消息的场景</p>
+<p>Button 控制灯泡，按钮按下的时候，灯泡点亮或关闭。常规的设计是，Button 类直接依赖 Lamp 灯泡类</p>
+<p><img src="/2020/02/23/denpendence-inversion-principle/dip_4.png" width="70%" height="70%"><br>图4</p>
+<p>这样会导致问题，Button 依赖 Lamp, Lamp 的任何改动都会牵扯到 Button, 变成联级的改动。另外，如果想要 Button 控制另外一种电器，Button 变难以重用， 以为 Button 依赖着 Lamp.</p>
+<p>解决办法是将依赖中的具体实现，改成为依赖抽象。</p>
+<p>重构后的设计</p>
+<p><img src="/2020/02/23/denpendence-inversion-principle/dip_5.png" width="70%" height="70%"><br>图5</p>
+<p>抽象接口 ButtonServer 是属于高层模块 Button 的，不属于低层模块 Lamp。这样就形成了依赖倒置。</p>
+<p>Button 不会再依赖 Lamp，而是依赖抽象的 ButtonServer, 而 Lamp 是<br>ButtonServer 的具体实现，这样 Lamp 的改动基本上就不会牵扯 Button。另外，如果想要重用 Button 控制其他设备, 只需要这些设备实现 ButtonServer 接口即可。</p>
+<h3 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h3><p>在创建对象是，一般都会是具体实现，这样就会形成一个依赖。这时，可以选择用抽象工厂模式来解决代码依赖的问题。</p>
+<p><img src="/2020/02/23/denpendence-inversion-principle/dip_6.png" width="70%" height="70%"><br>图6</p>
+<p>Application 通过调用 ServiceFactory接口的 makeService 方法。这个方法由 ServiceFactoryImpl 类具体提供，该方法初始化一个 ConcreteImpl 类的实例，并且将其返回 Service 类型返回。</p>
+<p>图6中间的虚线代表着软件架构中的抽象层与具体实现层的边界。所有跨越这条边界源码级别的依赖关系都应该是单向的，即具体实现层依赖抽象层。</p>
+<p>抽象接口层包含了应用的所有高阶业务规则，具体实现层则包括了这些业务规则需要做的具体操作及其相关的细节信息。</p>
+<p>图6中控制流跨越边界（虚线）的方向与源代码依赖关系跨越该边界的反向相反，源代码依赖用于是控制流方向反向，这就是依赖倒置。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://book.douban.com/subject/30333919/" target="_blank" rel="noopener">《架构整洁之道》</a>第11章：DIP 依赖反转原则</li>
+<li><a href="https://time.geekbang.org/column/article/179282" target="_blank" rel="noopener">极客时间-李智慧·后端技术面试38讲</a>  12 | 软件设计的依赖倒置原则：如何不依赖代码却可以复用它的功能</li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/软件设计/" rel="tag"># 软件设计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/18/dedao-boxian-summary/" rel="next" title="怎样选择保险">
+                <i class="fa fa-chevron-left"></i> 怎样选择保险
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用依赖倒置实现高层模块复用"><span class="nav-number">1.</span> <span class="nav-text">使用依赖倒置实现高层模块复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">2.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

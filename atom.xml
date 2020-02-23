@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yxhuangch.github.io/"/>
-  <updated>2019-10-02T02:58:18.324Z</updated>
+  <updated>2020-02-23T01:02:48.142Z</updated>
   <id>https://yxhuangch.github.io/</id>
   
   <author>
@@ -15,6 +15,58 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>软件设计原则（一）： 依赖倒置原则</title>
+    <link href="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/"/>
+    <id>https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/</id>
+    <published>2020-02-23T00:59:24.000Z</published>
+    <updated>2020-02-23T01:02:48.142Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>如何不依赖代码却可以复用它的功能</p></blockquote><p>在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。</p><p><img src="/2020/02/23/denpendence-inversion-principle/dip_1.png" width="70%" height="70%"><br>图1</p><p>这是我们正常的软件设计。</p><p>但是这样的设计会带来一些问题。</p><p>策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。</p><p>出现了上述问题，可能会想到定义策略层和工具层的接口，毕竟接口比实现更问题。</p><p>所以，会变成下面的设计关系。</p><p><img src="/2020/02/23/denpendence-inversion-principle/dip_2.png" width="70%" height="70%"><br>图2</p><p>Policy layer 层依赖的是方法层的 MechanismService 接口，而方法层会依赖工具层的 UtilityService 接口。这是通常的编程习惯，底层模块有自己的接口，高层模块依赖低层模块提供的接口。</p><p>但是我们下面不是用这种方式，而是用依赖倒置设计原则去重构。</p><p>###依赖倒置的设计原则</p><p>按照依赖倒置原则，接口的所有权是被倒置的，也就是说，接口被定义在高层模块，高层模块拥有接口，低层模块实现接口。不是高层模块依赖低层模块的接口，而是低层模块依赖高层模块的接口，从而实现依赖关系的倒置。</p><p><img src="/2020/02/23/denpendence-inversion-principle/dip_3.png" width="70%" height="70%"><br>图3</p><p>在上面的依赖层次中，每一层的接口都被高层模块定义，由低层模块实现，高层模块完全不依赖底层模块。这样低层模块的改动不会影响高层模块，高层模块的复用也不会完全依赖低层模块。</p><h3 id="使用依赖倒置实现高层模块复用"><a href="#使用依赖倒置实现高层模块复用" class="headerlink" title="使用依赖倒置实现高层模块复用"></a>使用依赖倒置实现高层模块复用</h3><p>依赖倒置原则也适用于一个类向另一个类发送消息的场景</p><p>Button 控制灯泡，按钮按下的时候，灯泡点亮或关闭。常规的设计是，Button 类直接依赖 Lamp 灯泡类</p><p><img src="/2020/02/23/denpendence-inversion-principle/dip_4.png" width="70%" height="70%"><br>图4</p><p>这样会导致问题，Button 依赖 Lamp, Lamp 的任何改动都会牵扯到 Button, 变成联级的改动。另外，如果想要 Button 控制另外一种电器，Button 变难以重用， 以为 Button 依赖着 Lamp.</p><p>解决办法是将依赖中的具体实现，改成为依赖抽象。</p><p>重构后的设计</p><p><img src="/2020/02/23/denpendence-inversion-principle/dip_5.png" width="70%" height="70%"><br>图5</p><p>抽象接口 ButtonServer 是属于高层模块 Button 的，不属于低层模块 Lamp。这样就形成了依赖倒置。</p><p>Button 不会再依赖 Lamp，而是依赖抽象的 ButtonServer, 而 Lamp 是<br>ButtonServer 的具体实现，这样 Lamp 的改动基本上就不会牵扯 Button。另外，如果想要重用 Button 控制其他设备, 只需要这些设备实现 ButtonServer 接口即可。</p><h3 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h3><p>在创建对象是，一般都会是具体实现，这样就会形成一个依赖。这时，可以选择用抽象工厂模式来解决代码依赖的问题。</p><p><img src="/2020/02/23/denpendence-inversion-principle/dip_6.png" width="70%" height="70%"><br>图6</p><p>Application 通过调用 ServiceFactory接口的 makeService 方法。这个方法由 ServiceFactoryImpl 类具体提供，该方法初始化一个 ConcreteImpl 类的实例，并且将其返回 Service 类型返回。</p><p>图6中间的虚线代表着软件架构中的抽象层与具体实现层的边界。所有跨越这条边界源码级别的依赖关系都应该是单向的，即具体实现层依赖抽象层。</p><p>抽象接口层包含了应用的所有高阶业务规则，具体实现层则包括了这些业务规则需要做的具体操作及其相关的细节信息。</p><p>图6中控制流跨越边界（虚线）的方向与源代码依赖关系跨越该边界的反向相反，源代码依赖用于是控制流方向反向，这就是依赖倒置。</p><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul><li><a href="https://book.douban.com/subject/30333919/" target="_blank" rel="noopener">《架构整洁之道》</a>第11章：DIP 依赖反转原则</li><li><a href="https://time.geekbang.org/column/article/179282" target="_blank" rel="noopener">极客时间-李智慧·后端技术面试38讲</a>  12 | 软件设计的依赖倒置原则：如何不依赖代码却可以复用它的功能</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;如何不依赖代码却可以复用它的功能&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+      <category term="软件设计" scheme="https://yxhuangch.github.io/tags/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>怎样选择保险</title>
+    <link href="https://yxhuangch.github.io/2019/11/18/dedao-boxian-summary/"/>
+    <id>https://yxhuangch.github.io/2019/11/18/dedao-boxian-summary/</id>
+    <published>2019-11-18T15:28:45.000Z</published>
+    <updated>2019-12-01T15:02:11.771Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近学习完得到上面的课程《保险》，做了一份总结，对保险有个大概的认知，知道以后怎样去选择对应的保险。</p><p>这里只是做一个简要的总结，如果想要详细了解，可以去得到上订阅课程。</p><h2 id="保险的功能、原则"><a href="#保险的功能、原则" class="headerlink" title="保险的功能、原则"></a>保险的功能、原则</h2><p><strong>明确保险的功能</strong></p><ul><li>对冲风险</li><li>跨时期分配资源</li></ul><p>首先要明确保险的功能，保险最主要的功能是对冲风险和跨时期分配资源，虽然部分的保险也有理财功能，但那不是最主要的功能。</p><p><strong>选择保险的原则</strong></p><ul><li>认真分析自己可能会面临的风险和自己想要达成的生活目标、再决定买什么产品，买多大保额</li><li>先保障后理财，先人身后财产、先大人后小孩，先主力后其他</li></ul><p>选择保险，一定根据自己的实际情况，不要盲目去买保险。如果买了不适合自己的保险，退保单也有相应的损失。<br>另外一点很重要就是先要保主力，不要自己都没有相应的保障，就为小孩买很多的保险。如果自己都出问题了，怎样去保障小孩的生活。</p><p><strong>保险费用控制</strong></p><ul><li>家庭保险费用总预算应该控制在家庭年收入的 10%~20%</li><li>保障型保险保费不超过家庭年收入的 15%</li><li>投资理财型、转移型保险不超过年收入的 20%</li></ul><p>保险费用的控制也是很重要的，如果太多了，就会生活质量产生影响。如果太低了，又不能覆盖相应的风险。</p><p><strong>风险的分类</strong><br>我们日常生活中面临的很多风险，这些风险可以分类为</p><ul><li>生存保障风险，一般包含疾病、身故和财产损失</li><li>支出性风险， 一般包含养老、子女教育和消费支出</li><li>所有权风险，一般包含婚姻、债务、税务和传承</li></ul><p>根据上面的风险分类，我们需要针对性的去搭建属于自己的防守体系，这个体系如下图的金字塔。</p><p><img src="/2019/11/18/dedao-boxian-summary/dedao_baoxian.png" width="70%" height="70%"></p><p>首先需要保证的是生存风险<br>其次是支出性的保障<br>最后才是所有权的保障</p><p>我们配置保险的话，也是按照这个金字塔重底部往上进行规划保障。</p><p><strong>保险的类型</strong><br>根据保险的类型，可以分为</p><ul><li>保障型保险，包含医疗险、重疾险、意外险、寿险、车险和家财险</li><li>理财型保险，包含年金险、分红险、万能险和投资连结险</li><li>转移型保险，一般是终身寿险</li></ul><h2 id="虚拟案例讲述"><a href="#虚拟案例讲述" class="headerlink" title="虚拟案例讲述"></a>虚拟案例讲述</h2><p>上面简要讲述了保险的功能作用、选择保险的原则、保险费用的控制以及我们日常生活面临的风险，并根据这些风险作出相应的保障类型的保险。</p><p>下面我会虚拟一个人，名字叫小强，根据小强个人的生活状态的变化，结合上面的一些原则，讲述他需要保障。</p><p>根据他的成长过程分为毕业期、成家期和中年期，三个时期去配置。</p><h4 id="1-刚毕业时期"><a href="#1-刚毕业时期" class="headerlink" title="1.刚毕业时期"></a>1.刚毕业时期</h4><p>小强刚大学毕业的时候，一个人，收入不太高。根据上面保障金字塔，首先要解决生存保障风险。</p><p>小强这个时候需要配置医疗险、意外险和重疾险。</p><p>工作了虽然有医保，毕竟医保的保障范围是有限的，需要医疗险进行补充，保障医保范围外风险。</p><p>#####医疗险<br>医疗险一般都是先垫付后报销的，也就是说医疗费用先自己出，最后才去找保险公司理赔的。</p><p>如果是看过电影《我不是药神》，里面王传君饰演的吕受益是白血病人，他的医药费用医保当时是不能报销的，但是医疗险就可以。</p><p><img src="/2019/11/18/dedao-boxian-summary/boxian_2.png" width="70%" height="70%"></p><p>选择医疗险的注意事项：</p><ul><li>第一点是保额，医疗险的保额一般选择在 100 万的基本能够覆盖了。</li><li>第二点是看是否有附加伤害医疗责任</li><li>第三点是看是否可以覆盖自费药</li><li>第三点是看保险里面的医院范围</li><li>第四点是看免赔额</li></ul><p>#####意外险</p><p>虽然谁也不想有意外，但是这个风险还是不可忽视。如果是因为平时意外造成的伤残，会对个人和家庭带来巨大的打击。这个时候意外险就可以起一定的作用，赔偿费用，可以减少经济负担。</p><p>意外险一般是一次性赔付的，它矿业保障我们因意外事件造成的伤亡和残疾，承担意外发生后的医疗费用支出和身故赔偿，也可以帮助我们补偿经济损失。</p><p>另外，因意外导致了身故，保险公司可以赔付受益方，如果选择了父母作为受益方，这样也算是对父母负责和尽孝。</p><p>选择意外险注意的事项：</p><ul><li>一般选择综合意外险</li><li>另外是选择包含伤残责任的</li></ul><p>最后一个重疾险。</p><p>#####重疾险<br>配置了医疗险也还是需要配置重疾险，它们有所不同</p><ul><li>保障范围不同<ul><li>医疗险保障是所有疾病</li><li>重疾险保障的是发病率高，而且花费大量治疗费用的重大疾病</li></ul></li><li><p>给付方式不同</p><ul><li>医疗险需要自己先行垫付，后找保险公司报销</li><li>重疾险是给付型支付方式，也就是一次性把钱给付，由自己分配</li></ul></li><li><p>保障时间不同</p><ul><li>医疗险基本上是一年期的</li><li>重疾险一般可以定期，例如保到六七十岁，或者是终身的</li></ul></li></ul><p>选择重疾险的注意事项：</p><ul><li>选择保额，一般设置成 5 年生活必需支出的费用总和，这样可以保证生活质量不下降</li><li>另外是可以选择轻疾、重疾分组赔付。就是说如果到了轻症疾病，可以得到赔付，而不影响后面重疾的赔付。</li></ul><p><img src="/2019/11/18/dedao-boxian-summary/boxian_5.png" width="70%" height="70%"></p><h4 id="2-成家期"><a href="#2-成家期" class="headerlink" title="2.成家期"></a>2.成家期</h4><p>话说小强毕业六七年后结婚、买房、买车和有了小孩，这个时候他应该配置什么的保险，去降低生活的风险呢。</p><p>成家后，已经不像刚毕业那样，一人吃饱全家不饿了。之前已经配置了基本的生存保障的保险，这个时期需要保障金字塔的第二级，也就是支出性风险。</p><p>成家则意味这责任，如果小强出现了什么意外，那这个责任也还在的。所以这个时候就需要配置寿险了。在小强不幸身故之后，家人可以得到一笔赔偿，这个赔偿可以保证家人的经济水平不会因为失去支柱而陷入困境。</p><h5 id="寿险"><a href="#寿险" class="headerlink" title="寿险"></a>寿险</h5><p>寿险就是为了保障被保险人身故之后，还能履行对家庭的责任。</p><p>选择寿险的注意事项：</p><ul><li>保额，考虑家里的贷款负债、基本的生活成本、子女教育、赡养父母等支出考虑进去，根据需要承担的责任这是保额</li><li>保障的时间，寿险也是分定期寿险和终身寿险，对已一般的家庭来讲选择定期寿险，保到60~70岁的即可，性价比是比价高的</li></ul><p>在选择投保重疾险和寿险时可以在保单里增加豁免条款。也就是小强给妻子投保，妻子给小强投保。例如小强出现意外死亡，由于投保人已经身故，没人交保费，但是有豁免条款，小强帮妻子买的保单不用继续交保费，而保单会继续生效。</p><p>配置了意外险、医疗险、重疾险和寿险，有了这几个工具，那生存保障风险也就应付的差不多了。这个时候需要考虑一些家财险了。</p><p>小强买了房子，这个房子在小强家庭总资产的比重是比较高的。如果房子出现火灾，那面临的损失也是比较大的，很容易陷入家庭困境。这个时候就需要家财险来规避风险了。</p><h5 id="家财险"><a href="#家财险" class="headerlink" title="家财险"></a>家财险</h5><p>家财险是一个产品组合，里面可以自己选择配置。<br>家财险一般包含 4 类功能：</p><ul><li>保房屋，是指在发生火灾、地震、爆炸等情况导致的房屋损失，保险公司进行赔偿。</li><li>保室内，是指因为出现水管爆裂、墙皮脱落需要进行重新装修，这个费用保险公司也可以赔。</li><li>保物品，是指因为家里值钱的东西被盗，保险公司进行相应的赔偿。</li><li>保责任，是指由于自己的责任造成别人的损失，需要赔偿的。例如因为自己家的水管爆了，淹到楼下邻居，这个损失保险公司也是可以进行赔偿的。另外一个例子就是最近报道比较频繁的是高空抛物事故，如果因为找不到相应责任人需要全体高层住户一起赔偿的，这个时候保险公司也可以进行赔偿。</li></ul><h5 id="车险"><a href="#车险" class="headerlink" title="车险"></a>车险</h5><p>如果是买了车子，也需要进行相应的保险的，可以根据下面的表格进行相应的配置</p><p><img src="/2019/11/18/dedao-boxian-summary/boxian_4.png" width="70%" height="70%"></p><p><img src="/2019/11/18/dedao-boxian-summary/boxian_6.png" width="70%" height="70%"></p><h4 id="3-中年期"><a href="#3-中年期" class="headerlink" title="3.中年期"></a>3.中年期</h4><p>又过了十年，这时候的小强已经步入中年了，这个时候需要进行怎样的保险配置呢。</p><p>还记得保险的两个功能，一个是对冲风险，另一个是跨时期分配资源。小强在毕业前和成家期配置的保险都是利用了保险的第一个功能，对冲风险。那后面就需要用到另一个功能，也就是跨时期分配资源。</p><p>跨时间分配资源，符合这个作用的，一般都被成为”理财型保险产品“，这个理财不是用来发财的，不能和股票、基金这样的投资产品混为一谈。</p><p>选择购买理财型保险的注意事项：</p><ul><li>保险不是用来发财的，它更多是跨期分配资源</li><li>关注期末收益没有意义，要看兑换时收益。</li><li>买理财型保险的投入比例不宜太高，一般占可投资盈余的 25%~40%。</li></ul><p>小强这个时候需要考虑小孩教育、个人的养老等问题。</p><p><img src="/2019/11/18/dedao-boxian-summary/boxian_8.png" width="70%" height="70%"></p><h2 id="购买保险注意事项"><a href="#购买保险注意事项" class="headerlink" title="购买保险注意事项"></a>购买保险注意事项</h2><p> 购买保险，一般要注意核保、理赔和服务三方面事项</p><h4 id="核保"><a href="#核保" class="headerlink" title="核保"></a>核保</h4><p>购买保险的时候，保险公司需要进行核保，也就是核实被保险人的情况，防止出现骗保的情况。</p><p>在核保时遵循<em>”真话不全说、假话全不说“</em>，也就是<strong>保险公司明确问到你的，一定要如实回答，但没有问到你的，或者问题不明确的，不需要主动告知</strong></p><p>另外一个核保或者理赔的时候，保险公司一般会通过医保卡的使用记录，医保的就诊记录；第二个是医疗机构体检、就诊记录；第三个是同业理赔记录。<br>所以，<strong>医保卡不能外借</strong>，如果用自己的医保卡给家里的老人买了治高血压、糖尿病的药，会对核保或者理赔产生不良影响。</p><h4 id="理赔"><a href="#理赔" class="headerlink" title="理赔"></a>理赔</h4><p>理赔需要的注意点：</p><ul><li>保存好所有的单据</li><li>在理赔过程中，和保险顾问及时沟通</li></ul><p>在理赔过程总出现纠纷，一般先争取通融赔付，和保险公司协商。如果实在不行，就向银保监会投诉。最后还是不能解决，那可以寻求法律诉讼。</p><h4 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h4><p>购买保险一般还有有一些附加服务的<br>例如一些挂号预约，绿色通道等。</p><p>如果想要更清晰去了解保险的内容，推荐去得到定义《给忙碌着的个人保险课》</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;最近学习完得到上面的课程《保险》，做了一份总结，对保险有个大概的认知，知道以后怎样去选择对应的保险。&lt;/p&gt;
+&lt;p&gt;这里只是做一个简要的总结，如果想要详细了解，可以去得到上订阅课程。&lt;/p&gt;
+&lt;h2 id=&quot;保险的功能、原则&quot;&gt;&lt;a href=&quot;#保险的功能、原则&quot; cla
+      
+    
+    </summary>
+    
+    
+      <category term="life" scheme="https://yxhuangch.github.io/tags/life/"/>
+    
+  </entry>
   
   <entry>
     <title>设计模式总结</title>
@@ -431,27 +483,6 @@
       
       
         &lt;p&gt; 欢迎到广州！&lt;br&gt;                2017.08.19&lt;br&gt;&lt;img src=&quot;/2017/08/20/Hello-GuangZhou/haizhuhu.jpeg&quot; width=&quot;70%&quot; height=&quot;50%&quot;&gt;&lt;/p&gt;
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="https://yxhuangch.github.io/2017/08/15/hello-world/"/>
-    <id>https://yxhuangch.github.io/2017/08/15/hello-world/</id>
-    <published>2017-08-15T15:56:07.000Z</published>
-    <updated>2017-08-15T15:56:07.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
       
     
     </summary>

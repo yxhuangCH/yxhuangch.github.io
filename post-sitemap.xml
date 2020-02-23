@@ -7,8 +7,16 @@
     </url>
 
     <url>
+        <loc>https://yxhuangch.github.io/2019/10/02/pattarns-summary/</loc>
+        <lastmod>2019-10-02T02:58:18.324Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://yxhuangch.github.io/2019/08/24/state-pattern-in-android/</loc>
-        <lastmod>2019-08-25T04:03:05.446Z</lastmod>
+        <lastmod>2019-08-25T06:49:35.901Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
