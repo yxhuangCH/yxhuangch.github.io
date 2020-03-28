@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="前言最近在做 Android 项目的时候，需要在 NativeActivity  中动态加载 so 。运行的时候，抛出了异常  Caused by: java.lang.IllegalArgumentException: Unable to find native library  using classloader: dalvik.system.PathClassLoader  在 Native">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 动态链接库 So 的加载">
+<meta property="og:url" content="https://yxhuangch.github.io/2020/03/28/android-so-load/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="前言最近在做 Android 项目的时候，需要在 NativeActivity  中动态加载 so 。运行的时候，抛出了异常  Caused by: java.lang.IllegalArgumentException: Unable to find native library  using classloader: dalvik.system.PathClassLoader  在 Native">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/03/28/android-so-load/android_so_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/03/28/android-so-load/android_so_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/03/28/android-so-load/android_so_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/03/28/android-so-load/android_so_load_3.png">
+<meta property="og:updated_time" content="2020-03-28T03:36:01.421Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 动态链接库 So 的加载">
+<meta name="twitter:description" content="前言最近在做 Android 项目的时候，需要在 NativeActivity  中动态加载 so 。运行的时候，抛出了异常  Caused by: java.lang.IllegalArgumentException: Unable to find native library  using classloader: dalvik.system.PathClassLoader  在 Native">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2020/03/28/android-so-load/android_so_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2020/03/28/android-so-load/">
+
+
+
+
+
+  <title>Android 动态链接库 So 的加载 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2020/03/28/android-so-load/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 动态链接库 So 的加载</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-28T08:51:02+08:00">
+                2020-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在做 Android 项目的时候，需要在 NativeActivity  中动态加载 so 。运行的时候，抛出了异常</p>
+<blockquote>
+<p>Caused by: java.lang.IllegalArgumentException: Unable to find native library  using classloader: dalvik.system.PathClassLoader</p>
+</blockquote>
+<p>在 NativeActivity 中可以看到</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    BaseDexClassLoader classLoader = (BaseDexClassLoader) getClassLoader();</span><br><span class="line">        String path = classLoader.findLibrary(libname);</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span> (path == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Unable to find native library "</span> + libname +</span><br><span class="line">                                               <span class="string">" using classloader: "</span> + classLoader.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的源码中，可以知道，NativeActivity 要是通过 BaseDexClassLoader#findLibrary 方法去查找 so 的路径，然后进行判空。上面提到的异常，就是因为找不到这个 so 的 path, 抛处理的异常。</p>
+<p>在这个异常之后有几个疑问</p>
+<ul>
+<li>第一个问题是： so 的加载过程是怎样的，so 是如何和现在运行的代码联系起来的？</li>
+<li>第二个问题是： classLoader 通过 findLibrary 方法去查找 so 的 path, 这些path 有什么，是怎样来的？</li>
+<li>第三个问题是：classLoader 是怎么来的，在哪里生成的？</li>
+</ul>
+<p>带着这三个问题去找答案，下面就是对三个问题答案的寻找过程。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>本文通过讲述 Android 动态链接库 so 的加载过来，已经 so 的加载原理，可以对加载的整个流程有个清晰的认识，有助于对后续学习热修复有比较好的帮助。</p>
+<p>下面代码分析的源码都是以 Android 9.0 版。</p>
+<h2 id="1-Android-So-的加载过程"><a href="#1-Android-So-的加载过程" class="headerlink" title="1 Android  So 的加载过程"></a>1 Android  So 的加载过程</h2><p>在 Android 添加 so 有两种方式，一种是调用 <code>load(String filename)</code> 方法，传递进去的是路径；另一种是调用 <code>loadLibrary(String libname)</code> 方式，传递进去的是 so 的名称</p>
+<blockquote>
+<p>System.load(“/storage/emulated/0/libnative-lib.so”) 全路径<br>System.loadLibrary(“native-lib”); so 的名字</p>
+</blockquote>
+<h3 id="1-1-System-loadLibrary"><a href="#1-1-System-loadLibrary" class="headerlink" title="1.1 System#loadLibrary"></a>1.1 System#loadLibrary</h3><p>[&gt; java/lang/System.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loadLibrary</span><span class="params">(String libname)</span> </span>&#123;</span><br><span class="line">    Runtime.getRuntime().loadLibrary0(VMStack.getCallingClassLoader(), libname);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-Runtime-loadLibrary0"><a href="#1-2-Runtime-loadLibrary0" class="headerlink" title="1.2 Runtime#loadLibrary0"></a>1.2 Runtime#loadLibrary0</h3><p>[&gt;java/lang/Runtime.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">loadLibrary0</span><span class="params">(ClassLoader loader, Class&lt;?&gt; callerClass, String libname)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    String libraryName = libname;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (loader != <span class="keyword">null</span> &amp;&amp; !(loader <span class="keyword">instanceof</span> BootClassLoader)) &#123;</span><br><span class="line">         <span class="comment">//① ClassLoader#findLibrary 查找 so 的文件名称，见 1.4节</span></span><br><span class="line">        String filename = loader.findLibrary(libraryName);</span><br><span class="line">            <span class="keyword">if</span> (filename == <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">                    (loader.getClass() == PathClassLoader.class ||</span><br><span class="line">                     loader.getClass() == DelegateLastClassLoader.class)) &#123;</span><br><span class="line">            <span class="comment">// ② 如果通过 ClassLoader 找不到，则会通过 System 默认路径去找</span></span><br><span class="line">                filename = System.mapLibraryName(libraryName);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (filename == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> UnsatisfiedLinkError(loader + <span class="string">" couldn't find \""</span> +</span><br><span class="line">                                               System.mapLibraryName(libraryName) + <span class="string">"\""</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// ③ Native 加载</span></span><br><span class="line">            String error = nativeLoad(filename, loader);</span><br><span class="line">            <span class="keyword">if</span> (error != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> UnsatisfiedLinkError(error);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ClassLoader 为空的时候</span></span><br><span class="line">    getLibPaths();</span><br><span class="line">    String filename = System.mapLibraryName(libraryName);</span><br><span class="line">    String error = nativeLoad(filename, loader, callerClass);</span><br><span class="line">    <span class="keyword">if</span> (error != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsatisfiedLinkError(error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">   <span class="comment">// 最终通过 Native 来加载</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">nativeLoad</span><span class="params">(String filename, ClassLoader loader, Class&lt;?&gt; caller)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>当 loader 不为空是，通过 ClassLoader#findLibrary() 查看 so  是否存在</li>
+<li>当 loader 为空是，则从默认目录 mLibPaths 中查找</li>
+</ul>
+<h3 id="1-3-Runtime-getLibPaths"><a href="#1-3-Runtime-getLibPaths" class="headerlink" title="1.3 Runtime#getLibPaths"></a>1.3 Runtime#getLibPaths</h3><p>[&gt;java/lang/Runtime.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">// 获取 Lib 默认路径</span><br><span class="line">private String[] getLibPaths() &#123;</span><br><span class="line">    if (mLibPaths == null) &#123;</span><br><span class="line">        synchronized(this) &#123;</span><br><span class="line">            if (mLibPaths == null) &#123;</span><br><span class="line">                mLibPaths = initLibPaths();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return mLibPaths;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">private static String[] initLibPaths() &#123;</span><br><span class="line">    String javaLibraryPath = System.getProperty(&quot;java.library.path&quot;);</span><br><span class="line">    if (javaLibraryPath == null) &#123;</span><br><span class="line">        return EmptyArray.STRING;</span><br><span class="line">    &#125;</span><br><span class="line">    String[] paths = javaLibraryPath.split(&quot;:&quot;);</span><br><span class="line">    for (int i = 0; i &lt; paths.length; ++i) &#123;</span><br><span class="line">        if (!paths[i].endsWith(&quot;/&quot;)) &#123;</span><br><span class="line">            paths[i] += &quot;/&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return paths;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>initLibPaths</code> 路径是默认的 lib 路径 返回的路径是</p>
+<blockquote>
+<p> /system/lib/<br>/vendor/lib/<br>/product/lib/</p>
+</blockquote>
+<h3 id="1-4-BaseDexClassLoader-findLibrary"><a href="#1-4-BaseDexClassLoader-findLibrary" class="headerlink" title="1.4 BaseDexClassLoader.findLibrary"></a>1.4 BaseDexClassLoader.findLibrary</h3><p>通过 ClassLoader 查找 so</p>
+<p>[&gt; libcore/dalvik/src/main/java/dalvik/system/BaseDexClassLoader.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> pathList.findLibrary(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>pathList 是 DexPathList</p>
+<h3 id="1-5-DexPathList-findLibrary"><a href="#1-5-DexPathList-findLibrary" class="headerlink" title="1.5 DexPathList#findLibrary"></a>1.5 DexPathList#findLibrary</h3><p>[&gt;libcore/dalvik/src/main/java/dalvik/system/DexPathList.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String libraryName)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 通过 so 的名称拼接成文件路径</span></span><br><span class="line">    String fileName = System.mapLibraryName(libraryName);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (NativeLibraryElement element : nativeLibraryPathElements) &#123;</span><br><span class="line">        String path = element.findNativeLibrary(fileName);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (path != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> path;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如<br><code>System.mapLibraryName(native-lib)</code> 返回的是 <code>libnative-lib.so</code></p>
+<p><code>nativeLibraryPathElements</code> 是 native library 路径的集合， 它的是 <code>DexPathList</code> 初始化的时候赋值，详见 1.7节</p>
+<h3 id="1-6-DexPathList-NativeLibraryElement-findNativeLibrary"><a href="#1-6-DexPathList-NativeLibraryElement-findNativeLibrary" class="headerlink" title="1.6 DexPathList$NativeLibraryElement#findNativeLibrary"></a>1.6 DexPathList$NativeLibraryElement#findNativeLibrary</h3><p>[&gt;libcore/dalvik/src/main/java/dalvik/system/DexPathList.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public String findNativeLibrary(String name) &#123;</span><br><span class="line">    maybeInit();</span><br><span class="line"></span><br><span class="line">    if (zipDir == null) &#123;</span><br><span class="line">        String entryPath = new File(path, name).getPath();</span><br><span class="line">        // 能打开并且只读的 so</span><br><span class="line">        if (IoUtils.canOpenReadOnly(entryPath)) &#123;</span><br><span class="line">            return entryPath;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else if (urlHandler != null) &#123;</span><br><span class="line">        String entryName = zipDir + &apos;/&apos; + name;</span><br><span class="line">        if (urlHandler.isEntryStored(entryName)) &#123;</span><br><span class="line">          return path.getPath() + zipSeparator + entryName;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-7-DexPathList-DexPathList"><a href="#1-7-DexPathList-DexPathList" class="headerlink" title="1.7 DexPathList#DexPathList"></a>1.7 DexPathList#DexPathList</h3><p>[&gt;libcore/dalvik/src/main/java/dalvik/system/DexPathList.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">DexPathList(ClassLoader definingContext, String dexPath,</span><br><span class="line">    String librarySearchPath, File optimizedDirectory, boolean isTrusted) &#123;</span><br><span class="line">  </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    this.definingContext = definingContext;</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;IOException&gt; suppressedExceptions = new ArrayList&lt;IOException&gt;();</span><br><span class="line">    // save dexPath for BaseDexClassLoader</span><br><span class="line">   //  dex 的路径</span><br><span class="line">    this.dexElements = makeDexElements(splitDexPath(dexPath), optimizedDirectory,</span><br><span class="line">                                           suppressedExceptions, definingContext, isTrusted);</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    // Native 库的路径</span><br><span class="line">    this.nativeLibraryDirectories = splitPaths(librarySearchPath, false);</span><br><span class="line">    //  系统 Native 库的路径</span><br><span class="line">    this.systemNativeLibraryDirectories =</span><br><span class="line">            splitPaths(System.getProperty(&quot;java.library.path&quot;), true);</span><br><span class="line">    // 所有的 Natvie</span><br><span class="line">    this.nativeLibraryPathElements = makePathElements(getAllNativeLibraryDirectories());</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 <code>DexPathList</code> 的构造函数中，我们可以知道 <code>nativeLibraryPathElements</code> 是所有 Native Library 的集合。</p>
+<p><code>DexPathList</code> 是在 ActivityThread 中创建，ActivityThread 是在 App 启动时候创建的。关于 App 启动的启动流程，可以去找这方面的资料，自行查看。</p>
+<p>总结一些 Native Library 的路径来源：</p>
+<ul>
+<li><p>一个是 Native 库的原始路径 <code>System.getProperty(&quot;java.library.path****&quot;)</code>,<br>  /system/lib/; /vendor/lib/; /product/lib/</p>
+</li>
+<li><p>另外一个是App启动时的 Lib 库路径</p>
+</li>
+</ul>
+<p><img src="/2020/03/28/android-so-load/android_so_1.png" width="80%" height="30%"></p>
+<h3 id="1-8-Runtime-doLoad"><a href="#1-8-Runtime-doLoad" class="headerlink" title="1.8 Runtime#doLoad"></a>1.8 Runtime#doLoad</h3><p>在上面我们解决 Native Library 的路径问题，下面分析一下加载的过程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">doLoad</span><span class="params">(String name, ClassLoader loader)</span> </span>&#123;</span><br><span class="line">    String librarySearchPath = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (loader != <span class="keyword">null</span> &amp;&amp; loader <span class="keyword">instanceof</span> BaseDexClassLoader) &#123;</span><br><span class="line">        BaseDexClassLoader dexClassLoader = (BaseDexClassLoader) loader;</span><br><span class="line">        librarySearchPath = dexClassLoader.getLdLibraryPath();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="comment">// 调用 native 方法加载 so, librarySearchPath 就是前面分析的路径的路径</span></span><br><span class="line">        <span class="keyword">return</span> nativeLoad(name, loader, librarySearchPath);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">nativeLoad</span><span class="params">(String filename, ClassLoader loader,</span></span></span><br><span class="line"><span class="function"><span class="params">                                            String librarySearchPath)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="1-9-Runtime-c-Runtime-nativeLoad"><a href="#1-9-Runtime-c-Runtime-nativeLoad" class="headerlink" title="1.9 Runtime.c#Runtime_nativeLoad"></a>1.9 Runtime.c#Runtime_nativeLoad</h3><p>[&gt; libcore/ojluni/src/main/native/Runtime.c]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT jstring JNICALL</span><br><span class="line">Runtime_nativeLoad(JNIEnv* env, jclass ignored, jstring javaFilename,</span><br><span class="line">                   jobject javaLoader, jclass caller)</span><br><span class="line">&#123;</span><br><span class="line">    return JVM_NativeLoad(env, javaFilename, javaLoader, caller);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Runtime.c 中 <code>Runtime_nativeLoad</code> 方法会调用 <code>JVM_NativeLoad</code></p>
+<h3 id="1-10-OpenjdkJvm-cc-JVM-NativeLoad"><a href="#1-10-OpenjdkJvm-cc-JVM-NativeLoad" class="headerlink" title="1.10 OpenjdkJvm.cc#JVM_NativeLoad"></a>1.10 OpenjdkJvm.cc#JVM_NativeLoad</h3><p>[&gt;art/openjdkjvm/OpenjdkJvm.cc]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT jstring JVM_NativeLoad(JNIEnv* env,</span><br><span class="line">                                 jstring javaFilename,</span><br><span class="line">                                 jobject javaLoader,</span><br><span class="line">                                 jclass caller) &#123;</span><br><span class="line">  ScopedUtfChars filename(env, javaFilename);</span><br><span class="line">  if (filename.c_str() == nullptr) &#123;</span><br><span class="line">    return nullptr;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  std::string error_msg;</span><br><span class="line">  &#123;</span><br><span class="line">    // 获取 java 虚拟机</span><br><span class="line">    art::JavaVMExt* vm = art::Runtime::Current()-&gt;GetJavaVM();</span><br><span class="line">    // 加载 调用java 虚拟机中 NativieLibrary 方法去加载 so</span><br><span class="line">    bool success = vm-&gt;LoadNativeLibrary(env,</span><br><span class="line">                                         filename.c_str(),</span><br><span class="line">                                         javaLoader,</span><br><span class="line">                                         caller,</span><br><span class="line">                                         &amp;error_msg);</span><br><span class="line">    if (success) &#123;</span><br><span class="line">      return nullptr;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+<h3 id="1-11-java-vm-ext-cc-JVM-NativeLoad"><a href="#1-11-java-vm-ext-cc-JVM-NativeLoad" class="headerlink" title="1.11 java_vm_ext.cc#JVM_NativeLoad"></a>1.11 java_vm_ext.cc#JVM_NativeLoad</h3><p>[&gt;art/runtime/java_vm_ext.cc]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">bool JavaVMExt::LoadNativeLibrary(JNIEnv* env,</span><br><span class="line">                                  const std::string&amp; path,</span><br><span class="line">                                  jobject class_loader,</span><br><span class="line">                                  std::string* error_msg) &#123;</span><br><span class="line">  error_msg-&gt;clear();</span><br><span class="line"></span><br><span class="line">  SharedLibrary* library;</span><br><span class="line">  Thread* self = Thread::Current();</span><br><span class="line">  // ① 先判断 so 是否已经被加载过</span><br><span class="line">  &#123;</span><br><span class="line">    MutexLock mu(self, *Locks::jni_libraries_lock_);</span><br><span class="line">    library = libraries_-&gt;Get(path);</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">  </span><br><span class="line">    &#125;</span><br><span class="line">    VLOG(jni) &lt;&lt; &quot;[Shared library \&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot; already loaded in &quot;</span><br><span class="line">              &lt;&lt; &quot; ClassLoader &quot; &lt;&lt; class_loader &lt;&lt; &quot;]&quot;;</span><br><span class="line">    if (!library-&gt;CheckOnLoadResult()) &#123;</span><br><span class="line">      StringAppendF(error_msg, &quot;JNI_OnLoad failed on a previous attempt &quot;</span><br><span class="line">          &quot;to load \&quot;%s\&quot;&quot;, path.c_str());</span><br><span class="line">      return false;</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // ② 打开 so </span><br><span class="line">  ScopedLocalRef&lt;jstring&gt; library_path(env, GetLibrarySearchPath(env, class_loader));</span><br><span class="line">  Locks::mutator_lock_-&gt;AssertNotHeld(self);</span><br><span class="line">  const char* path_str = path.empty() ? nullptr : path.c_str();</span><br><span class="line">  bool needs_native_bridge = false;</span><br><span class="line">  void* handle = android::OpenNativeLibrary(env,</span><br><span class="line">                                            runtime_-&gt;GetTargetSdkVersion(),</span><br><span class="line">                                            path_str,</span><br><span class="line">                                            class_loader,</span><br><span class="line">                                            library_path.get(),</span><br><span class="line">                                            &amp;needs_native_bridge,</span><br><span class="line">                                            error_msg);</span><br><span class="line"></span><br><span class="line">  VLOG(jni) &lt;&lt; &quot;[Call to dlopen(\&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot;, RTLD_NOW) returned &quot; &lt;&lt; handle &lt;&lt; &quot;]&quot;;</span><br><span class="line"></span><br><span class="line">  // 打开失败返回</span><br><span class="line">  if (handle == nullptr) &#123;</span><br><span class="line">    VLOG(jni) &lt;&lt; &quot;dlopen(\&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot;, RTLD_NOW) failed: &quot; &lt;&lt; *error_msg;</span><br><span class="line">    return false;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  // 检测异常</span><br><span class="line">  if (env-&gt;ExceptionCheck() == JNI_TRUE) &#123;</span><br><span class="line">    LOG(ERROR) &lt;&lt; &quot;Unexpected exception:&quot;;</span><br><span class="line">    env-&gt;ExceptionDescribe();</span><br><span class="line">    env-&gt;ExceptionClear();</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  // ③ 创建一个新的 SharedLibrary 结构体放到 libraries 中</span><br><span class="line">  bool created_library = false;</span><br><span class="line">  &#123;</span><br><span class="line">    // Create SharedLibrary ahead of taking the libraries lock to maintain lock ordering.</span><br><span class="line">    std::unique_ptr&lt;SharedLibrary&gt; new_library(</span><br><span class="line">        new SharedLibrary(env,</span><br><span class="line">                          self,</span><br><span class="line">                          path,</span><br><span class="line">                          handle,</span><br><span class="line">                          needs_native_bridge,</span><br><span class="line">                          class_loader,</span><br><span class="line">                          class_loader_allocator));</span><br><span class="line"></span><br><span class="line">    MutexLock mu(self, *Locks::jni_libraries_lock_);</span><br><span class="line">    library = libraries_-&gt;Get(path);</span><br><span class="line">    if (library == nullptr) &#123;  // We won race to get libraries_lock.</span><br><span class="line">      library = new_library.release();</span><br><span class="line">      libraries_-&gt;Put(path, library);</span><br><span class="line">      created_library = true;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  if (!created_library) &#123;</span><br><span class="line">    LOG(INFO) &lt;&lt; &quot;WOW: we lost a race to add shared library: &quot;</span><br><span class="line">        &lt;&lt; &quot;\&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot; ClassLoader=&quot; &lt;&lt; class_loader;</span><br><span class="line">    return library-&gt;CheckOnLoadResult();</span><br><span class="line">  &#125;</span><br><span class="line">  VLOG(jni) &lt;&lt; &quot;[Added shared library \&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot; for ClassLoader &quot; &lt;&lt; class_loader &lt;&lt; &quot;]&quot;;</span><br><span class="line"></span><br><span class="line">  // ④ 查找 ”JNI_OnLoad“ 符号</span><br><span class="line">  bool was_successful = false;</span><br><span class="line">  void* sym = library-&gt;FindSymbol(&quot;JNI_OnLoad&quot;, nullptr);</span><br><span class="line">  // 没有查找到， 标记为加载成功</span><br><span class="line">  if (sym == nullptr) &#123;</span><br><span class="line">    VLOG(jni) &lt;&lt; &quot;[No JNI_OnLoad found in \&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot;]&quot;;</span><br><span class="line">    was_successful = true;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // 如果我们在 JNI 中已经复写了 JNI_OnLoad 方法，则需要重写 ClassLoader</span><br><span class="line">    ScopedLocalRef&lt;jobject&gt; old_class_loader(env, env-&gt;NewLocalRef(self-&gt;GetClassLoaderOverride()));</span><br><span class="line">    self-&gt;SetClassLoaderOverride(class_loader);</span><br><span class="line"></span><br><span class="line">    VLOG(jni) &lt;&lt; &quot;[Calling JNI_OnLoad in \&quot;&quot; &lt;&lt; path &lt;&lt; &quot;\&quot;]&quot;;</span><br><span class="line">    typedef int (*JNI_OnLoadFn)(JavaVM*, void*);</span><br><span class="line">    JNI_OnLoadFn jni_on_load = reinterpret_cast&lt;JNI_OnLoadFn&gt;(sym);</span><br><span class="line">    int version = (*jni_on_load)(this, nullptr);</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    self-&gt;SetClassLoaderOverride(old_class_loader.get());</span><br><span class="line"></span><br><span class="line">    // 判断 JNI 版本</span><br><span class="line">    if (version == JNI_ERR) &#123;</span><br><span class="line">      StringAppendF(error_msg, &quot;JNI_ERR returned from JNI_OnLoad in \&quot;%s\&quot;&quot;, path.c_str());</span><br><span class="line">    &#125; else if (JavaVMExt::IsBadJniVersion(version)) &#123;</span><br><span class="line">      StringAppendF(error_msg, &quot;Bad JNI version returned from JNI_OnLoad in \&quot;%s\&quot;: %d&quot;,</span><br><span class="line">                    path.c_str(), version);</span><br><span class="line"></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      was_successful = true;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 返回加载结果</span><br><span class="line">  library-&gt;SetResult(was_successful);</span><br><span class="line">  return was_successful;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的内容比较多，需要一步步分析</p>
+<ul>
+<li>第一步是判断 so 是否已经被加载过，如果已经加载过了，则直接返回加载成功</li>
+<li>第二步是打开 so, 返回 <code>handle</code>句柄，如果返回的句柄为空，这份表示加载失败</li>
+<li>第三步是创建一个 <code>SharedLibrary</code> 结构体，放到 <code>libraries</code> 中缓存</li>
+<li>第四步是查找 <code>JNI_OnLoad</code> 符号，这里分两种情况<ul>
+<li>如果在 JNI 中没有写 <code>JNI_OnLoad</code> 方法，找不到符号，返回加成功</li>
+<li>另一种情况是，如果 JNI 中有 <code>JNI_OnLoad</code> 方法，则会重写当前的 ClassLoader, 并且判断 JNI 版本</li>
+</ul>
+</li>
+</ul>
+<p>从上面的第四步，<strong>我们可以知道加载 so 中 JNI 的入口是 <code>JNI_OnLoad</code> 方法，所以在写 JNI 的时候，会在 <code>JNI_OnLoad</code>方法中做一些初始化的工作。另外一个就是，如果写了 <code>JNI_OnLoad</code> 方法，就要指定 JNI 版本。</strong></p>
+<p>判断 JNI 的版本</p>
+<p>[&gt;art/runtime/java_vm_ext.cc]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bool JavaVMExt::IsBadJniVersion(int version) &#123;</span><br><span class="line">  // We don&apos;t support JNI_VERSION_1_1. These are the only other valid versions.</span><br><span class="line">  return version != JNI_VERSION_1_2 &amp;&amp; version != JNI_VERSION_1_4 &amp;&amp; version != JNI_VERSION_1_6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面是判断 JNI 版本，可以看到只能是 <code>JNI_VERSION_1_2,JNI_VERSION_1_4,JNI_VERSION_1_6</code> 三个版本</p>
+<p>下来是我们平时在写 JNI 的时候, <code>JNI_OnLoad</code> 方法中需要给定 jni 的版本， 同时做一些初始化的工作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">int JNI_OnLoad(JavaVM *vm, void *reserved) &#123;</span><br><span class="line">    JNIEnv *env;</span><br><span class="line">    jVM = vm;</span><br><span class="line"></span><br><span class="line">    // 设定 jni 版本为 1_4</span><br><span class="line">    if ((*vm)-&gt;GetEnv(vm, (void **) &amp;env, JNI_VERSION_1_4) != JNI_OK) &#123; </span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 初始化的工作</span><br><span class="line">     android_dumpVideo = (*env)-&gt;GetStaticMethodID(env, cEmulator, &quot;bitblt&quot;,</span><br><span class="line">                                                  &quot;(Ljava/nio/ByteBuffer;)V&quot;);</span><br><span class="line"></span><br><span class="line">    if (android_dumpVideo == NULL) &#123;</span><br><span class="line">        __android_log_print(ANDROID_LOG_ERROR, &quot;mame4droid-jni&quot;, &quot;Failed to find method bitblt&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    android_changeVideo = (*env)-&gt;GetStaticMethodID(env, cEmulator, &quot;changeVideo&quot;, &quot;(IIII)V&quot;);</span><br><span class="line"></span><br><span class="line">    if (android_changeVideo == NULL) &#123;</span><br><span class="line">        __android_log_print(ANDROID_LOG_ERROR, &quot;mame4droid-jni&quot;,</span><br><span class="line">                            &quot;Failed to find method changeVideo&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-So-的加载原理"><a href="#2-So-的加载原理" class="headerlink" title="2. So 的加载原理"></a>2. So 的加载原理</h2><p>在前面的部分，我们梳理了 so 加载的整个流程，但这个过程还有一些以为，包括：</p>
+<ul>
+<li>ClassLoader 从哪里来</li>
+<li>Native 库是怎样来的</li>
+<li>so 是怎样到 Native 库里面的</li>
+</ul>
+<p>下面将一个个来查找这些疑问的答案</p>
+<h3 id="2-1-ClassLoader-是怎样来的"><a href="#2-1-ClassLoader-是怎样来的" class="headerlink" title="2.1 ClassLoader 是怎样来的"></a>2.1 ClassLoader 是怎样来的</h3><h3 id="2-1-1-System-loadLibrary"><a href="#2-1-1-System-loadLibrary" class="headerlink" title="2.1.1 System#loadLibrary"></a>2.1.1 System#loadLibrary</h3><p>[&gt; java/lang/System.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loadLibrary</span><span class="params">(String libname)</span> </span>&#123;</span><br><span class="line">      Runtime.getRuntime().loadLibrary0(VMStack.getCallingClassLoader(), libname);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加载的 ClassLoader 从 VMStack 中获取， VMStack 再去从 Native 中获取</p>
+<p>[&gt;/libcore/libart/src/main/java/dalvik/system/VMStack.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@FastNative</span><br><span class="line">native public static ClassLoader getCallingClassLoader();</span><br></pre></td></tr></table></figure>
+<h3 id="2-1-2-ActivityThread-handleBindApplication"><a href="#2-1-2-ActivityThread-handleBindApplication" class="headerlink" title="2.1.2 ActivityThread#handleBindApplication"></a>2.1.2 ActivityThread#handleBindApplication</h3><p>[&gt;/frameworks/base/core/java/android/app/ActivityThread.java]</p>
+<p>在 ActivityThread 是 Android App 启动的入口，关于 App 的启动可参考其他资料。<br>App 启动过程，会调到 ActivityThread#handleBindApplication 方法。<br>在这个方法中，会创建 <code>LoadedApk</code>  并且传入进去 Context 中的 ClassLoader.<br>Context 的实现是 ContextImpl，Context#getClassLoader() 方法，去看 ContextImpl#getClassLoader()， 详见 2.1.3</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleBindApplication</span><span class="params">(AppBindData data)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 创建 LoadedApk，使用是 Context 的 ClassLoader</span></span><br><span class="line">    LoadedApk pi = getPackageInfo(instrApp, data.compatInfo, appContext.getClassLoader(), <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">    <span class="comment">// 将 ActivityThread 和 LoadedApk 作为创建 ContextImpl 的参数</span></span><br><span class="line">    ContextImpl instrContext = ContextImpl.createAppContext(<span class="keyword">this</span>, pi);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        java.lang.ClassLoader cl = instrContext.getClassLoader();</span><br><span class="line">        mInstrumentation = (Instrumentation) cl.loadClass(data.instrumentationName.getClassName())</span><br><span class="line">                .newInstance();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                <span class="string">"Unable to instantiate instrumentation "</span> + data.instrumentationName + <span class="string">": "</span> + e.toString(), e);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-1-3-ContextImpl-getClassLoader"><a href="#2-1-3-ContextImpl-getClassLoader" class="headerlink" title="2.1.3 ContextImpl#getClassLoader"></a>2.1.3 ContextImpl#getClassLoader</h3><p>[&gt;/frameworks/base/core/java/android/app/ContextImpl.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ClassLoader <span class="title">getClassLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mClassLoader != <span class="keyword">null</span> ? mClassLoader : (mPackageInfo != <span class="keyword">null</span> ? mPackageInfo.getClassLoader() : ClassLoader.getSystemClassLoader());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的逻辑有点绕，将代码整理改成下面，会更加容易看懂</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ClassLoader <span class="title">getClassLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mClassLoader != <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> mClassLoader;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mPackageInfo != <span class="keyword">null</span>)&#123;</span><br><span class="line">      <span class="keyword">return</span> mPackageInfo.getClassLoader();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> ClassLoader.getSystemClassLoader();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过整理的代码逻辑就很清晰了，第一次进来的时候 mClassLoader 是空的，只要看后面的逻辑。<br>mPackageInfo是 LoadApk, mPackageInfo 不会为空，在 2.1.2 节知道它是 ContextImpl 创建的时候传进来的mP。所以，ackageInfo.getClassLoader()  是调用了  LoadApk#getClassLoader() 方法，关于这个方法详见 2.1.4</p>
+<h3 id="2-1-4-LoadApk-getClassLoader"><a href="#2-1-4-LoadApk-getClassLoader" class="headerlink" title="2.1.4 LoadApk#getClassLoader"></a>2.1.4 LoadApk#getClassLoader</h3><p>[&gt;/frameworks/base/core/java/android/app/LoadApk.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">public</span> ClassLoader <span class="title">getClassLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mClassLoader == <span class="keyword">null</span>) &#123;</span><br><span class="line">            createOrUpdateClassLoaderLocked(<span class="keyword">null</span> <span class="comment">/*addedPaths*/</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mClassLoader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createOrUpdateClassLoaderLocked</span><span class="params">(List&lt;String&gt; addedPaths)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    ···</span></span><br><span class="line"><span class="function">    <span class="comment">// 创建 LoadApk 的时候，传进 mIncludeCode 的值是 false</span></span></span><br><span class="line"><span class="function">    <span class="title">if</span> <span class="params">(!mIncludeCode)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (mClassLoader == <span class="keyword">null</span>) &#123;</span><br><span class="line">                StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();</span><br><span class="line">                mClassLoader = ApplicationLoaders.getDefault().getClassLoader(</span><br><span class="line">                        <span class="string">""</span> <span class="comment">/* codePath */</span>, mApplicationInfo.targetSdkVersion, isBundledApp,</span><br><span class="line">                        librarySearchPath, libraryPermittedPath, mBaseClassLoader,</span><br><span class="line">                        <span class="keyword">null</span> <span class="comment">/* classLoaderName */</span>);</span><br><span class="line">                StrictMode.setThreadPolicy(oldPolicy);</span><br><span class="line">                mAppComponentFactory = AppComponentFactory.DEFAULT;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 调用  ApplicationLoaders.getDefault() 创建 ClassLoader, </span></span><br><span class="line">     <span class="keyword">if</span> (mClassLoader == <span class="keyword">null</span>) &#123;</span><br><span class="line">        ..</span><br><span class="line">        mClassLoader = ApplicationLoaders.getDefault().getClassLoader(zip,</span><br><span class="line">                mApplicationInfo.targetSdkVersion, isBundledApp, librarySearchPath,</span><br><span class="line">                libraryPermittedPath, mBaseClassLoader,</span><br><span class="line">                mApplicationInfo.classLoaderName);</span><br><span class="line">        mAppComponentFactory = createAppFactory(mApplicationInfo, mClassLoader);</span><br><span class="line">    </span><br><span class="line">       ...</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    ···</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-1-5-ApplicationLoaders-getClassLoader"><a href="#2-1-5-ApplicationLoaders-getClassLoader" class="headerlink" title="2.1.5 ApplicationLoaders#getClassLoader"></a>2.1.5 ApplicationLoaders#getClassLoader</h3><p>[&gt;/frameworks/base/core/java/android/app/ApplicationLoaders.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ClassLoader <span class="title">getClassLoader</span><span class="params">(String zip, <span class="keyword">int</span> targetSdkVersion, <span class="keyword">boolean</span> isBundled,</span></span></span><br><span class="line"><span class="function"><span class="params">                           String librarySearchPath, String libraryPermittedPath,</span></span></span><br><span class="line"><span class="function"><span class="params">                           ClassLoader parent, String classLoaderName)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// For normal usage the cache key used is the same as the zip path.</span></span><br><span class="line">    <span class="keyword">return</span> getClassLoader(zip, targetSdkVersion, isBundled, librarySearchPath,</span><br><span class="line">                          libraryPermittedPath, parent, zip, classLoaderName);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">private</span> ClassLoader <span class="title">getClassLoader</span><span class="params">(String zip, <span class="keyword">int</span> targetSdkVersion, <span class="keyword">boolean</span> isBundled,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       String librarySearchPath, String libraryPermittedPath,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       ClassLoader parent, String cacheKey,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       String classLoaderName)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    ClassLoader baseParent = ClassLoader.getSystemClassLoader().getParent();</span><br><span class="line">        </span><br><span class="line">      <span class="keyword">synchronized</span> (mLoaders) &#123;</span><br><span class="line">            <span class="keyword">if</span> (parent == <span class="keyword">null</span>) &#123;</span><br><span class="line">                parent = baseParent;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 试图从缓存总去取 ClassLoader</span></span><br><span class="line">            <span class="keyword">if</span> (parent == baseParent) &#123;</span><br><span class="line">                ClassLoader loader = mLoaders.get(cacheKey);</span><br><span class="line">                <span class="keyword">if</span> (loader != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> loader;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 创建 ClassLoader</span></span><br><span class="line">            ClassLoader classloader = ClassLoaderFactory.createClassLoader(</span><br><span class="line">                    zip,  librarySearchPath, libraryPermittedPath, parent,</span><br><span class="line">                    targetSdkVersion, isBundled, classLoaderName);</span><br><span class="line">                mLoaders.put(cacheKey, classloader);</span><br><span class="line">                <span class="keyword">return</span> classloader;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-1-6-ClassLoaderFactory-createClassLoader"><a href="#2-1-6-ClassLoaderFactory-createClassLoader" class="headerlink" title="2.1.6 ClassLoaderFactory#createClassLoader"></a>2.1.6 ClassLoaderFactory#createClassLoader</h3><p>[&gt;/frameworks/base/core/java/com/android/internal/os/ClassLoaderFactory.java]</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ClassLoader <span class="title">createClassLoader</span><span class="params">(String dexPath,</span></span></span><br><span class="line"><span class="function"><span class="params">    String librarySearchPath, ClassLoader parent, String classloaderName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isPathClassLoaderName(classloaderName)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PathClassLoader(dexPath, librarySearchPath, parent);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isDelegateLastClassLoaderName(classloaderName)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DelegateLastClassLoader(dexPath, librarySearchPath, parent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"Invalid classLoaderName: "</span> + classloaderName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过上面这么多步，终于看到了创建创建 ClassLoader 的地方.<br>根据参数的 classloaderName 的不同，会创建  PathClassLoader 或者 DelegateLastClassLoader。 </p>
+<p>classloaderName 参数是 app 启动的时候传下来的，见 2.1.4 节</p>
+<p>总的来说，<strong>ClassLoader 是 app 启动的时候， ActivityThread 中经过一步步的调用，最后在 ApplicationLoaders 中用 ClassLoaderFactory 创建。</strong></p>
+<p>ClassLoader 的分类</p>
+<p><img src="/2020/03/28/android-so-load/android_so_2.png" width="80%" height="30%"></p>
+<p>关于不同的 ClassLoader 有不同的作用，可以去查相关的资料</p>
+<p>到此，我们的第一个问题解决了，ClassLoader 是 app 启动的时候在 ActivityThread 中创建。 </p>
+<h2 id="2-2-Native-库是怎样来的"><a href="#2-2-Native-库是怎样来的" class="headerlink" title="2.2 Native 库是怎样来的"></a>2.2 Native 库是怎样来的</h2><p>通过对 DexPathList 的分析，可以知道 Native Library 来自来自两个地方</p>
+<ul>
+<li><p>一个是 DexPathList 创建的时候，构造函数传进来的 librarySearchPath。</p>
+</li>
+<li><p>另外一个是 addNativePath(Collection<string> libPaths)<br>例如 :</string></p>
+<blockquote>
+<p>/data/app/com.test.baidu/base.apk!/lib/armeabi-v7a</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="2-2-1-DexPathList-findLibrary"><a href="#2-2-1-DexPathList-findLibrary" class="headerlink" title="2.2.1 DexPathList#findLibrary"></a>2.2.1 DexPathList#findLibrary</h3><p>在第一章的时候，加载 so 会调用到 DexPathList#findLibrary 方法，在这个方法里面会遍历 nativeLibraryPathElements。 nativeLibraryPathElements 是 NativeLibrary 路径的集合。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String libraryName)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    String fileName = System.mapLibraryName(libraryName);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (NativeLibraryElement element : nativeLibraryPathElements) &#123;</span><br><span class="line">        String path = element.findNativeLibrary(fileName);</span><br><span class="line">        <span class="keyword">if</span> (path != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> path;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>System.mapLibraryName 的实现是在 System.c 里面，返回 so 的文件名，例如 </p>
+<blockquote>
+<p>libraryName 是 test_baidu,<br>System.mapLibraryName(‘test_baidu’) 返回的是  libtest_baidu.so</p>
+</blockquote>
+<p>下面要看看 <code>nativeLibraryPathElements</code>是怎么来的<br>NativeLibraryElement 类是 Native Library 的路径元素</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> static class NativeLibraryElement &#123;</span><br><span class="line">        </span><br><span class="line">    private final File path;</span><br><span class="line">    private final String zipDir;</span><br><span class="line"></span><br><span class="line">    public NativeLibraryElement(File dir) &#123;</span><br><span class="line">        this.path = dir;</span><br><span class="line">        this.zipDir = null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public NativeLibraryElement(File zip, String zipDir) &#123;</span><br><span class="line">        this.path = zip;</span><br><span class="line">        this.zipDir = zipDir;</span><br><span class="line"></span><br><span class="line">        if (zipDir == null) &#123;</span><br><span class="line">          throw new IllegalArgumentException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-1-DexPathList-DexPathList-构造函数"><a href="#2-2-1-DexPathList-DexPathList-构造函数" class="headerlink" title="2.2.1 DexPathList#DexPathList 构造函数"></a>2.2.1 DexPathList#DexPathList 构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">DexPathList(ClassLoader definingContext, String dexPath,</span><br><span class="line">            String librarySearchPath, File optimizedDirectory, boolean isTrusted) &#123;</span><br><span class="line">            </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    this.dexElements = makeDexElements(splitDexPath(dexPath), optimizedDirectory,</span><br><span class="line">                                           suppressedExceptions, definingContext, isTrusted);</span><br><span class="line"></span><br><span class="line">    //  ① 创建是传入进来的 librarySearchPath</span><br><span class="line">    this.nativeLibraryDirectories = splitPaths(librarySearchPath, false);</span><br><span class="line">        </span><br><span class="line">   //  ② 系统的 &quot;java.library.path&quot; 路径  </span><br><span class="line">    this.systemNativeLibraryDirectories = splitPaths(System.getProperty(&quot;java.library.path&quot;), true);</span><br><span class="line">    List&lt;File&gt; allNativeLibraryDirectories = new ArrayList&lt;&gt;(nativeLibraryDirectories);</span><br><span class="line">    allNativeLibraryDirectories.addAll(systemNativeLibraryDirectories);</span><br><span class="line">    this.nativeLibraryPathElements = makePathElements(allNativeLibraryDirectories);</span><br><span class="line"></span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 DexPathList 的构造函数中，我们可以看到 Native library 存在两个方面</p>
+<ul>
+<li>一个是传入进来的 librarySearchPath</li>
+<li>另外一个是通过虚拟机属性 <code>java.library.path</code> 获取的系统 Native 库</li>
+</ul>
+<h3 id="2-2-2-DexPathList-addNativePath"><a href="#2-2-2-DexPathList-addNativePath" class="headerlink" title="2.2.2 DexPathList#addNativePath"></a>2.2.2 DexPathList#addNativePath</h3><p>外部添加的 libPaths 路径<br>例如 </p>
+<blockquote>
+<p>/data/app/com.test.baidu/base.apk!/lib/armeabi-v7a</p>
+</blockquote>
+<p>DexPathList#addNativePath 是在 ApplicationLoaders#addNative 中调用，见 2.2.3</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public void addNativePath(Collection&lt;String&gt; libPaths) &#123;</span><br><span class="line">    if (libPaths.isEmpty()) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    List&lt;File&gt; libFiles = new ArrayList&lt;&gt;(libPaths.size());</span><br><span class="line">    for (String path : libPaths) &#123;</span><br><span class="line">        libFiles.add(new File(path));</span><br><span class="line">    &#125;</span><br><span class="line">    ArrayList&lt;NativeLibraryElement&gt; newPaths =</span><br><span class="line">            new ArrayList&lt;&gt;(nativeLibraryPathElements.length + libPaths.size());</span><br><span class="line">    newPaths.addAll(Arrays.asList(nativeLibraryPathElements));</span><br><span class="line">    for (NativeLibraryElement element : makePathElements(libFiles)) &#123;</span><br><span class="line">        if (!newPaths.contains(element)) &#123;</span><br><span class="line">            newPaths.add(element);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    nativeLibraryPathElements = newPaths.toArray(new NativeLibraryElement[newPaths.size()]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-3-ApplicationLoaders-addNative"><a href="#2-2-3-ApplicationLoaders-addNative" class="headerlink" title="2.2.3 ApplicationLoaders#addNative"></a>2.2.3 ApplicationLoaders#addNative</h3><p>[&gt;/frameworks/base/core/java/android/app/ApplicationLoaders.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void addNative(ClassLoader classLoader, Collection&lt;String&gt; libPaths) &#123;</span><br><span class="line">        if (!(classLoader instanceof PathClassLoader)) &#123;</span><br><span class="line">            throw new IllegalStateException(&quot;class loader is not a PathClassLoader&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        final PathClassLoader baseDexClassLoader = (PathClassLoader) classLoader;</span><br><span class="line">        baseDexClassLoader.addNativePath(libPaths);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-4-LoadedApk-createOrUpdateClassLoaderLocked"><a href="#2-2-4-LoadedApk-createOrUpdateClassLoaderLocked" class="headerlink" title="2.2.4 LoadedApk#createOrUpdateClassLoaderLocked"></a>2.2.4 LoadedApk#createOrUpdateClassLoaderLocked</h3><p>[&gt; /frameworks/base/core/java/android/app/LoadedApk.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">private void createOrUpdateClassLoaderLocked(List&lt;String&gt; addedPaths) &#123;</span><br><span class="line">        </span><br><span class="line">    ...</span><br><span class="line">       </span><br><span class="line">    // ① 默认 library 的路径</span><br><span class="line">   final String defaultSearchPaths = System.getProperty(&quot;java.library.path&quot;);</span><br><span class="line">    final boolean treatVendorApkAsUnbundled = !defaultSearchPaths.contains(&quot;/vendor/lib&quot;);</span><br><span class="line">    if (mApplicationInfo.getCodePath() != null</span><br><span class="line">            &amp;&amp; mApplicationInfo.isVendor() &amp;&amp; treatVendorApkAsUnbundled) &#123;</span><br><span class="line">        isBundledApp = false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // ②</span><br><span class="line">    makePaths(mActivityThread, isBundledApp, mApplicationInfo, zipPaths, libPaths);</span><br><span class="line">    String libraryPermittedPath = mDataDir;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">  // ③ 创建 ClassLoader</span><br><span class="line">   if (mClassLoader == null) &#123;</span><br><span class="line">        ...</span><br><span class="line">        mClassLoader = ApplicationLoaders.getDefault().getClassLoader(zip,</span><br><span class="line">                mApplicationInfo.targetSdkVersion, isBundledApp, librarySearchPath,</span><br><span class="line">                libraryPermittedPath, mBaseClassLoader,</span><br><span class="line">                mApplicationInfo.classLoaderName);</span><br><span class="line">        mAppComponentFactory = createAppFactory(mApplicationInfo, mClassLoader);</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (!libPaths.isEmpty() &amp;&amp; SystemProperties.getBoolean(PROPERTY_NAME_APPEND_NATIVE, true)) &#123;</span><br><span class="line">        ...</span><br><span class="line">        try &#123;</span><br><span class="line">            // ④ 添加 libPaths 路径</span><br><span class="line">        ApplicationLoaders.getDefault().addNative(mClassLoader, libPaths);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            StrictMode.setThreadPolicy(oldPolicy);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    // ⑤ 其他的 lib 路径 到 defaultSearchPaths</span><br><span class="line">  List&lt;String&gt; extraLibPaths = new ArrayList&lt;&gt;(3);</span><br><span class="line">    String abiSuffix = VMRuntime.getRuntime().is64Bit() ? &quot;64&quot; : &quot;&quot;;</span><br><span class="line">    if (!defaultSearchPaths.contains(&quot;/vendor/lib&quot;)) &#123;</span><br><span class="line">        extraLibPaths.add(&quot;/vendor/lib&quot; + abiSuffix);</span><br><span class="line">    &#125;</span><br><span class="line">    if (!defaultSearchPaths.contains(&quot;/odm/lib&quot;)) &#123;</span><br><span class="line">        extraLibPaths.add(&quot;/odm/lib&quot; + abiSuffix);</span><br><span class="line">    &#125;</span><br><span class="line">    if (!defaultSearchPaths.contains(&quot;/product/lib&quot;)) &#123;</span><br><span class="line">        extraLibPaths.add(&quot;/product/lib&quot; + abiSuffix);</span><br><span class="line">    &#125;</span><br><span class="line">    if (!extraLibPaths.isEmpty()) &#123;</span><br><span class="line">        ...</span><br><span class="line">        try &#123;</span><br><span class="line">            // ⑥ 将 其他 lib 路径也添加到 DexPathList 中</span><br><span class="line">            ApplicationLoaders.getDefault().addNative(mClassLoader, extraLibPaths);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            StrictMode.setThreadPolicy(oldPolicy);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>createOrUpdateClassLoaderLocked 方法里面创建 ClassLoader 并且设置 lib 路径</p>
+<ul>
+<li>首先 defaultSearchPaths 默认路径，在 ①⑤中获取并放置进去，包含</li>
+</ul>
+<blockquote>
+<p> /system/lib/<br>/vendor/lib/<br>/product/lib/</p>
+</blockquote>
+<ul>
+<li>其次，在 ② 中 makePaths</li>
+<li>在 ④⑥中将 libs 路径添加到 DexPathList 中</li>
+</ul>
+<h3 id="2-2-5-LoadedApk-makePaths"><a href="#2-2-5-LoadedApk-makePaths" class="headerlink" title="2.2.5 LoadedApk#makePaths"></a>2.2.5 LoadedApk#makePaths</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">public static void makePaths(ActivityThread activityThread,</span><br><span class="line">                                 boolean isBundledApp,</span><br><span class="line">                                 ApplicationInfo aInfo,</span><br><span class="line">                                 List&lt;String&gt; outZipPaths,</span><br><span class="line">                                 List&lt;String&gt; outLibPaths) &#123;</span><br><span class="line">    final String appDir = aInfo.sourceDir;</span><br><span class="line">    // aInfo.nativeLibraryDir 的来源在 ActivityThread#getInstrumentationLibrary 中</span><br><span class="line">    final String libDir = aInfo.nativeLibraryDir;</span><br><span class="line">    final String[] sharedLibraries = aInfo.sharedLibraryFiles;</span><br><span class="line">        </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    String instrumentationLibDir = activityThread.mInstrumentationLibDir;</span><br><span class="line">    String instrumentedLibDir = activityThread.mInstrumentedLibDir;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    if (outLibPaths != null) &#123;</span><br><span class="line">        outLibPaths.add(instrumentationLibDir);</span><br><span class="line">        if (!instrumentationLibDir.equals(instrumentedLibDir)) &#123;</span><br><span class="line">            outLibPaths.add(instrumentedLibDir);</span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br><span class="line">    </span><br><span class="line">        if (outLibPaths != null) &#123;</span><br><span class="line">        outLibPaths.add(instrumentationLibDir);</span><br><span class="line">        if (!instrumentationLibDir.equals(instrumentedLibDir)) &#123;</span><br><span class="line">            outLibPaths.add(instrumentedLibDir);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ...</span><br><span class="line">         </span><br><span class="line">        if (outLibPaths.isEmpty()) &#123;</span><br><span class="line">            outLibPaths.add(libDir);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ① 根据 cpu 的不同添加不同路径</span><br><span class="line">        if (aInfo.primaryCpuAbi != null) &#123;</span><br><span class="line">            if (aInfo.targetSdkVersion &lt; Build.VERSION_CODES.N) &#123;</span><br><span class="line">                outLibPaths.add(&quot;/system/fake-libs&quot; +</span><br><span class="line">                    (VMRuntime.is64BitAbi(aInfo.primaryCpuAbi) ? &quot;64&quot; : &quot;&quot;));</span><br><span class="line">            &#125;</span><br><span class="line">            for (String apk : outZipPaths) &#123;</span><br><span class="line">                outLibPaths.add(apk + &quot;!/lib/&quot; + aInfo.primaryCpuAbi);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (isBundledApp) &#123;</span><br><span class="line">outLibPaths.add(System.getProperty(&quot;java.library.path&quot;));</span><br><span class="line">        &#125;      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 ① 中，会根据 cpu 架构的不同，而添加不同路径，例如，如果手机 cpu 的架构 是 armeabi-v7a, 那 <code>apk + &quot;!/lib/&quot; + aInfo.primaryCpuAbi</code> 就是</p>
+<blockquote>
+<p>data/app/包名==/base.apk!/lib/armeabli-v7a</p>
+</blockquote>
+<h3 id="2-2-6-ActivityThread-getInstrumentationLibrary"><a href="#2-2-6-ActivityThread-getInstrumentationLibrary" class="headerlink" title="2.2.6 ActivityThread#getInstrumentationLibrary"></a>2.2.6 ActivityThread#getInstrumentationLibrary</h3><p>[&gt;/frameworks/base/core/java/android/app/ActivityThread.java]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">private String getInstrumentationLibrary(ApplicationInfo appInfo, InstrumentationInfo insInfo) &#123;</span><br><span class="line">    if (appInfo.primaryCpuAbi != null &amp;&amp; appInfo.secondaryCpuAbi != null</span><br><span class="line">            &amp;&amp; appInfo.secondaryCpuAbi.equals(insInfo.secondaryCpuAbi)) &#123;</span><br><span class="line">       </span><br><span class="line">        String secondaryIsa =</span><br><span class="line">                VMRuntime.getInstructionSet(appInfo.secondaryCpuAbi);</span><br><span class="line">        final String secondaryDexCodeIsa =</span><br><span class="line">                SystemProperties.get(&quot;ro.dalvik.vm.isa.&quot; + secondaryIsa);</span><br><span class="line">        secondaryIsa = secondaryDexCodeIsa.isEmpty() ? secondaryIsa : secondaryDexCodeIsa;</span><br><span class="line"></span><br><span class="line">        final String runtimeIsa = VMRuntime.getRuntime().vmInstructionSet();</span><br><span class="line">        if (runtimeIsa.equals(secondaryIsa)) &#123;</span><br><span class="line">            return insInfo.secondaryNativeLibraryDir;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return insInfo.nativeLibraryDir;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 ActivityThread 中的 nativeLibraryDir 通过 getInstrumentationLibrary 方法获取，也是通过 <code>SystemProperties.get(&quot;ro.dalvik.vm.isa.&quot; + secondaryIsa);</code> 系统属性获取</p>
+<p>总的来说 NativeLibraryPath 主要是来至于几个方面</p>
+<ul>
+<li><p>一个是系统的 <code>java.library.path</code> 属性，是</p>
+<blockquote>
+<p>/system/lib<br>/vendor/lib<br>/product/lib</p>
+</blockquote>
+</li>
+<li><p>一个是 <code>apk + &quot;!/lib/&quot; + aInfo.primaryCpuAbi</code> </p>
+<blockquote>
+<p>/data/app/包名==/base.apk!/lib/armeabli-v7a</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>一个是 <code>&quot;ro.dalvik.vm.isa.&quot; + secondaryIsa</code> 属性<blockquote>
+<p>/data/app/包名==/lib/arm</p>
+</blockquote>
+</li>
+</ul>
+<p>如下图中的 nativeLiraryPathsElements中的路径<br><img src="/2020/03/28/android-so-load/android_so_1.png" width="80%" height="30%"></p>
+<h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>通过上面的分析，已经回答了我们在前言部分的三个疑问，那接下来就要解决这个异常了。<br>我们知道</p>
+<blockquote>
+<p>Caused by: java.lang.IllegalArgumentException: Unable to find native library  using classloader: dalvik.system.PathClassLoader</p>
+</blockquote>
+<p>在上面的分析知道, 通过 ClassLoader#findLibrary去 libs 路径去查找我们要加载的 so, 找不到这个 path 导致。</p>
+<p>动态加载 so，我们在通常需要把要加载的 so 从后台下载下来，然后通过 System.load(String filename) 或者 System.loadLibrary(String libname) 方法去加载 so。</p>
+<p>那解决这个问题就是把我们下载存放 so 的路径，添加到 ClassLoader 的 libs 路径里面，而这些 libs 路径是 app 启动的时候就应经生成了。可以利用反射，在运行时路径添加进去。</p>
+<h3 id="将存放-so-的路径放到-ClassLoader-中"><a href="#将存放-so-的路径放到-ClassLoader-中" class="headerlink" title="将存放 so 的路径放到 ClassLoader 中"></a>将存放 so 的路径放到 ClassLoader 中</h3><p>利用反射将存放 so 的路径放到 ClassLoader 中，刚好 <a href="https://github.com/Tencent/tinker/blob/dev/tinker-android/tinker-android-lib/src/main/java/com/tencent/tinker/lib/library/TinkerLoadLibrary.java" target="_blank" rel="noopener">tinker</a> 的 TinkerLoadLibrary 也有实现发方法，我们就不用自己实现了，可以拿过来直接使用</p>
+<p>LoadLibrary 核心代码 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">V25</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">install</span><span class="params">(ClassLoader classLoader, File folder)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        Field pathListField = RetroShareReflectUtil.findField(classLoader, <span class="string">"pathList"</span>);</span><br><span class="line">        Object dexPathList = pathListField.get(classLoader);</span><br><span class="line"></span><br><span class="line">        Field nativeLibraryDirectories = RetroShareReflectUtil.findField(dexPathList, <span class="string">"nativeLibraryDirectories"</span>);</span><br><span class="line"></span><br><span class="line">        List&lt;File&gt; libDirs = (List&lt;File&gt;) nativeLibraryDirectories.get(dexPathList);</span><br><span class="line">        libDirs.add(<span class="number">0</span>, folder);</span><br><span class="line">        Field systemNativeLibraryDirectories =</span><br><span class="line">                RetroShareReflectUtil.findField(dexPathList, <span class="string">"systemNativeLibraryDirectories"</span>);</span><br><span class="line">        List&lt;File&gt; systemLibDirs = (List&lt;File&gt;) systemNativeLibraryDirectories.get(dexPathList);</span><br><span class="line">        Method makePathElements =</span><br><span class="line">                RetroShareReflectUtil.findMethod(dexPathList, <span class="string">"makePathElements"</span>, List.class);</span><br><span class="line">        libDirs.addAll(systemLibDirs);</span><br><span class="line">        Object[] elements = (Object[]) makePathElements.</span><br><span class="line">                invoke(dexPathList, libDirs);</span><br><span class="line">        Field nativeLibraryPathElements = RetroShareReflectUtil.findField(dexPathList, <span class="string">"nativeLibraryPathElements"</span>);</span><br><span class="line">        nativeLibraryPathElements.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        nativeLibraryPathElements.set(dexPathList, elements);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于反射的代码已放到 <a href="https://github.com/yxhuangCH/AndroidSoLoad/tree/master/soload" target="_blank" rel="noopener">github</a></p>
+<p>我的项目下载存放 so 的路径是 /data/user/0/包名/app_libs</p>
+<p>运行之后,我们看开点 路径已经添加进了 ClassLoader 的 nativeLibraryDirecories 中</p>
+<p><img src="/2020/03/28/android-so-load/android_so_load_3.png" width="80%" height="30%"></p>
+<p>至此，异常解决了。<br>同时也对 so 的加载原理有了更好的了解。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><p><a href="https://blog.csdn.net/givemeacondom/article/details/83826645" target="_blank" rel="noopener">Android_动态加载.so文件,解决apk安装包过大的问题</a></p>
+</li>
+<li><p><a href="https://cloud.tencent.com/developer/article/1071447" target="_blank" rel="noopener">Android 动态链接库加载原理及 HotFix 方案介绍</a></p>
+</li>
+<li><p><a href="https://cloud.tencent.com/developer/article/1563054" target="_blank" rel="noopener">Android so 加载原理分析</a></p>
+</li>
+<li><p><a href="http://gityuan.com/2017/03/26/load_library/" target="_blank" rel="noopener">loadLibrary动态库加载过程分析</a></p>
+</li>
+<li><p><a href="http://androidxref.com/" target="_blank" rel="noopener">参考 Android 源码</a></p>
+</li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/23/denpendence-inversion-principle/" rel="next" title="软件设计原则（一）： 依赖倒置原则">
+                <i class="fa fa-chevron-left"></i> 软件设计原则（一）： 依赖倒置原则
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正文"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Android-So-的加载过程"><span class="nav-number">3.</span> <span class="nav-text">1 Android  So 的加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-System-loadLibrary"><span class="nav-number">3.1.</span> <span class="nav-text">1.1 System#loadLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Runtime-loadLibrary0"><span class="nav-number">3.2.</span> <span class="nav-text">1.2 Runtime#loadLibrary0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Runtime-getLibPaths"><span class="nav-number">3.3.</span> <span class="nav-text">1.3 Runtime#getLibPaths</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-BaseDexClassLoader-findLibrary"><span class="nav-number">3.4.</span> <span class="nav-text">1.4 BaseDexClassLoader.findLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-DexPathList-findLibrary"><span class="nav-number">3.5.</span> <span class="nav-text">1.5 DexPathList#findLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-DexPathList-NativeLibraryElement-findNativeLibrary"><span class="nav-number">3.6.</span> <span class="nav-text">1.6 DexPathList$NativeLibraryElement#findNativeLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-DexPathList-DexPathList"><span class="nav-number">3.7.</span> <span class="nav-text">1.7 DexPathList#DexPathList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-8-Runtime-doLoad"><span class="nav-number">3.8.</span> <span class="nav-text">1.8 Runtime#doLoad</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-9-Runtime-c-Runtime-nativeLoad"><span class="nav-number">3.9.</span> <span class="nav-text">1.9 Runtime.c#Runtime_nativeLoad</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-10-OpenjdkJvm-cc-JVM-NativeLoad"><span class="nav-number">3.10.</span> <span class="nav-text">1.10 OpenjdkJvm.cc#JVM_NativeLoad</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-11-java-vm-ext-cc-JVM-NativeLoad"><span class="nav-number">3.11.</span> <span class="nav-text">1.11 java_vm_ext.cc#JVM_NativeLoad</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-So-的加载原理"><span class="nav-number">4.</span> <span class="nav-text">2. So 的加载原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-ClassLoader-是怎样来的"><span class="nav-number">4.1.</span> <span class="nav-text">2.1 ClassLoader 是怎样来的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-System-loadLibrary"><span class="nav-number">4.2.</span> <span class="nav-text">2.1.1 System#loadLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-ActivityThread-handleBindApplication"><span class="nav-number">4.3.</span> <span class="nav-text">2.1.2 ActivityThread#handleBindApplication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-ContextImpl-getClassLoader"><span class="nav-number">4.4.</span> <span class="nav-text">2.1.3 ContextImpl#getClassLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-LoadApk-getClassLoader"><span class="nav-number">4.5.</span> <span class="nav-text">2.1.4 LoadApk#getClassLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-5-ApplicationLoaders-getClassLoader"><span class="nav-number">4.6.</span> <span class="nav-text">2.1.5 ApplicationLoaders#getClassLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-6-ClassLoaderFactory-createClassLoader"><span class="nav-number">4.7.</span> <span class="nav-text">2.1.6 ClassLoaderFactory#createClassLoader</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Native-库是怎样来的"><span class="nav-number">5.</span> <span class="nav-text">2.2 Native 库是怎样来的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-DexPathList-findLibrary"><span class="nav-number">5.1.</span> <span class="nav-text">2.2.1 DexPathList#findLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-DexPathList-DexPathList-构造函数"><span class="nav-number">5.2.</span> <span class="nav-text">2.2.1 DexPathList#DexPathList 构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-DexPathList-addNativePath"><span class="nav-number">5.3.</span> <span class="nav-text">2.2.2 DexPathList#addNativePath</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-ApplicationLoaders-addNative"><span class="nav-number">5.4.</span> <span class="nav-text">2.2.3 ApplicationLoaders#addNative</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-LoadedApk-createOrUpdateClassLoaderLocked"><span class="nav-number">5.5.</span> <span class="nav-text">2.2.4 LoadedApk#createOrUpdateClassLoaderLocked</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-5-LoadedApk-makePaths"><span class="nav-number">5.6.</span> <span class="nav-text">2.2.5 LoadedApk#makePaths</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-6-ActivityThread-getInstrumentationLibrary"><span class="nav-number">5.7.</span> <span class="nav-text">2.2.6 ActivityThread#getInstrumentationLibrary</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决问题"><span class="nav-number">6.</span> <span class="nav-text">解决问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将存放-so-的路径放到-ClassLoader-中"><span class="nav-number">6.1.</span> <span class="nav-text">将存放 so 的路径放到 ClassLoader 中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
