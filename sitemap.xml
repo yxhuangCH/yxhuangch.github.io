@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yxhuangch.github.io/2020/08/05/jvm-class-lifetime/</loc>
+    
+    <lastmod>2020-08-10T23:33:39.163Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yxhuangch.github.io/2020/07/07/java-class-loader/</loc>
+    
+    <lastmod>2020-07-30T02:23:30.400Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yxhuangch.github.io/2020/04/12/jvm-class-file/</loc>
     
     <lastmod>2020-04-14T00:10:14.690Z</lastmod>

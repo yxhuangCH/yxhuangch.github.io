@@ -4,6 +4,36 @@
 
     
   <url>
+    <loc>https://yxhuangch.github.io/2020/08/05/jvm-class-lifetime/</loc>
+    <lastmod>2020-08-10T23:33:39.163Z</lastmod>
+    <data>
+        <display>
+        <title>JVM(三)  类的生命周期</title>
+        <pubTime>2020-08-05T00:15:49.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://yxhuangch.github.io/2020/07/07/java-class-loader/</loc>
+    <lastmod>2020-07-30T02:23:30.400Z</lastmod>
+    <data>
+        <display>
+        <title>JVM(四)类加载器</title>
+        <pubTime>2020-07-07T00:25:25.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://yxhuangch.github.io/2020/04/12/jvm-class-file/</loc>
     <lastmod>2020-04-14T00:10:14.690Z</lastmod>
     <data>
