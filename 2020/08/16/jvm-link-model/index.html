@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="这是我们 Java 虚拟机系列文件的第五篇，连接模型 从程序员的角度来看，理解 Java 虚拟机体系结构最重要的方面之一就是连接模型 1.解析和动态扩展编译一个 Java 程序之后，会得到程序中每个类和接口的独立 class 文件。它们是通过接口符号（harbor）相互联系的，或者用 Java API 的 class 文件相联 class 文件把它所有的引用符号都保存在常量池中。在程序运行时，如果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 虚拟机（五）- 链接模式">
+<meta property="og:url" content="https://yxhuangch.github.io/2020/08/16/jvm-link-model/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="这是我们 Java 虚拟机系列文件的第五篇，连接模型 从程序员的角度来看，理解 Java 虚拟机体系结构最重要的方面之一就是连接模型 1.解析和动态扩展编译一个 Java 程序之后，会得到程序中每个类和接口的独立 class 文件。它们是通过接口符号（harbor）相互联系的，或者用 Java API 的 class 文件相联 class 文件把它所有的引用符号都保存在常量池中。在程序运行时，如果">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/08/16/jvm-link-model/jvm_link_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/08/16/jvm-link-model/jvm_link_2.png">
+<meta property="og:updated_time" content="2020-08-16T09:02:17.780Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 虚拟机（五）- 链接模式">
+<meta name="twitter:description" content="这是我们 Java 虚拟机系列文件的第五篇，连接模型 从程序员的角度来看，理解 Java 虚拟机体系结构最重要的方面之一就是连接模型 1.解析和动态扩展编译一个 Java 程序之后，会得到程序中每个类和接口的独立 class 文件。它们是通过接口符号（harbor）相互联系的，或者用 Java API 的 class 文件相联 class 文件把它所有的引用符号都保存在常量池中。在程序运行时，如果">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2020/08/16/jvm-link-model/jvm_link_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2020/08/16/jvm-link-model/">
+
+
+
+
+
+  <title>Java 虚拟机（五）- 链接模式 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2020/08/16/jvm-link-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java 虚拟机（五）- 链接模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-16T17:00:56+08:00">
+                2020-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这是我们 Java 虚拟机系列文件的第五篇，连接模型</p>
+<p>从程序员的角度来看，理解 Java 虚拟机体系结构最重要的方面之一就是连接模型</p>
+<h3 id="1-解析和动态扩展"><a href="#1-解析和动态扩展" class="headerlink" title="1.解析和动态扩展"></a>1.解析和动态扩展</h3><p>编译一个 Java 程序之后，会得到程序中每个类和接口的独立 class 文件。它们是通过接口符号（harbor）相互联系的，或者用 Java API 的 class 文件相联</p>
+<p>class 文件把它所有的引用符号都保存在常量池中。在程序运行时，如果某个特定的接口符号将要被使用，它通过解析，根据符号引用查到实体，再把符号引用替换成一个直接引用的过程。<br>因为所有的符号引用都保存在常量池中，这个过程也被称为<strong>常量池解析。</strong></p>
+<p>解析分成早解析和迟解析</p>
+<ul>
+<li>早解析：程序在它的 main() 方法尚未被调用时就已经完全连接了</li>
+<li>迟解析：JVM 在执行程序的第一次用到这个符号引用的最后一刻才去解析</li>
+</ul>
+<p><strong>连接包括把符号引用替换成直接引用，还包括检查正确性和权限。</strong></p>
+<p>检查内容包含：</p>
+<ul>
+<li>那个类是否存在</li>
+<li>该类是返回有权访问那个类</li>
+<li>那个类中是否存在名称相符的字段</li>
+<li>那个字段的类型和期望的类型是否相符</li>
+<li>本类是否有权访问那个字段</li>
+<li>那个字段的确是一个类变量，而不是一个实例变量。</li>
+</ul>
+<p><strong>Java 虚拟机为每一个装载的类和接口都保存一份独立的常量池。</strong></p>
+<h3 id="2-类加载器和双亲委托机制"><a href="#2-类加载器和双亲委托机制" class="headerlink" title="2.类加载器和双亲委托机制"></a>2.类加载器和双亲委托机制</h3><p>看前面的文章</p>
+<h3 id="3-常量池的解析"><a href="#3-常量池的解析" class="headerlink" title="3.常量池的解析"></a>3.常量池的解析</h3><p> 被初始化为编译时常量的静态 final 变量的引用，在编译时被解析为常量值的一个本地拷贝</p>
+<h3 id="4-其他类型的解析"><a href="#4-其他类型的解析" class="headerlink" title="4.其他类型的解析"></a>4.其他类型的解析</h3><h4 id="4-1-解析-CONSTANT-Class-info-入口"><a href="#4-1-解析-CONSTANT-Class-info-入口" class="headerlink" title="4.1 解析 CONSTANT_Class_info 入口"></a>4.1 解析 CONSTANT_Class_info 入口</h4><p><img src="/2020/08/16/jvm-link-model/jvm_link_1.png" width="50%" height="20%"></p>
+<ul>
+<li><ol>
+<li>装载类或任何超类<br>在第一步，虚拟机确定被引用的已经被装载进当前命名空间，并为该类标记为初设装载器。<br>如果当前类加载器是启动类加载器，虚拟机根据不同的实现，使用不同的方式加载。<br>如果是自定义类加载器，则通过 loadClass() 方法完成加载请求，把需要加载的类的全限定名作为参数传递进去。</li>
+</ol>
+</li>
+</ul>
+<p>被引用的类型被加载了，虚拟机检测它的二进制数据。如果类型是一个类，并且不是 java.lang.Object， 虚拟机根据类的数据得到它的直接超类的全限定名。如果超类没有被加载进当前命名空间。如果没有，先加载超类。一旦超类被加载了，虚拟在此检查超类的二进制数据来找到它的超类。一直重复到超类是 Object 为止。</p>
+<p>一旦一个类型被加载进当前命名空间，而且通过递归，所有该类型的超类和超接口都会被加载成功。</p>
+<ul>
+<li><p>2.检查访问权限<br>如果没有访问权限，会抛出 <strong>IllegalAccessError 异常</strong>，符号引用解析失败。</p>
+</li>
+<li><p>3.检验类型<br>校验过程要去虚拟机加载的类型符合 Java 语言的语义</p>
+</li>
+<li><p>4.准备阶段<br>准备阶段虚拟机为类变量以及实现不同有差别的数据结构分配内存</p>
+</li>
+<li><p>5.解析类型<br>解析类型的阶段是可以选择的，根据参数选择解析或不解析</p>
+</li>
+<li><p>6.初始化类型<br>超类必须在子类之前被初始化，必须确保它的所有超类都被初始化，从 Object 开始沿着继承的结构向下处理，直达被引用的类。<br>如果一个类型没有被连接，在初始化之前必须被连接。<br>超类必须被初始化，超接口是不必的</p>
+</li>
+</ul>
+<p>如果虚拟机因为内存不足，在初始化的时候会抛出 <strong>OutOfMemoryError 异常</strong></p>
+<h4 id="4-2-解析-CONSTANT-Fieldref-info-入口"><a href="#4-2-解析-CONSTANT-Fieldref-info-入口" class="headerlink" title="4.2 解析 CONSTANT_Fieldref_info 入口"></a>4.2 解析 CONSTANT_Fieldref_info 入口</h4><p>要解析 CONSTANT_Fieldref_info 入口，必须要先解析 CONSTANT_Class_info 入口。</p>
+<p><img src="/2020/08/16/jvm-link-model/jvm_link_2.png" width="70%" height="70%"></p>
+<p>搜索 Field 字段过程</p>
+<ul>
+<li>1.虚拟机在被引用的类型中查找具有指定的名称和类型的字段。如果找到，则成功。</li>
+<li>2.否则虚拟机检测类型的直接实现或拓展的接口，以及递归地检查它们的超接口。如果找到，则成功</li>
+<li>3.否则检测直接超类，并且递归地检查类型的所有超类。如果找到，则成功</li>
+<li>4.最后都找不到，则字段搜索失败</li>
+</ul>
+<p>如果没有在被引用的类或者它的任何超类中找到名字和类型都符合的字段，虚拟机就会抛出 <strong>NoSuchFieldError 异常</strong><br>如果字段搜索成功，但是当前类没有权限访问该字段，虚拟机就会抛出 <strong>IllegalAccessError 异常</strong></p>
+<p>成功了之后，虚拟机就会把这个入口标记为已解析，并在这个常量池入口的数据中放上指向这个字段的直接引用。</p>
+<h4 id="4-3-解析-CONSTANT-Methodref-info-入口"><a href="#4-3-解析-CONSTANT-Methodref-info-入口" class="headerlink" title="4.3 解析 CONSTANT_Methodref_info 入口"></a>4.3 解析 CONSTANT_Methodref_info 入口</h4><p>要解析 CONSTANT_Methodref_info 入口，必须要先解析 CONSTANT_Class_info 入口。</p>
+<p>解析 methodref 的过程</p>
+<ul>
+<li>1.如果被解析的类型是一个接口，而非类，虚拟机就会抛出 <strong>IncompatibleClassChangeError 异常</strong></li>
+<li>2.如果解析的类型是一个类。虚拟机检查被引用的类是否有一个符合指定名字以及描述符。如果找到，则成功</li>
+<li>3.否则虚拟机检查是否这个类直接实现了任何接口，并递归地检查由类型直接实现的接口的超接口，查看是否有方法符合指定的名称和描述符。如果找到，则成功</li>
+<li>4.最后都找不到，则方法搜索失败</li>
+</ul>
+<p>如果没有在被引用的类和它的任何超类中找到名称、返回类型、参数数量和类型都符合的方法，虚拟机就会抛出 <strong>NoSuchMethodError 异常</strong></p>
+<p>成功了之后，虚拟机就会把这个入口标记为已解析，并在这个常量池入口的数据中放上指向这个字段的直接引用。</p>
+<h4 id="4-4-解析-CONSTANT-InterfaceMethodref-info-入口"><a href="#4-4-解析-CONSTANT-InterfaceMethodref-info-入口" class="headerlink" title="4.4 解析 CONSTANT_InterfaceMethodref_info 入口"></a>4.4 解析 CONSTANT_InterfaceMethodref_info 入口</h4><p>要解析 CONSTANT_InterfaceMethodref_info 入口，必须要先解析 CONSTANT_Class_info 入口。</p>
+<p>解析 InterfaceMethodref 的过程</p>
+<ul>
+<li>1.如果被解析的类型是一个类，而非接口，虚拟机就会抛出 <strong>IncompatibleClassChangeError 异常</strong></li>
+<li>2.如果解析的类型是一个接口。虚拟机检查被引用的接口是否有符合指定名称和描述符。如果找到，则成功</li>
+<li>3.否则虚拟机检查接口的直接超接口，并且递归地检查接口的所有超接口，以及 java.lang.Object 类来查找符合指定名称和描述符的方法。如果找到，则成功</li>
+<li>4.最后都找不到，则接口方法搜索失败</li>
+</ul>
+<p>如果在被引用的接口和它的任何超类型中都招标名称、返回类型、参数数量和类型都符合的方法，虚拟机就会抛出 <strong>NoSuchMethodError 异常</strong></p>
+<p>成功了之后，虚拟机就会把这个入口标记为已解析，并在这个常量池入口的数据中放上指向这个字段的直接引用。</p>
+<h4 id="4-5-解析-CONSTANT-String-info-入口"><a href="#4-5-解析-CONSTANT-String-info-入口" class="headerlink" title="4.5 解析 CONSTANT_String_info 入口"></a>4.5 解析 CONSTANT_String_info 入口</h4><p>要解析 CONSTANT_String_info 入口，虚拟机必须把一个指定内部字符串对象的引用放置到被解析的常量池入口数据中。该字符串对象必须按照 sting_index 项在 CONSTANT_String_info 中指明 CONTANT_Utf8_info 入口所指定的字符顺序组织。</p>
+<p>要完成 CONSTANT_String_info 入口的解析过程，虚拟机应把指向被拘留的字符串对象的引用放置到被解析的常量表入口数据中。</p>
+<h3 id="5-直接引用"><a href="#5-直接引用" class="headerlink" title="5.直接引用"></a>5.直接引用</h3><p><strong>常量池解析的最终目标是把符号引用替换为直接引用</strong></p>
+<p><strong>直接存储的格式是用指针</strong></p>
+<p>指向类、类变量和类方法的直接引用是指向方法区的本地指针<br>指向实例变量和实例方法的直接引用都是偏移变量。实例变量的直接引用是从对象的映像开始算起到这个实例位置的偏移量。实例方法的直接引用是方发表的偏移量。</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
+<li><a href="https://book.douban.com/subject/1138768/" target="_blank" rel="noopener">《深入 Java 虚拟机》</a></li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/05/jvm-class-lifetime/" rel="next" title="JVM(三)  类的生命周期">
+                <i class="fa fa-chevron-left"></i> JVM(三)  类的生命周期
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-解析和动态扩展"><span class="nav-number">1.</span> <span class="nav-text">1.解析和动态扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-类加载器和双亲委托机制"><span class="nav-number">2.</span> <span class="nav-text">2.类加载器和双亲委托机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-常量池的解析"><span class="nav-number">3.</span> <span class="nav-text">3.常量池的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-其他类型的解析"><span class="nav-number">4.</span> <span class="nav-text">4.其他类型的解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-解析-CONSTANT-Class-info-入口"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 解析 CONSTANT_Class_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-解析-CONSTANT-Fieldref-info-入口"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 解析 CONSTANT_Fieldref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-解析-CONSTANT-Methodref-info-入口"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 解析 CONSTANT_Methodref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-解析-CONSTANT-InterfaceMethodref-info-入口"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 解析 CONSTANT_InterfaceMethodref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-解析-CONSTANT-String-info-入口"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 解析 CONSTANT_String_info 入口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-直接引用"><span class="nav-number">5.</span> <span class="nav-text">5.直接引用</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-number"></span> <span class="nav-text">参考：</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

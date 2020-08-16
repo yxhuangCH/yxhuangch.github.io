@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://yxhuangch.github.io/2020/08/05/jvm-class-lifetime/</loc>
+    <loc>https://yxhuangch.github.io/2020/08/16/jvm-link-model/</loc>
     
-    <lastmod>2020-08-10T23:33:39.163Z</lastmod>
+    <lastmod>2020-08-16T09:02:17.780Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://yxhuangch.github.io/2020/07/07/java-class-loader/</loc>
     
-    <lastmod>2020-07-30T02:23:30.400Z</lastmod>
+    <lastmod>2020-08-12T15:37:18.260Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yxhuangch.github.io/2020/08/05/jvm-class-lifetime/</loc>
+    
+    <lastmod>2020-08-10T23:33:39.163Z</lastmod>
     
   </url>
   

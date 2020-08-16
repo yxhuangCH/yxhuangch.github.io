@@ -4,12 +4,12 @@
 
     
   <url>
-    <loc>https://yxhuangch.github.io/2020/08/05/jvm-class-lifetime/</loc>
-    <lastmod>2020-08-10T23:33:39.163Z</lastmod>
+    <loc>https://yxhuangch.github.io/2020/08/16/jvm-link-model/</loc>
+    <lastmod>2020-08-16T09:02:17.780Z</lastmod>
     <data>
         <display>
-        <title>JVM(三)  类的生命周期</title>
-        <pubTime>2020-08-05T00:15:49.000Z</pubTime>
+        <title>Java 虚拟机（五）- 链接模式</title>
+        <pubTime>2020-08-16T09:00:56.000Z</pubTime>
         
          
            
@@ -20,11 +20,26 @@
     
   <url>
     <loc>https://yxhuangch.github.io/2020/07/07/java-class-loader/</loc>
-    <lastmod>2020-07-30T02:23:30.400Z</lastmod>
+    <lastmod>2020-08-12T15:37:18.260Z</lastmod>
     <data>
         <display>
         <title>JVM(四)类加载器</title>
         <pubTime>2020-07-07T00:25:25.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://yxhuangch.github.io/2020/08/05/jvm-class-lifetime/</loc>
+    <lastmod>2020-08-10T23:33:39.163Z</lastmod>
+    <data>
+        <display>
+        <title>JVM(三)  类的生命周期</title>
+        <pubTime>2020-08-05T00:15:49.000Z</pubTime>
         
          
            
