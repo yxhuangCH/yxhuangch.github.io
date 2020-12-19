@@ -4,8 +4,25 @@
 
     
   <url>
+    <loc>https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/</loc>
+    <lastmod>2020-12-19T09:05:02.881Z</lastmod>
+    <data>
+        <display>
+        <title>对 Firebase 上 NDK 无符号解决的记录</title>
+        <pubTime>2020-12-19T08:57:02.000Z</pubTime>
+        
+        <tag>firebase</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://yxhuangch.github.io/2020/08/16/jvm-link-model/</loc>
-    <lastmod>2020-08-16T09:02:17.780Z</lastmod>
+    <lastmod>2020-08-16T11:58:57.623Z</lastmod>
     <data>
         <display>
         <title>Java 虚拟机（五）- 链接模式</title>

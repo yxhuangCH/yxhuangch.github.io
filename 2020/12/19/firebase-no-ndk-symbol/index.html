@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="firebase,">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="记 Firebase 上队 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
+<meta name="keywords" content="firebase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对 Firebase 上 NDK 无符号解决的记录">
+<meta property="og:url" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="记 Firebase 上队 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_3.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_4.png">
+<meta property="og:updated_time" content="2020-12-19T09:05:02.881Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对 Firebase 上 NDK 无符号解决的记录">
+<meta name="twitter:description" content="记 Firebase 上队 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/">
+
+
+
+
+
+  <title>对 Firebase 上 NDK 无符号解决的记录 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">对 Firebase 上 NDK 无符号解决的记录</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-19T16:57:02+08:00">
+                2020-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>记 Firebase 上队 NDK 符号表解决的过程</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。</p>
+<p><img src="/2020/12/19/firebase-no-ndk-symbol/img_1.png" width="100%" height="100%"></p>
+<p>而这个 bug 占据了我们 bug 的 Top 1 位置。</p>
+<h2 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h2><p><strong>第一步 重新检查集成 Firebase 的过程</strong><br>出现问题的时候，我们第一步是去<a href="https://firebase.google.com/docs/crashlytics/get-started?platform=android" target="_blank" rel="noopener">官网</a>重新看集成 Firebase 的过程<br>检查了发现没有问题。</p>
+<p><strong>第二步 重新查看官网文档</strong><br>经过第一步的检查，集成的步骤是没有问题的, 我们再次看看官网文档，有没有新的发现。<br>在官网的 <a href="https://firebase.google.com/docs/crashlytics/ndk-reports" target="_blank" rel="noopener">Get Android NDK crash reports</a> 的这个章节发现了新的线索。</p>
+<p>我们的音视频 so 是自己开发的，用 gradle 的方式集成到工程里面。这个相当于外部独立的依赖，所以，需要用 Firebase 提供的 unstrippedNativeLibsDir 的属性上传未剥离符号表的 so.<br>在第三步 <a href="https://firebase.google.com/docs/crashlytics/ndk-reports#upload-external-dependencies" target="_blank" rel="noopener">Step 3(optinal): Upload symbols for external dependencies</a> 中</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// …</span></span><br><span class="line">android &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            firebaseCrashlytics &#123;</span><br><span class="line">                nativeSymbolUploadEnabled <span class="keyword">true</span></span><br><span class="line">                unstrippedNativeLibsDir ‘path<span class="regexp">/to/u</span>nstripped<span class="regexp">/parent/</span>dir’</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并且需要对应的 so 架构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">unstrippedNativeLibsDir/</span><br><span class="line"> +- x86/</span><br><span class="line">      |</span><br><span class="line">      +- libfoo.so</span><br><span class="line">      +- libbar.so</span><br><span class="line"> +- arm64/</span><br><span class="line">      |</span><br><span class="line">      +- libfoo.so</span><br><span class="line">      +- libbar.so</span><br></pre></td></tr></table></figure>
+<p>加了之后用命令执行 task 上传符号表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:assembleDebug app:uploadCrashlyticsSymbolFileDebug -debug | grep &quot;\[com.google.firebase.crashlytics\]&quot;</span><br></pre></td></tr></table></figure>
+<p>上面的命令跑了，之后发现我们上传符号表失败了，是因为网络的原因</p>
+<p><strong>第三步 Android　Studio 配置科学上网</strong><br>我们在国内，虽然用了科学上网，但是 Android Studio 的 gradle 是没有效果的，需要在 Android Studio 设置代理或者为整台机提供科学上网服务。</p>
+<p>设置 Android Studio 的代理<br>查看 SS 的端口<br><img src="/2020/12/19/firebase-no-ndk-symbol/img_2.png" width="100%" height="100%"></p>
+<p>设置代理<br><img src="/2020/12/19/firebase-no-ndk-symbol/img_3.png" width="100%" height="100%"></p>
+<ul>
+<li>1.找到 HTTP Proxy 设置选项</li>
+<li>2.选择 Manual proxy configuration</li>
+<li>3.填写 ss 的 ip 和端口</li>
+<li>4.检测是否设置成功 check connection<br>输入 google 的网址，检测是否设置成功，如果成功了，会弹窗连接成功的弹窗</li>
+</ul>
+<p><strong>第四步 去 Firebas 的github 上看 issues</strong><br>经过上面三步还是不行，我们就去 <a href="https://github.com/firebase/firebase-android-sdk" target="_blank" rel="noopener">Firebase 的 github</a> 上看看其他人有没有遇到同样的问题。<br>这里顺便说一句，如果是开源的项目，遇到问题，查看它的 issues 也是解决问题的切入点，你遇到的问题，别人也会遇到，看看 issues 或许能找到解决办法或者提示。</p>
+<p>在 Firebase 的 issues 中搜索 ndk symbol，可以找到相关 ndk 符号表的内容。然后在一条中找到相关的内容 <a href="https://github.com/firebase/firebase-android-sdk/issues/1978" target="_blank" rel="noopener">Native crash reports missing symbol information (file name, line number, function name) #1978</a>，有人也遇到相应的问题，就是在 Firebase 上没有看到相应的符号表。<br>他的解决办法，就是把已剥离和未剥离符号表的 so 都放到对于的目录下，用于上传符号表</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">debug &#123;</span><br><span class="line">    minifyEnabled <span class="keyword">false</span></span><br><span class="line">    signingConfig signingConfigs.debugsign</span><br><span class="line"></span><br><span class="line">    firebaseCrashlytics &#123;</span><br><span class="line">        nativeSymbolUploadEnabled <span class="keyword">true</span></span><br><span class="line">        strippedNativeLibsDir <span class="string">'nativelibs/stripped'</span>  <span class="comment">// 剥离符号表的 so</span></span><br><span class="line">        unstrippedNativeLibsDir <span class="string">'nativelibs/unstripped'</span> <span class="comment">// 未剥离符号表的 so</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:assembleDebug app:uploadCrashlyticsSymbolFileDebug -debug | grep &quot;\[com.google.firebase.crashlytics\]&quot;</span><br></pre></td></tr></table></figure>
+<p>这次命令执行的结果显示,上传符号表成功了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Crashlytics symbol file uploaded successfully</span><br></pre></td></tr></table></figure>
+<p>经过测试 native 的崩溃后，发现符号表打印是上传成功了，但是还是没有显示出来。</p>
+<p>到这来，我们已经没有办法。为什么明明符号表已经上传成功了，但是还是解析不到呢。</p>
+<p><strong>第四步 配对 So 和项目 NDK 版本</strong></p>
+<p>至此，唯一的可能性是我们上传的符号表和 native 的崩溃对不上，导致 Firebase 无法解析。</p>
+<p>通过一番查找，发现我们构建 SO 用的 NDK 版本是 19， 构建项目是的 NDK 是 21 版本。<br>我们将项目的 NDK 版本也改成 19。</p>
+<p>最后发现可以了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上传非工程直接编译 so 的符号表</p>
+<p><strong>第一 按照官方文档集成 Firebase</strong><br>在项目级别的 build.gradle 中,添加 firebase</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    classpath &apos;com.google.firebase:firebase-crashlytics-gradle:2.1.1&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 app 的 build.gradle 中添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;com.google.firebase.crashlytics&apos;</span><br><span class="line"></span><br><span class="line">....</span><br><span class="line"></span><br><span class="line">buildTypes &#123;</span><br><span class="line"></span><br><span class="line">    release &#123;</span><br><span class="line">        ...</span><br><span class="line">        firebaseCrashlytics &#123;</span><br><span class="line"></span><br><span class="line">            nativeSymbolUploadEnabled true</span><br><span class="line">            strippedNativeLibsDir &apos;nativelibs/stripped&apos;</span><br><span class="line">            unstrippedNativeLibsDir &apos;nativelibs/unstripped&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    debug &#123;</span><br><span class="line">         ...</span><br><span class="line">        firebaseCrashlytics &#123;</span><br><span class="line">            nativeSymbolUploadEnabled true</span><br><span class="line">            strippedNativeLibsDir &apos;nativelibs/stripped&apos;</span><br><span class="line">            unstrippedNativeLibsDir &apos;nativelibs/unstripped&apos;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>strippedNativeLibsDir 是放已经剥离符号表的 so, unstrippedNativeLibsDir 是放未剥离符号表的 so</p>
+<p><img src="/2020/12/19/firebase-no-ndk-symbol/img_4.png" width="100%" height="100%"></p>
+<p>在 module 的 build.gradle 中添加依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// google 崩溃上报</span></span><br><span class="line">    implementation <span class="string">'com.google.firebase:firebase-analytics-ktx:17.4.4'</span></span><br><span class="line">    <span class="comment">// Add the Firebase Crashlytics SDK.</span></span><br><span class="line">    implementation <span class="string">'com.google.firebase:firebase-crashlytics:17.1.1'</span></span><br><span class="line">    implementation <span class="string">'com.google.firebase:firebase-crashlytics-ndk:17.1.1'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>第二步 确保网络没有问题</strong><br>如果是在国内，要设置Android studio 科学上网</p>
+<p><strong>第三步 确保编译 so 的 NDK 和项目的 NDK 版本一致</strong></p>
+<p><strong>第三步 用命令行上传符号表</strong><br>用命令行上传符号表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:assembleDebug app:uploadCrashlyticsSymbolFileDebug -debug | grep &quot;\[com.google.firebase.crashlytics\]&quot;</span><br></pre></td></tr></table></figure>
+<p>跑命令的时候观察打印，如果打印出</p>
+<blockquote>
+<p>Crashlytics symbol file uploaded successfully</p>
+</blockquote>
+<p>则说明已经上传成功</p>
+<p><strong>第四步 测试 bug</strong><br>打开 firebase 的 log 打印</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb shell setprop log.tag.FirebaseCrashlytics DEBUG</span><br><span class="line"></span><br><span class="line">adb logcat -s FirebaseCrashlytics</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/firebase/" rel="tag"># firebase</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/16/jvm-link-model/" rel="next" title="Java 虚拟机（五）- 链接模式">
+                <i class="fa fa-chevron-left"></i> Java 虚拟机（五）- 链接模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决过程"><span class="nav-number">2.</span> <span class="nav-text">解决过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

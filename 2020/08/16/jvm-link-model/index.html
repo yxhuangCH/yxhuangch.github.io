@@ -105,7 +105,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/08/16/jvm-link-model/jvm_link_1.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/08/16/jvm-link-model/jvm_link_2.png">
-<meta property="og:updated_time" content="2020-08-16T09:02:17.780Z">
+<meta property="og:updated_time" content="2020-08-16T11:58:57.623Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 虚拟机（五）- 链接模式">
 <meta name="twitter:description" content="这是我们 Java 虚拟机系列文件的第五篇，连接模型 从程序员的角度来看，理解 Java 虚拟机体系结构最重要的方面之一就是连接模型 1.解析和动态扩展编译一个 Java 程序之后，会得到程序中每个类和接口的独立 class 文件。它们是通过接口符号（harbor）相互联系的，或者用 Java API 的 class 文件相联 class 文件把它所有的引用符号都保存在常量池中。在程序运行时，如果">
@@ -428,7 +428,7 @@
 <h3 id="5-直接引用"><a href="#5-直接引用" class="headerlink" title="5.直接引用"></a>5.直接引用</h3><p><strong>常量池解析的最终目标是把符号引用替换为直接引用</strong></p>
 <p><strong>直接存储的格式是用指针</strong></p>
 <p>指向类、类变量和类方法的直接引用是指向方法区的本地指针<br>指向实例变量和实例方法的直接引用都是偏移变量。实例变量的直接引用是从对象的映像开始算起到这个实例位置的偏移量。实例方法的直接引用是方发表的偏移量。</p>
-<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
+<h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><ul>
 <li><a href="https://book.douban.com/subject/1138768/" target="_blank" rel="noopener">《深入 Java 虚拟机》</a></li>
 </ul>
       
@@ -471,6 +471,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/12/19/firebase-no-ndk-symbol/" rel="prev" title="对 Firebase 上 NDK 无符号解决的记录">
+                对 Firebase 上 NDK 无符号解决的记录 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -545,7 +549,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -558,7 +562,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
@@ -600,7 +604,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-解析和动态扩展"><span class="nav-number">1.</span> <span class="nav-text">1.解析和动态扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-类加载器和双亲委托机制"><span class="nav-number">2.</span> <span class="nav-text">2.类加载器和双亲委托机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-常量池的解析"><span class="nav-number">3.</span> <span class="nav-text">3.常量池的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-其他类型的解析"><span class="nav-number">4.</span> <span class="nav-text">4.其他类型的解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-解析-CONSTANT-Class-info-入口"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 解析 CONSTANT_Class_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-解析-CONSTANT-Fieldref-info-入口"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 解析 CONSTANT_Fieldref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-解析-CONSTANT-Methodref-info-入口"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 解析 CONSTANT_Methodref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-解析-CONSTANT-InterfaceMethodref-info-入口"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 解析 CONSTANT_InterfaceMethodref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-解析-CONSTANT-String-info-入口"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 解析 CONSTANT_String_info 入口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-直接引用"><span class="nav-number">5.</span> <span class="nav-text">5.直接引用</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-number"></span> <span class="nav-text">参考：</span></a></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-解析和动态扩展"><span class="nav-number">1.</span> <span class="nav-text">1.解析和动态扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-类加载器和双亲委托机制"><span class="nav-number">2.</span> <span class="nav-text">2.类加载器和双亲委托机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-常量池的解析"><span class="nav-number">3.</span> <span class="nav-text">3.常量池的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-其他类型的解析"><span class="nav-number">4.</span> <span class="nav-text">4.其他类型的解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-解析-CONSTANT-Class-info-入口"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 解析 CONSTANT_Class_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-解析-CONSTANT-Fieldref-info-入口"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 解析 CONSTANT_Fieldref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-解析-CONSTANT-Methodref-info-入口"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 解析 CONSTANT_Methodref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-解析-CONSTANT-InterfaceMethodref-info-入口"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 解析 CONSTANT_InterfaceMethodref_info 入口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-解析-CONSTANT-String-info-入口"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 解析 CONSTANT_String_info 入口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-直接引用"><span class="nav-number">5.</span> <span class="nav-text">5.直接引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考："><span class="nav-number">6.</span> <span class="nav-text">参考：</span></a></li></ol></div>
             
 
           </div>
