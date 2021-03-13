@@ -83,8 +83,6 @@
 
 
 
-  
-
 
   <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
 
@@ -98,22 +96,22 @@
 
 
 
-<meta name="description" content="记 Firebase 上队 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
+<meta name="description" content="记 Firebase 上无 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
 <meta name="keywords" content="firebase">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对 Firebase 上 NDK 无符号解决的记录">
 <meta property="og:url" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/index.html">
 <meta property="og:site_name" content="yxhuang">
-<meta property="og:description" content="记 Firebase 上队 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
+<meta property="og:description" content="记 Firebase 上无 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_1.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_2.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_3.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_4.png">
-<meta property="og:updated_time" content="2020-12-19T09:05:02.881Z">
+<meta property="og:updated_time" content="2021-03-13T14:34:40.077Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对 Firebase 上 NDK 无符号解决的记录">
-<meta name="twitter:description" content="记 Firebase 上队 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
+<meta name="twitter:description" content="记 Firebase 上无 NDK 符号表解决的过程 背景在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。  而这个 bug 占据了我们 bug 的 Top 1 位置。 解决过程第一步 重新检查集成 Firebase 的过程出现问题的时候，我们第一步是去官网重新看集成 Firebase 的过程检查了发">
 <meta name="twitter:image" content="https://yxhuangch.github.io/2020/12/19/firebase-no-ndk-symbol/img_1.png">
 
 
@@ -353,7 +351,7 @@
       
 
       
-        <p>记 Firebase 上队 NDK 符号表解决的过程</p>
+        <p>记 Firebase 上无 NDK 符号表解决的过程</p>
 <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在 项目上线之后，Firebase 的后台收到音视频上报的崩溃。在项目中音视频以 so 文件的形式集成近项目。在后台上报页面，看不到符号表的匹配。</p>
 <p><img src="/2020/12/19/firebase-no-ndk-symbol/img_1.png" width="100%" height="100%"></p>
 <p>而这个 bug 占据了我们 bug 的 Top 1 位置。</p>
@@ -366,7 +364,7 @@
 <p>加了之后用命令执行 task 上传符号表</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:assembleDebug app:uploadCrashlyticsSymbolFileDebug -debug | grep &quot;\[com.google.firebase.crashlytics\]&quot;</span><br></pre></td></tr></table></figure>
 <p>上面的命令跑了，之后发现我们上传符号表失败了，是因为网络的原因</p>
-<p><strong>第三步 Android　Studio 配置科学上网</strong><br>我们在国内，虽然用了科学上网，但是 Android Studio 的 gradle 是没有效果的，需要在 Android Studio 设置代理或者为整台机提供科学上网服务。</p>
+<p><strong>第三步 Android　Studio 配置科学上网</strong><br>我们在国内需要对 Android Studio 的 gradle 设置代理</p>
 <p>设置 Android Studio 的代理<br>查看 SS 的端口<br><img src="/2020/12/19/firebase-no-ndk-symbol/img_2.png" width="100%" height="100%"></p>
 <p>设置代理<br><img src="/2020/12/19/firebase-no-ndk-symbol/img_3.png" width="100%" height="100%"></p>
 <ul>
@@ -397,7 +395,7 @@
 <p><img src="/2020/12/19/firebase-no-ndk-symbol/img_4.png" width="100%" height="100%"></p>
 <p>在 module 的 build.gradle 中添加依赖</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// google 崩溃上报</span></span><br><span class="line">    implementation <span class="string">'com.google.firebase:firebase-analytics-ktx:17.4.4'</span></span><br><span class="line">    <span class="comment">// Add the Firebase Crashlytics SDK.</span></span><br><span class="line">    implementation <span class="string">'com.google.firebase:firebase-crashlytics:17.1.1'</span></span><br><span class="line">    implementation <span class="string">'com.google.firebase:firebase-crashlytics-ndk:17.1.1'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>第二步 确保网络没有问题</strong><br>如果是在国内，要设置Android studio 科学上网</p>
+<p><strong>第二步 确保网络没有问题</strong><br>如果是在国内，要设置Android studio 代理</p>
 <p><strong>第三步 确保编译 so 的 NDK 和项目的 NDK 版本一致</strong></p>
 <p><strong>第三步 用命令行上传符号表</strong><br>用命令行上传符号表</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew app:assembleDebug app:uploadCrashlyticsSymbolFileDebug -debug | grep &quot;\[com.google.firebase.crashlytics\]&quot;</span><br></pre></td></tr></table></figure>
@@ -454,6 +452,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/13/read-changle-code/" rel="prev" title="读书笔记《修改软件的艺术》">
+                读书笔记《修改软件的艺术》 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -528,7 +530,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -541,7 +543,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
@@ -606,7 +608,7 @@
         <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

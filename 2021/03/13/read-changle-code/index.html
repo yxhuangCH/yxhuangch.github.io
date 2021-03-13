@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="读书笔记,">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="来源 《修改软件的艺术》 [TOC] 重点摘要  优秀的开发者首要考虑的是代码的可维护性 软件开发者之所以会过度开发，是因为我们害怕某个功能会以我们没有预料的方式使用 不同层次的抽象可以帮助我们对组件的关系建立起大局观，也可以让我们可以只在需要的时候关注细节 意外耦合是缺乏优质代码特质的一种体现 封装就是：让做什么，隐藏如何做 封装良好的软件是由外而内而不是由内而外设计的 一部分代码对另一部分">
+<meta name="keywords" content="读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读书笔记《修改软件的艺术》">
+<meta property="og:url" content="https://yxhuangch.github.io/2021/03/13/read-changle-code/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="来源 《修改软件的艺术》 [TOC] 重点摘要  优秀的开发者首要考虑的是代码的可维护性 软件开发者之所以会过度开发，是因为我们害怕某个功能会以我们没有预料的方式使用 不同层次的抽象可以帮助我们对组件的关系建立起大局观，也可以让我们可以只在需要的时候关注细节 意外耦合是缺乏优质代码特质的一种体现 封装就是：让做什么，隐藏如何做 封装良好的软件是由外而内而不是由内而外设计的 一部分代码对另一部分">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/13/read-changle-code/change_code_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/13/read-changle-code/clean_code_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/13/read-changle-code/logic_control.png">
+<meta property="og:updated_time" content="2021-03-13T14:37:14.246Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读书笔记《修改软件的艺术》">
+<meta name="twitter:description" content="来源 《修改软件的艺术》 [TOC] 重点摘要  优秀的开发者首要考虑的是代码的可维护性 软件开发者之所以会过度开发，是因为我们害怕某个功能会以我们没有预料的方式使用 不同层次的抽象可以帮助我们对组件的关系建立起大局观，也可以让我们可以只在需要的时候关注细节 意外耦合是缺乏优质代码特质的一种体现 封装就是：让做什么，隐藏如何做 封装良好的软件是由外而内而不是由内而外设计的 一部分代码对另一部分">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2021/03/13/read-changle-code/change_code_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2021/03/13/read-changle-code/">
+
+
+
+
+
+  <title>读书笔记《修改软件的艺术》 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2021/03/13/read-changle-code/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">读书笔记《修改软件的艺术》</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-13T16:57:02+08:00">
+                2021-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/2021/03/13/read-changle-code/change_code_1.png" width="80%" height="80%"></p>
+<p>来源 <a href="https://book.douban.com/subject/27151925/" target="_blank" rel="noopener">《修改软件的艺术》</a></p>
+<p>[TOC]</p>
+<p><strong>重点摘要</strong></p>
+<ul>
+<li>优秀的开发者首要考虑的是代码的可维护性</li>
+<li>软件开发者之所以会过度开发，是因为我们害怕某个功能会以我们没有预料的方式使用</li>
+<li>不同层次的抽象可以帮助我们对组件的关系建立起大局观，也可以让我们可以只在需要的时候关注细节</li>
+<li>意外耦合是缺乏优质代码特质的一种体现</li>
+<li>封装就是：让做什么，隐藏如何做</li>
+<li>封装良好的软件是由外而内而不是由内而外设计的</li>
+<li>一部分代码对另一部分 “知道” 得越多，则依赖越重，无论显示的还是隐式的</li>
+<li>软件被阅读的次数比编写次数多</li>
+<li>在写公用的应用程序接口、方法，或者暴露给外部的其他服务，不要在那个方法中放入任何实现。而是将其位委托其他方法</li>
+</ul>
+<h3 id="1-如何做之前先问做什么、为什么做、给谁做"><a href="#1-如何做之前先问做什么、为什么做、给谁做" class="headerlink" title="1. 如何做之前先问做什么、为什么做、给谁做"></a>1. 如何做之前先问做什么、为什么做、给谁做</h3><p>软件开发者需要领域建模，这就是需要我们去学习领域设计的知识；</p>
+<p>开发者需要在善于提出没人想过的问题。这就要要去需要在需求评审的时候提出，多问产品为什么需要这样？出发点是什么？</p>
+<h3 id="2-编写整洁的代码"><a href="#2-编写整洁的代码" class="headerlink" title="2.编写整洁的代码"></a>2.编写整洁的代码</h3><p><img src="/2021/03/13/read-changle-code/clean_code_1.png" width="80%" height="80%"></p>
+<h4 id="内聚"><a href="#内聚" class="headerlink" title="内聚"></a>内聚</h4><p>内聚就是每个片段都只关注一件事，一个类应该只有一个目的；</p>
+<p>不同层次的抽象可以帮助我们对组件的关系建立起大局观，也可以让我们可以只在需要的时候关注细节。</p>
+<blockquote>
+<p>代码的层次从高往下应该是从抽象 -&gt; 实体</p>
+</blockquote>
+<p>内聚的代码更容易理解和查找 bug, 因为每个实体都只处理自身的事物</p>
+<h4 id="松散耦合"><a href="#松散耦合" class="headerlink" title="松散耦合"></a>松散耦合</h4><p>松散耦合的代码不直接依赖它所使用的代码，而是通过一个中间层来调用；</p>
+<p>意外耦合是缺乏优质代码特质的一种体现</p>
+<p>松散耦合的代码让实体之间的副作用更少，而且更容易测试、复用、扩展</p>
+<h4 id="封装良好"><a href="#封装良好" class="headerlink" title="封装良好"></a>封装良好</h4><p>高质量的代码是封装良好的，它隐藏了实现细节</p>
+<p>封装就是：让做什么，隐藏如何做</p>
+<p>封装良好的软件是由外而内而不是由内而外设计的。</p>
+<p>在用对象来实现系统的时候，让每个对象自身和所处的环境复制，系统中的每个对象都有自己的用途</p>
+<p>默认封装，必要时再暴露</p>
+<p>面向接口编程，而不是面向实现编程</p>
+<p>封装良好的代码有助于我们管理复杂度，让调用者不必关系被调用者的实现细节，所以更容易修改</p>
+<h4 id="代码自主"><a href="#代码自主" class="headerlink" title="代码自主"></a>代码自主</h4><p>代码自主，是指让它自己管理自己的职责，不应该互相干预。</p>
+<p>自主的原则是:</p>
+<ul>
+<li>对象应该控制自身的状态</li>
+<li>对象之间不应该相互干预</li>
+</ul>
+<blockquote>
+<p>数据和控制逻辑要分开</p>
+</blockquote>
+<p>自主的代码让我们知道行为应该和它所依赖的数据放到一起</p>
+<h4 id="没有冗余"><a href="#没有冗余" class="headerlink" title="没有冗余"></a>没有冗余</h4><p>软件不应该自我复制，要没有冗余</p>
+<p>没有冗余的代码以为这我们可以只在一个地方修复 bug 和进行更改</p>
+<h3 id="3-最后实现设计"><a href="#3-最后实现设计" class="headerlink" title="3.最后实现设计"></a>3.最后实现设计</h3><h4 id="3-1-阻碍了可修改代码的产生"><a href="#3-1-阻碍了可修改代码的产生" class="headerlink" title="3.1 阻碍了可修改代码的产生"></a>3.1 阻碍了可修改代码的产生</h4><p>在实现设计之前，需用明确是什么阻碍了可修改代码的产生</p>
+<h5 id="缺乏封装"><a href="#缺乏封装" class="headerlink" title="缺乏封装"></a>缺乏封装</h5><p>一部分代码对另一部分 “知道” 得越多，则依赖越重，无论显示的还是隐式的</p>
+<h5 id="滥用继承"><a href="#滥用继承" class="headerlink" title="滥用继承"></a>滥用继承</h5><p>少用继承，多用组合</p>
+<h5 id="僵化的实现"><a href="#僵化的实现" class="headerlink" title="僵化的实现"></a>僵化的实现</h5><p>当缺乏抽象的时候，两个或多个行为之间会有太多的共同性，导致冗余和非必要的复杂性，让代码难以使用。僵化的实现难以修改，难以在日后添加新的差异性</p>
+<h5 id="内联代码"><a href="#内联代码" class="headerlink" title="内联代码"></a>内联代码</h5><h5 id="没有正常阻隔一拉"><a href="#没有正常阻隔一拉" class="headerlink" title="没有正常阻隔一拉"></a>没有正常阻隔一拉</h5><h4 id="3-2-编写可持续性代码的注意事项"><a href="#3-2-编写可持续性代码的注意事项" class="headerlink" title="3.2 编写可持续性代码的注意事项"></a>3.2 编写可持续性代码的注意事项</h4><ul>
+<li>删除死代码</li>
+<li><p>保持名称更新<br>重命名方法和类，以保持“见名知意”的良好名称。随着开发的进行，对事物理解的加深，代码功能也会随之变化。如果代码变化了，随之亦要重新命名来反应代码更新后的行为</p>
+</li>
+<li><p><strong>集中决策</strong><br>将分散大代码集中一处。让决策集中。如果决策需要改变，只会影响一处。<br>如果类和方法都非常内聚，业务规则就分散到系统的各个部分，让其难以理解和修改。将各种流程的规则集中化。将业务规则集中到一起。这样就消除了很多冗余，让代码更容易理解和维护</p>
+<blockquote>
+<p>这个规则是在平时写代码的时候容易被忽略的，需要重视</p>
+</blockquote>
+</li>
+<li><p>对所有外部依赖建立并使用抽象</p>
+</li>
+<li>在建领域模型的时候，需要确保建模完整，对这些类组织，让它们有合理的行为和属性</li>
+</ul>
+<h4 id="3-3-意图导向编程"><a href="#3-3-意图导向编程" class="headerlink" title="3.3 意图导向编程"></a>3.3 意图导向编程</h4><p>意图导向编程是指，将所有公用接口的代码都委托到不同的方法中，就可以消除这些重复工作。这样代码读起来就像一段脚本或一个菜单，因为它保持同样抽象层次。</p>
+<p>在写公用的应用程序接口、方法，或者暴露给外部的其他服务，不要在那个方法中放入任何实现。而是将其委托给其他方法。</p>
+<h4 id="3-4-降低复杂度"><a href="#3-4-降低复杂度" class="headerlink" title="3.4 降低复杂度"></a>3.4 降低复杂度</h4><p>一个条件（if）语句的复杂度是 2， 两个 if 语句就是的复杂度是4， 这种复杂度是指数型增长的。复杂度越高，越容易出现 bug 所以要降低复杂度</p>
+<p>降低复杂度的手段一般有多态，将条件语句的创建放在对象的创建阶段而不是使用阶段</p>
+<p>以下内容来自极客时间的专栏 《左耳听风》，第 38| 编程范式游记（9）编程的本质</p>
+<p><strong>任何算法都会有两个部分，一个是 Logic 部分，这是用来解决实际问题的。另一个是 Control 部分，这是用来决定用什么策略来解决问题。Logic 部分是真正意义上解决问题的算法，而 Control 部分只是影响解决这个这个问题的效率。程序运行的效率问题和程序的逻辑其实是没有关系的。我们认为，如果将 Logic 和 Control 部分有效地分开，那么代码就会变得更容易改进和维护</strong></p>
+<p><strong>有效分离 Logic 、Control 和 Data 是写出好程序的关键所在</strong></p>
+<p><img src="/2021/03/13/read-changle-code/logic_control.png" width="80%" height="80%"></p>
+<p>Logic 是程序复杂度的下限，然后，我们未来控制程序，需要再搞出很多控制代码，于是 Logic + Control 的相互交织成为了最终程序的复杂度</p>
+<ul>
+<li>业务逻辑的复杂度决定了代码的复杂度；</li>
+<li>控制逻辑的复杂度 + 业务逻辑的复杂度 ==&gt; 程序代码的混乱不堪</li>
+<li>绝大多数程序复杂混乱的根本原因：<strong>业务逻辑与控制逻辑的耦合</strong></li>
+</ul>
+<p>分离 logic 和 control</p>
+<ul>
+<li><p><strong>State Machine 状态机</strong> </p>
+<ul>
+<li>状态定义</li>
+<li>状态变迁条件</li>
+<li>状态的 action</li>
+</ul>
+</li>
+<li><p><strong>DSL</strong></p>
+<ul>
+<li>HTML, SQL, Unix Shell Script, AWK, 正则表达式</li>
+</ul>
+</li>
+<li><strong>编程范式</strong><ul>
+<li>面向对象：委托、策略、桥接、修饰、 IoC/DIP、MVC…</li>
+<li>函数式编程：修饰、管道、拼装</li>
+<li>逻辑推导式编程： Prolog</li>
+</ul>
+</li>
+</ul>
+<p><strong>编程的本质：</strong></p>
+<ul>
+<li><strong>Logic 部分是真正有意义的 （What）</strong></li>
+<li><strong>Control 部分只影响 Logic 部分的效率 （How）</strong></li>
+</ul>
+<h3 id="5-重构遗留代码"><a href="#5-重构遗留代码" class="headerlink" title="5.重构遗留代码"></a>5.重构遗留代码</h3><p>重构是指在不改变外部行为的前提下对代码的内部结构进行重组和重新包装</p>
+<p>怎样重构</p>
+<blockquote>
+<p>1.只要代码运行没有问题，就不要去修改它，能正常运行，就不用重构<br>2.只有在那些要修改、添加新功能的代码，才进行重构<br>3.重构的时候要遵循渐进式、小步修改的原则</p>
+</blockquote>
+<p><strong>何时进行重构</strong></p>
+<ul>
+<li><p>当关键代码维护不善的时候<br>别去碰遗留代码是明智的，但是关键代码难以理解变成累赘时，就需要进行清理</p>
+</li>
+<li><p>当唯一理解代码的人没空的时候</p>
+</li>
+<li><p>当有信息可以揭示更好的设计的时候</p>
+</li>
+<li><p>当修复bug 的时候</p>
+</li>
+<li><p>当需要添加新功能的时候</p>
+</li>
+<li><p>当需要为遗留代码写文档的时候</p>
+</li>
+<li><p>当重构比重写容易的时候</p>
+</li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/19/firebase-no-ndk-symbol/" rel="next" title="对 Firebase 上 NDK 无符号解决的记录">
+                <i class="fa fa-chevron-left"></i> 对 Firebase 上 NDK 无符号解决的记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-如何做之前先问做什么、为什么做、给谁做"><span class="nav-number">1.</span> <span class="nav-text">1. 如何做之前先问做什么、为什么做、给谁做</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-编写整洁的代码"><span class="nav-number">2.</span> <span class="nav-text">2.编写整洁的代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内聚"><span class="nav-number">2.1.</span> <span class="nav-text">内聚</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#松散耦合"><span class="nav-number">2.2.</span> <span class="nav-text">松散耦合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#封装良好"><span class="nav-number">2.3.</span> <span class="nav-text">封装良好</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码自主"><span class="nav-number">2.4.</span> <span class="nav-text">代码自主</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#没有冗余"><span class="nav-number">2.5.</span> <span class="nav-text">没有冗余</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-最后实现设计"><span class="nav-number">3.</span> <span class="nav-text">3.最后实现设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-阻碍了可修改代码的产生"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 阻碍了可修改代码的产生</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#缺乏封装"><span class="nav-number">3.1.1.</span> <span class="nav-text">缺乏封装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#滥用继承"><span class="nav-number">3.1.2.</span> <span class="nav-text">滥用继承</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#僵化的实现"><span class="nav-number">3.1.3.</span> <span class="nav-text">僵化的实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内联代码"><span class="nav-number">3.1.4.</span> <span class="nav-text">内联代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#没有正常阻隔一拉"><span class="nav-number">3.1.5.</span> <span class="nav-text">没有正常阻隔一拉</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-编写可持续性代码的注意事项"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 编写可持续性代码的注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-意图导向编程"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 意图导向编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-降低复杂度"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 降低复杂度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-重构遗留代码"><span class="nav-number">4.</span> <span class="nav-text">5.重构遗留代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
