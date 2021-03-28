@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="读书笔记, 程序员的自我修养,">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="[TOC] 一、目标文件的格式目标文件是源代码编译后但为进行链接的那些中间文件（Window 的 .obj 和 Linux 下的 .o） 动态链接库（DLL, Dynamic Linking Library）, Window 是 .dll， Linux 是 .so静态链接库（Static Linking Library）, Window 是 .lib 和 Linux 是 .a 可执行文件格式是 E">
+<meta name="keywords" content="读书笔记, 程序员的自我修养">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读书笔记|《程序员的自我修养》- 02 目标文件">
+<meta property="og:url" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="[TOC] 一、目标文件的格式目标文件是源代码编译后但为进行链接的那些中间文件（Window 的 .obj 和 Linux 下的 .o） 动态链接库（DLL, Dynamic Linking Library）, Window 是 .dll， Linux 是 .so静态链接库（Static Linking Library）, Window 是 .lib 和 Linux 是 .a 可执行文件格式是 E">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/type.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/obj_type.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/16163130180870.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/16163131604327.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/16163150711009.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/16163111896910.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/16163116226334.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/sysmbol.png">
+<meta property="og:updated_time" content="2021-03-28T14:50:40.532Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读书笔记|《程序员的自我修养》- 02 目标文件">
+<meta name="twitter:description" content="[TOC] 一、目标文件的格式目标文件是源代码编译后但为进行链接的那些中间文件（Window 的 .obj 和 Linux 下的 .o） 动态链接库（DLL, Dynamic Linking Library）, Window 是 .dll， Linux 是 .so静态链接库（Static Linking Library）, Window 是 .lib 和 Linux 是 .a 可执行文件格式是 E">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-one/type.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2021/03/28/linker-read-one/">
+
+
+
+
+
+  <title>读书笔记|《程序员的自我修养》- 02 目标文件 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2021/03/28/linker-read-one/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">读书笔记|《程序员的自我修养》- 02 目标文件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-28T22:41:30+08:00">
+                2021-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="一、目标文件的格式"><a href="#一、目标文件的格式" class="headerlink" title="一、目标文件的格式"></a>一、目标文件的格式</h1><p>目标文件是源代码编译后但为进行链接的那些中间文件（Window 的 .obj 和 Linux 下的 .o）</p>
+<p>动态链接库（DLL, Dynamic Linking Library）, Window 是 .dll， Linux 是 .so<br>静态链接库（Static Linking Library）, Window 是 .lib 和 Linux 是 .a</p>
+<p>可执行文件格式是 ELF</p>
+<h1 id="二、目标文件的文件类型"><a href="#二、目标文件的文件类型" class="headerlink" title="二、目标文件的文件类型"></a>二、目标文件的文件类型</h1><p><img src="/2021/03/28/linker-read-one/type.png" width="80%" height="80%"></p>
+<p>命令 file 查看文件的类型格式<br>例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; file libdycloudmedia.so </span><br><span class="line">libdycloudmedia.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, BuildID[sha1]=2bcf3eae561f0f6ca25b0f2abd0728eef68f9ea3, stripped</span><br></pre></td></tr></table></figure>
+<h1 id="三、目标文件的内容"><a href="#三、目标文件的内容" class="headerlink" title="三、目标文件的内容"></a>三、目标文件的内容</h1><p><img src="/2021/03/28/linker-read-one/obj_type.png" width="80%" height="80%"></p>
+<h2 id="3-1-可执行文件的内容"><a href="#3-1-可执行文件的内容" class="headerlink" title="3.1 可执行文件的内容"></a>3.1 可执行文件的内容</h2><p>程序源代码编译后的机器指令经常被放在<strong>代码段（Code Section）</strong>, 代码段常见的字有 “.code” 或 ”.text”</p>
+<p>全局变量和局部变量数据经常放在<strong>数据段（Data Section）</strong></p>
+<p>总体来说，源程序代码被编译以后主要分成两种段，程序指令和程序数据。代码段属于程序指令，而数据段和.bss 属于程序数据</p>
+<p>将数据和指令分段的好处：</p>
+<ul>
+<li>程序被装载后，数据和指令分别被映射到两个虚拟区域。数据区对于进程是可读写，指令区对于进程是只读，这两个两个区域的权限分别设置为可读写和只读。这样防止程序指令被破坏</li>
+<li>充分利用 CPU 的缓存，提供命中率</li>
+<li>当系统中存在该程序的副本时，可以共享指令，节约内存。</li>
+</ul>
+<p><strong>查看 ELF 各段的基本信息</strong></p>
+<blockquote>
+<p>objdump -h SimpleSection.o<br>-h 将 ELF 文件的各个段的基本信息打印出来</p>
+</blockquote>
+<p><img src="/2021/03/28/linker-read-one/16163130180870.png" width="80%" height="80%"></p>
+<p><strong>查看ELF文件的代码段、数据段、和 BSS 段的长度</strong></p>
+<blockquote>
+<p>size SimpleSection.o</p>
+</blockquote>
+<p><img src="/2021/03/28/linker-read-one/16163131604327.png" width="80%" height="80%"></p>
+<h2 id="3-2-文件头-HEADER"><a href="#3-2-文件头-HEADER" class="headerlink" title="3.2 文件头 HEADER"></a>3.2 文件头 HEADER</h2><p>ELF 目标文件最前面的是 ELF 文件头，它包含描述整个文件的基本属性，例如 ELF 文件版本、目标机器型号、程序入口等</p>
+<p>查看</p>
+<blockquote>
+<p>$readelf -h SimpleSection.o  // linex 用 </p>
+</blockquote>
+<blockquote>
+<p>$otool -h SimpleSection.o  // mac 使用</p>
+</blockquote>
+<p><img src="/2021/03/28/linker-read-one/16163150711009.png" width="80%" height="80%"></p>
+<h2 id="3-3-代码段-text"><a href="#3-3-代码段-text" class="headerlink" title="3.3 代码段 .text"></a>3.3 代码段 .text</h2><p>使用命令下面命令查看</p>
+<blockquote>
+<p>objdump -s -d SimpleSection.o<br>-s 参数表示将所有段的内容以十六进制的方式打印出来<br>-d 参数将所有包含指令的段反汇编</p>
+</blockquote>
+<p><img src="/2021/03/28/linker-read-one/16163111896910.png" width="80%" height="80%"></p>
+<h2 id="3-3-数据段和只读数据段-data"><a href="#3-3-数据段和只读数据段-data" class="headerlink" title="3.3 数据段和只读数据段 .data"></a>3.3 数据段和只读数据段 .data</h2><p>.data 段保存已经初始化了的全局静态变量和局部静态变量</p>
+<p>.rodata 段存放只读数据,(mac 里面是 cstring )</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Contents of section __data:</span><br><span class="line"> 0068 54000000 55000000                    T...U...</span><br><span class="line">Contents of section __cstring:</span><br><span class="line"> 0070 25640a00                             %d..</span><br></pre></td></tr></table></figure>
+<h2 id="3-4-BSS-段"><a href="#3-4-BSS-段" class="headerlink" title="3.4 BSS 段"></a>3.4 BSS 段</h2><p>.bss 段存放未初始化的全局变量和局部静态变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Contents of section __bss:</span><br><span class="line">&lt;skipping contents of bss section at [0120, 0124)&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="四、ELF-文件结构描述"><a href="#四、ELF-文件结构描述" class="headerlink" title="四、ELF 文件结构描述"></a>四、ELF 文件结构描述</h1><p><strong>链接过程的本质就是要把多个不同的目标文件之间相互”粘“到一起，或者说像玩具积木一样，可以拼成一个整体</strong></p>
+<p>符号是链接过程的粘合剂</p>
+<h2 id="4-1-重新定位表-rel-text"><a href="#4-1-重新定位表-rel-text" class="headerlink" title="4.1  重新定位表 .rel.text"></a>4.1  重新定位表 .rel.text</h2><p>链接器在处理目标文件时，必须要对目标文件中某些部位进行重定位</p>
+<h2 id="4-2-符号"><a href="#4-2-符号" class="headerlink" title="4.2  符号"></a>4.2  符号</h2><p>链接过程的本质就是把不同的目标文件相互“粘”到一起，拼成一个整体。符号就是链接中的粘合剂，整个链接过程正是基于符号才能正确完成的。</p>
+<p>查看符号表</p>
+<blockquote>
+<p>$ nm SimpleSection.o</p>
+</blockquote>
+<p><img src="/2021/03/28/linker-read-one/16163116226334.png" width="80%" height="80%"></p>
+<p><strong>ELF 符号表结构</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Elf32_Word st_name;     <span class="comment">// 符号名</span></span><br><span class="line">    Efl32_Addr st_value;    <span class="comment">// 对应的值</span></span><br><span class="line">    Elf32_Word st_size;     <span class="comment">// 符号大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> st_info;  <span class="comment">// 符号类型和绑定信息</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> st_other; <span class="comment">// 0, 暂时没有用途</span></span><br><span class="line">    Elf32_Half st_shndx;    <span class="comment">// 符号所在的段</span></span><br><span class="line">&#125; Elf32_Sym;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/28/linker-read-one/sysmbol.png" width="80%" height="80%"></p>
+<h1 id="五、其他"><a href="#五、其他" class="headerlink" title="五、其他"></a>五、其他</h1><h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">printf</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* fromt, ...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> global_init_var = <span class="number">84</span>;</span><br><span class="line"><span class="keyword">int</span> global_uninit_var;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func1</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> static_var = <span class="number">85</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> static_var2;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line"></span><br><span class="line">    func1(static_var + static_var2 + a + b);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Mac-使用-readelf"><a href="#Mac-使用-readelf" class="headerlink" title="Mac 使用 readelf"></a>Mac 使用 readelf</h2><p>Mac 上没有 ‘readelf 命令’ 可以使用 ’greadelf‘ 和 ’gobjdump‘<br>安装步骤：</p>
+<ol>
+<li>使用命令<blockquote>
+<p>brew update &amp;&amp; brew install binutils</p>
+</blockquote>
+</li>
+</ol>
+<p>2.路径添加到 ’~/.bash_profile‘ 文件中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># binutils</span><br><span class="line">export PATH=&quot;/usr/local/opt/binutils/bin:$PATH&quot;</span><br><span class="line">export LDFLAGS=&quot;-L/usr/local/opt/binutils/lib&quot;</span><br><span class="line">export CPPFLAGS=&quot;-I/usr/local/opt/binutils/include&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="Mac-otool替代readelf命令"><a href="#Mac-otool替代readelf命令" class="headerlink" title="Mac otool替代readelf命令"></a>Mac otool替代readelf命令</h2><p>$otool -h</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">rg] [--version] &lt;object file&gt; ...</span><br><span class="line">	-f print the fat headers</span><br><span class="line">	-a print the archive header</span><br><span class="line">	-h print the mach header</span><br><span class="line">	-l print the load commands</span><br><span class="line">	-L print shared libraries used</span><br><span class="line">	-D print shared library id name</span><br><span class="line">	-t print the text section (disassemble with -v)</span><br><span class="line">	-x print all text sections (disassemble with -v)</span><br><span class="line">	-p &lt;routine name&gt;  start dissassemble from routine name</span><br><span class="line">	-s &lt;segname&gt; &lt;sectname&gt; print contents of section</span><br><span class="line">	-d print the data section</span><br><span class="line">	-o print the Objective-C segment</span><br><span class="line">	-r print the relocation entries</span><br><span class="line">	-S print the table of contents of a library (obsolete)</span><br><span class="line">	-T print the table of contents of a dynamic shared library (obsolete)</span><br><span class="line">	-M print the module table of a dynamic shared library (obsolete)</span><br><span class="line">	-R print the reference table of a dynamic shared library (obsolete)</span><br><span class="line">	-I print the indirect symbol table</span><br><span class="line">	-H print the two-level hints table (obsolete)</span><br><span class="line">	-G print the data in code table</span><br><span class="line">	-v print verbosely (symbolically) when possible</span><br><span class="line">	-V print disassembled operands symbolically</span><br><span class="line">	-c print argument strings of a core file</span><br><span class="line">	-X print no leading addresses or headers</span><br><span class="line">	-m don&apos;t use archive(member) syntax</span><br><span class="line">	-B force Thumb disassembly (ARM objects only)</span><br><span class="line">	-q use llvm&apos;s disassembler (the default)</span><br><span class="line">	-Q use otool(1)&apos;s disassembler</span><br><span class="line">	-mcpu=arg use `arg&apos; as the cpu for disassembly</span><br><span class="line">	-j print opcode bytes</span><br><span class="line">	-P print the info plist section as strings</span><br><span class="line">	-C print linker optimization hints</span><br><span class="line">	--version print the version of /Users/yxhuang/software/xcode/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/otool</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/读书笔记-程序员的自我修养/" rel="tag"># 读书笔记, 程序员的自我修养</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/28/linker-read-pre/" rel="next" title="读书笔记|《程序员的自我修养》- 01 前言">
+                <i class="fa fa-chevron-left"></i> 读书笔记|《程序员的自我修养》- 01 前言
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、目标文件的格式"><span class="nav-number">1.</span> <span class="nav-text">一、目标文件的格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、目标文件的文件类型"><span class="nav-number">2.</span> <span class="nav-text">二、目标文件的文件类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、目标文件的内容"><span class="nav-number">3.</span> <span class="nav-text">三、目标文件的内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-可执行文件的内容"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 可执行文件的内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-文件头-HEADER"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 文件头 HEADER</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-代码段-text"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 代码段 .text</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-数据段和只读数据段-data"><span class="nav-number">3.4.</span> <span class="nav-text">3.3 数据段和只读数据段 .data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-BSS-段"><span class="nav-number">3.5.</span> <span class="nav-text">3.4 BSS 段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、ELF-文件结构描述"><span class="nav-number">4.</span> <span class="nav-text">四、ELF 文件结构描述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-重新定位表-rel-text"><span class="nav-number">4.1.</span> <span class="nav-text">4.1  重新定位表 .rel.text</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-符号"><span class="nav-number">4.2.</span> <span class="nav-text">4.2  符号</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、其他"><span class="nav-number">5.</span> <span class="nav-text">五、其他</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#示例代码"><span class="nav-number">5.1.</span> <span class="nav-text">示例代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mac-使用-readelf"><span class="nav-number">5.2.</span> <span class="nav-text">Mac 使用 readelf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mac-otool替代readelf命令"><span class="nav-number">5.3.</span> <span class="nav-text">Mac otool替代readelf命令</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
