@@ -96,19 +96,19 @@
 
 
 
-<meta name="description" content="[TOC]  图片来自极客时间深入浅出计算机原理 学习链接知识的意义 理解链接将帮助你构建大型程序构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。  理解链接器将帮助你避免一些危险的编译错误  理解链接将帮助你理解语言的作用域是如何实现的例如，全局和局">
+<meta name="description" content="图片来自极客时间深入浅出计算机原理 学习链接知识的意义 理解链接将帮助你构建大型程序构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。  理解链接器将帮助你避免一些危险的编译错误  理解链接将帮助你理解语言的作用域是如何实现的例如，全局和局部变量之间的">
 <meta name="keywords" content="程序员的自我修养">
 <meta property="og:type" content="article">
 <meta property="og:title" content="读书笔记|《程序员的自我修养》- 01 前言">
 <meta property="og:url" content="https://yxhuangch.github.io/2021/03/28/linker-read-pre/index.html">
 <meta property="og:site_name" content="yxhuang">
-<meta property="og:description" content="[TOC]  图片来自极客时间深入浅出计算机原理 学习链接知识的意义 理解链接将帮助你构建大型程序构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。  理解链接器将帮助你避免一些危险的编译错误  理解链接将帮助你理解语言的作用域是如何实现的例如，全局和局">
+<meta property="og:description" content="图片来自极客时间深入浅出计算机原理 学习链接知识的意义 理解链接将帮助你构建大型程序构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。  理解链接器将帮助你避免一些危险的编译错误  理解链接将帮助你理解语言的作用域是如何实现的例如，全局和局部变量之间的">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-pre/linker-read-pre.png">
-<meta property="og:updated_time" content="2021-03-28T15:10:27.965Z">
+<meta property="og:updated_time" content="2021-03-28T23:54:21.062Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="读书笔记|《程序员的自我修养》- 01 前言">
-<meta name="twitter:description" content="[TOC]  图片来自极客时间深入浅出计算机原理 学习链接知识的意义 理解链接将帮助你构建大型程序构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。  理解链接器将帮助你避免一些危险的编译错误  理解链接将帮助你理解语言的作用域是如何实现的例如，全局和局">
+<meta name="twitter:description" content="图片来自极客时间深入浅出计算机原理 学习链接知识的意义 理解链接将帮助你构建大型程序构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。  理解链接器将帮助你避免一些危险的编译错误  理解链接将帮助你理解语言的作用域是如何实现的例如，全局和局部变量之间的">
 <meta name="twitter:image" content="https://yxhuangch.github.io/2021/03/28/linker-read-pre/linker-read-pre.png">
 
 
@@ -348,8 +348,7 @@
       
 
       
-        <p>[TOC]</p>
-<p><img src="/2021/03/28/linker-read-pre/linker-read-pre.png" width="80%" height="80%"></p>
+        <p><img src="/2021/03/28/linker-read-pre/linker-read-pre.png" width="80%" height="80%"></p>
 <p>图片来自极客时间<a href="https://time.geekbang.org/column/article/94470" target="_blank" rel="noopener">深入浅出计算机原理</a></p>
 <h1 id="学习链接知识的意义"><a href="#学习链接知识的意义" class="headerlink" title="学习链接知识的意义"></a>学习链接知识的意义</h1><ul>
 <li><p><strong>理解链接将帮助你构建大型程序</strong><br>构建大型程序的程序员经常会遇到由于缺少模块、缺少库或者不兼容的库版本引起的连接器错误。除非你理解连接器是如何解析引用、什么是库以及链接器是如何使用库来解析引用的，否则这类错误将令你感到迷惑或挫折。</p>
