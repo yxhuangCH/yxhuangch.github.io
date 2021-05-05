@@ -83,6 +83,8 @@
 
 
 
+  
+
 
   <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
 
@@ -96,12 +98,12 @@
 
 
 
-<meta name="description" content="[TOC] 这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。 动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。 中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。 最后还讲述了显示动态链">
+<meta name="description" content="这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。 动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。 中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。 最后还讲述了显示动态链接的概念，这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="读书笔记|《程序员的自我修养》- 05 动态链接">
 <meta property="og:url" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/index.html">
 <meta property="og:site_name" content="yxhuang">
-<meta property="og:description" content="[TOC] 这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。 动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。 中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。 最后还讲述了显示动态链">
+<meta property="og:description" content="这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。 动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。 中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。 最后还讲述了显示动态链接的概念，这">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/linker_dy_1.jpg">
 <meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/linker_dy_2.jpg">
@@ -111,10 +113,10 @@
 <meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/dylink_img_9.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/dylink_plt_1.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/dylink_plt_2.png">
-<meta property="og:updated_time" content="2021-05-05T15:22:51.366Z">
+<meta property="og:updated_time" content="2021-05-05T15:26:22.732Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="读书笔记|《程序员的自我修养》- 05 动态链接">
-<meta name="twitter:description" content="[TOC] 这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。 动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。 中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。 最后还讲述了显示动态链">
+<meta name="twitter:description" content="这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。 动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。 中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。 最后还讲述了显示动态链接的概念，这">
 <meta name="twitter:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-four/linker_dy_1.jpg">
 
 
@@ -354,8 +356,7 @@
       
 
       
-        <p>[TOC]</p>
-<p>这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。</p>
+        <p>这章主要首先讲述了动态链接是为了解决静态链接浪费内存和磁盘资源的问题，同时更加方便升级程序。</p>
 <p>动态链接需要面临装载地址不确定的问题，为了解决这个问题，引入了装载时重定位和地址无关代码这两个方法。然后讲述这两个方法的优缺点。同时还介绍了延迟绑定 PLT 技术。</p>
 <p>中间讲述了 ELF 文件中的 ”.interp“, “.dyanmic”, 动态符号表、重定位表等结构。</p>
 <p>最后还讲述了显示动态链接的概念，这个概念在 Android Ndk 的开发中需要应用，后续我会用特定的篇章讲述动态链接在 Android NDK 中的应用。</p>
