@@ -78,10 +78,12 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
 
 
-  <meta name="keywords" content="软件设计,">
+  <meta name="keywords" content="程序员的自我修养,">
 
 
 
+
+  
 
 
   <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
@@ -96,25 +98,22 @@
 
 
 
-<meta name="description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
-<meta name="keywords" content="软件设计">
+<meta name="description" content="[toc] 这一章讲述了操作系统入口将 ELF 文件装载到内存的过程。 一.装载的方式程序在运行时有局部性原理，可以将程序最常用的部分驻留在内存中，将不常用的数据存放在磁盘里。 加载的时候采用页映射的方式，也映射就是把部分程序的数据和指令按“页（page）” 为单位划分成若干个页，以后所有的装载和操作的单位就是页。 二.装载的过程操作系统加载目标文件的过程主要分为三步：  创建一个独立的虚拟地址空">
+<meta name="keywords" content="程序员的自我修养">
 <meta property="og:type" content="article">
-<meta property="og:title" content="软件设计原则（一）： 依赖倒置原则">
-<meta property="og:url" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/index.html">
+<meta property="og:title" content="读书笔记|《程序员的自我修养》- 04 可执行文件的装载与进程">
+<meta property="og:url" content="https://yxhuangch.github.io/2021/05/05/linker-read-third/index.html">
 <meta property="og:site_name" content="yxhuang">
-<meta property="og:description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
+<meta property="og:description" content="[toc] 这一章讲述了操作系统入口将 ELF 文件装载到内存的过程。 一.装载的方式程序在运行时有局部性原理，可以将程序最常用的部分驻留在内存中，将不常用的数据存放在磁盘里。 加载的时候采用页映射的方式，也映射就是把部分程序的数据和指令按“页（page）” 为单位划分成若干个页，以后所有的装载和操作的单位就是页。 二.装载的过程操作系统加载目标文件的过程主要分为三步：  创建一个独立的虚拟地址空">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_1.png">
-<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_2.png">
-<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_3.png">
-<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_4.png">
-<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_5.png">
-<meta property="og:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_6.png">
-<meta property="og:updated_time" content="2020-02-23T03:48:22.105Z">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-third/ELF_Segment-1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-third/dylink_load_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-third/dylink_load_2.png">
+<meta property="og:updated_time" content="2021-05-05T15:12:19.203Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="软件设计原则（一）： 依赖倒置原则">
-<meta name="twitter:description" content="如何不依赖代码却可以复用它的功能  在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。 图1 这是我们正常的软件设计。 但是这样的设计会带来一些问题。 策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。 出现了上述问题">
-<meta name="twitter:image" content="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/dip_1.png">
+<meta name="twitter:title" content="读书笔记|《程序员的自我修养》- 04 可执行文件的装载与进程">
+<meta name="twitter:description" content="[toc] 这一章讲述了操作系统入口将 ELF 文件装载到内存的过程。 一.装载的方式程序在运行时有局部性原理，可以将程序最常用的部分驻留在内存中，将不常用的数据存放在磁盘里。 加载的时候采用页映射的方式，也映射就是把部分程序的数据和指令按“页（page）” 为单位划分成若干个页，以后所有的装载和操作的单位就是页。 二.装载的过程操作系统加载目标文件的过程主要分为三步：  创建一个独立的虚拟地址空">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-third/ELF_Segment-1.png">
 
 
 
@@ -143,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/">
+  <link rel="canonical" href="https://yxhuangch.github.io/2021/05/05/linker-read-third/">
 
 
 
 
 
-  <title>软件设计原则（一）： 依赖倒置原则 | yxhuang</title>
+  <title>读书笔记|《程序员的自我修养》- 04 可执行文件的装载与进程 | yxhuang</title>
   
 
 
@@ -286,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2020/02/23/denpendence-inversion-principle/">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2021/05/05/linker-read-third/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yxhuang">
@@ -303,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">软件设计原则（一）： 依赖倒置原则</h1>
+          <h1 class="post-title" itemprop="name headline">读书笔记|《程序员的自我修养》- 04 可执行文件的装载与进程</h1>
         
 
         <div class="post-meta">
@@ -315,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-23T08:59:24+08:00">
-                2020-02-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-05T23:04:07+08:00">
+                2021-05-05
               </time>
             
 
@@ -353,62 +352,65 @@
       
 
       
-        <blockquote>
-<p>如何不依赖代码却可以复用它的功能</p>
-</blockquote>
-<p>在软件设计中为了建立清晰的软件分层关系，引入了软件分层设计，也是便于高层业务模块依赖低层模块。在一般的应用软件中，策略层会依赖方法层，业务逻辑层会依赖数据存储层。</p>
-<p><img src="/2020/02/23/denpendence-inversion-principle/dip_1.png" width="70%" height="70%"><br>图1</p>
-<p>这是我们正常的软件设计。</p>
-<p>但是这样的设计会带来一些问题。</p>
-<p>策略层对方程层和工具层是传递依赖的，如果下面两层的改动，都会对策略层产生影响，这样导致的级联改动非常不利用软件的维护。</p>
-<p>出现了上述问题，可能会想到定义策略层和工具层的接口，毕竟接口比实现更问题。</p>
-<p>所以，会变成下面的设计关系。</p>
-<p><img src="/2020/02/23/denpendence-inversion-principle/dip_2.png" width="70%" height="70%"><br>图2</p>
-<p>Policy layer 层依赖的是方法层的 MechanismService 接口，而方法层会依赖工具层的 UtilityService 接口。这是通常的编程习惯，底层模块有自己的接口，高层模块依赖低层模块提供的接口。</p>
-<p>但是我们下面不是用这种方式，而是用依赖倒置设计原则去重构。</p>
-<p>###依赖倒置的设计原则</p>
-<p>按照依赖倒置原则，接口的所有权是被倒置的，也就是说，接口被定义在高层模块，高层模块拥有接口，低层模块实现接口。不是高层模块依赖低层模块的接口，而是低层模块依赖高层模块的接口，从而实现依赖关系的倒置。</p>
-<p><img src="/2020/02/23/denpendence-inversion-principle/dip_3.png" width="70%" height="70%"><br>图3</p>
-<p>在上面的依赖层次中，每一层的接口都被高层模块定义，由低层模块实现，高层模块完全不依赖底层模块。这样低层模块的改动不会影响高层模块，高层模块的复用也不会完全依赖低层模块。</p>
-<h3 id="使用依赖倒置实现高层模块复用"><a href="#使用依赖倒置实现高层模块复用" class="headerlink" title="使用依赖倒置实现高层模块复用"></a>使用依赖倒置实现高层模块复用</h3><p>依赖倒置原则也适用于一个类向另一个类发送消息的场景</p>
-<p>Button 控制灯泡，按钮按下的时候，灯泡点亮或关闭。常规的设计是，Button 类直接依赖 Lamp 灯泡类</p>
-<p><img src="/2020/02/23/denpendence-inversion-principle/dip_4.png" width="70%" height="70%"><br>图4</p>
-<p>这样会导致问题，Button 依赖 Lamp, Lamp 的任何改动都会牵扯到 Button, 变成联级的改动。另外，如果想要 Button 控制另外一种电器，Button 变难以重用， 以为 Button 依赖着 Lamp.</p>
-<p>解决办法是将依赖中的具体实现，改成为依赖抽象。</p>
-<p>重构后的设计</p>
-<p><img src="/2020/02/23/denpendence-inversion-principle/dip_5.png" width="70%" height="70%"><br>图5</p>
-<p>抽象接口 ButtonServer 是属于高层模块 Button 的，不属于低层模块 Lamp。这样就形成了依赖倒置。</p>
-<p>Button 不会再依赖 Lamp，而是依赖抽象的 ButtonServer, 而 Lamp 是<br>ButtonServer 的具体实现，这样 Lamp 的改动基本上就不会牵扯 Button。另外，如果想要重用 Button 控制其他设备, 只需要这些设备实现 ButtonServer 接口即可。</p>
-<h3 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h3><p>在创建对象是，一般都会是具体实现，这样就会形成一个依赖。这时，可以选择用抽象工厂模式来解决代码依赖的问题。</p>
-<p><img src="/2020/02/23/denpendence-inversion-principle/dip_6.png" width="70%" height="70%"><br>图6</p>
-<p>Application 通过调用 ServiceFactory接口的 makeService 方法。这个方法由 ServiceFactoryImpl 类具体提供，该方法初始化一个 ConcreteImpl 类的实例，并且将其返回 Service 类型返回。</p>
-<p>图6中间的虚线代表着软件架构中的抽象层与具体实现层的边界。所有跨越这条边界源码级别的依赖关系都应该是单向的，即具体实现层依赖抽象层。</p>
-<p>抽象接口层包含了应用的所有高阶业务规则，具体实现层则包括了这些业务规则需要做的具体操作及其相关的细节信息。</p>
-<p>图6中控制流跨越边界（虚线）的方向与源代码依赖关系跨越该边界的反向相反，源代码依赖用于是控制流方向反向，这就是依赖倒置。</p>
-<h3 id="依赖导致原则"><a href="#依赖导致原则" class="headerlink" title="依赖导致原则"></a>依赖导致原则</h3><ul>
-<li>高层次的模块不应该依赖于低层次的模块，两者都应该依赖于抽象接口</li>
-<li>抽象接口不应该依赖于具体实现，而具体实现则应该依赖于抽象接口</li>
-</ul>
-<p>高层：业务逻辑<br>底层：UI,底层配置（数据库等）</p>
-<p>高层模块不依赖低层模块，而是依赖抽象接口，这个接口是由高层模块定义，低层模块实现</p>
-<p>应用规则：</p>
+        <p>[toc]</p>
+<p>这一章讲述了操作系统入口将 ELF 文件装载到内存的过程。</p>
+<h1 id="一-装载的方式"><a href="#一-装载的方式" class="headerlink" title="一.装载的方式"></a>一.装载的方式</h1><p>程序在运行时有局部性原理，可以将程序最常用的部分驻留在内存中，将不常用的数据存放在磁盘里。</p>
+<p>加载的时候采用<strong>页映射</strong>的方式，也映射就是把部分程序的数据和指令按“页（page）” 为单位划分成若干个页，以后所有的装载和操作的单位就是页。</p>
+<h1 id="二-装载的过程"><a href="#二-装载的过程" class="headerlink" title="二.装载的过程"></a>二.装载的过程</h1><p>操作系统加载目标文件的过程主要分为三步：</p>
 <ul>
+<li>创建一个独立的虚拟地址空间</li>
+<li>读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系</li>
+<li>将 CPU 的指令寄存器设置成可执行文件的入口地址，启动运行</li>
+</ul>
+<h2 id="2-1-创建一个独立的虚拟地址空间"><a href="#2-1-创建一个独立的虚拟地址空间" class="headerlink" title="2.1 创建一个独立的虚拟地址空间"></a>2.1 创建一个独立的虚拟地址空间</h2><p> 创建进程，就是创建一个独立的虚拟地址空间，虚拟空间由一组页映射函数将虚拟空间的各个页映射至相应的物理空间。</p>
+<h2 id="2-2-读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系"><a href="#2-2-读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系" class="headerlink" title="2.2 读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系"></a>2.2 读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系</h2><p><strong>这一步主要做的是，建立虚拟空间与可执行文件的映射关系,这种映射关系只是保存在操作系统内部的一个数据结构。</strong></p>
+<p>建立映射时，是将权限相同的 section 合并到一个 Segment, 再进行映射。这样可以节约内存。</p>
+<p>ELF 中一般是一下的三种组合：</p>
+<ul>
+<li>以代码段为代表的权限为可读可执行的段</li>
+<li>以数据段和 BSS 段为代表的权限为可读可写的段</li>
+<li>以只读数据段为代表的权限为只读的段</li>
+</ul>
+<p><img src="/2021/05/05/linker-read-third/ELF_Segment-1.png" width="80%" height="80%"></p>
+<p>上图就是例子，左边是没有合并 Segment 进行映射，右边是合并 Segment 进行映射的。.init 和 .text 段都是权限相同、可读可执行的段，将它们合并成通过 Segment 进行映射，节约了内存空间</p>
+<p>通过命名可以查看 ELF 文件中哪些段合并了 Segment </p>
+<blockquote>
+<p>$readelf -l Link5.elf</p>
+</blockquote>
+<p><img src="/2021/05/05/linker-read-third/dylink_load_1.png" width="80%" height="80%"></p>
+<h2 id="2-3-将-CPU-的指令寄存器设置成可执行文件的入口地址，启动运行"><a href="#2-3-将-CPU-的指令寄存器设置成可执行文件的入口地址，启动运行" class="headerlink" title="2.3 将 CPU 的指令寄存器设置成可执行文件的入口地址，启动运行"></a>2.3 将 CPU 的指令寄存器设置成可执行文件的入口地址，启动运行</h2><p>操作系统通过设置 CPU 的指令寄存器将控制权转交给进程,程序由此开始运行。这个地址是在 ELF 头文件中保存的</p>
+<p>程序运行时会产生一个<strong>“页错误（Page Fault）”</strong>,这是因为在 2.2 步，操作系统仅仅只是通过可执行文件的头文件信息建立可执行文件和进程虚拟空间的映射关系而已，并没有加载可执行文件的真正指令和数据到内存。</p>
+<p>操作系统处理页错误后，把指令和数据加载进内存，计算出相应的页面在可执行文件中的偏移，然后在物理内存中分配一个物理页面，将进程中该虚拟页与分配的物理页建立映射关系，控制权交回给进程，程序重新开始运行。</p>
+<h1 id="三-堆和栈"><a href="#三-堆和栈" class="headerlink" title="三.堆和栈"></a>三.堆和栈</h1><p>操作系统通过给进程空间划分一个个 VMA（虚拟内存空间） 来管理进程的虚拟空间；基本原则是将相同属性的、有相同映像文件的映射成一个 VMA.</p>
+<p>一个进程基本上划分为以下结果 VMA 区域：</p>
+<ul>
+<li>代码 VMA , 权限只读、可执行；有映像文件；</li>
+<li>数据 VMA, 权限可读写、可执行；有映像文件；</li>
+<li>堆 VMA, 权限可读写、可执行；无映像文件，匿名，可向上扩展；</li>
+<li>栈 VMA, 权限可读写、不可以执行；无映像文件，匿名，可向下扩展。</li>
+</ul>
+<p><img src="/2021/05/05/linker-read-third/dylink_load_2.png" width="80%" height="80%"></p>
+<h1 id="四-Linux-内核装载-ELF-过程"><a href="#四-Linux-内核装载-ELF-过程" class="headerlink" title="四. Linux 内核装载 ELF 过程"></a>四. Linux 内核装载 ELF 过程</h1><ul>
 <li><ol>
-<li>应用代码多使用抽象接口，尽量避免使用多变的具体实现类</li>
+<li>检测 ELF 可执行文件的有效性，例如魔数，程序头表中 Segment 的数量；</li>
 </ol>
 </li>
 <li><ol start="2">
-<li>不要继承具体类，除非是抽象类</li>
+<li>寻找动态链接的 “.interp” 段，设置动态链接器路径</li>
 </ol>
 </li>
 <li><ol start="3">
-<li>不要重写 override, 包含具体实现的函数</li>
+<li>根据 ELF 可执行文件的程序头表的描述，对 ELF 文件进行映射，例如代码、数据、只读数据</li>
 </ol>
 </li>
-</ul>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://book.douban.com/subject/30333919/" target="_blank" rel="noopener">《架构整洁之道》</a>第11章：DIP 依赖反转原则</li>
-<li><a href="https://time.geekbang.org/column/article/179282" target="_blank" rel="noopener">极客时间-李智慧·后端技术面试38讲</a>  12 | 软件设计的依赖倒置原则：如何不依赖代码却可以复用它的功能</li>
+<li><ol start="4">
+<li>初始化 ELF 进程环境，例如进程启动时 EDX 寄存器的地址应该是 DT_FINI 的地址</li>
+</ol>
+</li>
+<li><ol start="5">
+<li>将系统调用的返回地址修改成 ELF 可执行文件的入口点，这个入口点取决于程序的链接方式，对于静态链接的 ELF 可执行文件，这个程序入口是 ELF 文件头中 e_entry 所指的地址；对于动态链接的 ELF 可执行文件，程序入口点是动态链接器。</li>
+</ol>
+</li>
 </ul>
       
     </div>
@@ -434,7 +436,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/软件设计/" rel="tag"># 软件设计</a>
+            <a href="/tags/程序员的自我修养/" rel="tag"># 程序员的自我修养</a>
           
         </div>
       
@@ -447,8 +449,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/11/18/dedao-boxian-summary/" rel="next" title="怎样选择保险">
-                <i class="fa fa-chevron-left"></i> 怎样选择保险
+              <a href="/2021/05/05/linker-read-two/" rel="next" title="读书笔记|《程序员的自我修养》- 03 静态链接">
+                <i class="fa fa-chevron-left"></i> 读书笔记|《程序员的自我修养》- 03 静态链接
               </a>
             
           </div>
@@ -456,10 +458,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/03/28/android-so-load/" rel="prev" title="Android 动态链接库 So 的加载">
-                Android 动态链接库 So 的加载 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -589,7 +587,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用依赖倒置实现高层模块复用"><span class="nav-number">1.</span> <span class="nav-text">使用依赖倒置实现高层模块复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">2.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖导致原则"><span class="nav-number">3.</span> <span class="nav-text">依赖导致原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-装载的方式"><span class="nav-number">1.</span> <span class="nav-text">一.装载的方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-装载的过程"><span class="nav-number">2.</span> <span class="nav-text">二.装载的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-创建一个独立的虚拟地址空间"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 创建一个独立的虚拟地址空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-将-CPU-的指令寄存器设置成可执行文件的入口地址，启动运行"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 将 CPU 的指令寄存器设置成可执行文件的入口地址，启动运行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-堆和栈"><span class="nav-number">3.</span> <span class="nav-text">三.堆和栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-Linux-内核装载-ELF-过程"><span class="nav-number">4.</span> <span class="nav-text">四. Linux 内核装载 ELF 过程</span></a></li></ol></div>
             
 
           </div>
