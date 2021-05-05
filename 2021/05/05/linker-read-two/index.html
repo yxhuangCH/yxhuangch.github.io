@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="程序员的自我修养,">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="这是《程序员自我修养–链接、装载与库》读书笔记的第三篇，静态链接。 简单来说静态链接将多个目标文件性质相同部分，合并写入到输出目标文件中，然后将符号解析并且对外部引用符号重新定位。 目标文件的链接分为静态链接和动态链接。 静态链接是以多个重定位目标文件和命令参数作为输入，生成一个完全链接的可以加载和运行的可执行目标文件的过程。 这个过程由链接器完成，链接器主要的任务就是符号解析（sysbol re">
+<meta name="keywords" content="程序员的自我修养">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读书笔记|《程序员的自我修养》- 03 静态链接">
+<meta property="og:url" content="https://yxhuangch.github.io/2021/05/05/linker-read-two/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="这是《程序员自我修养–链接、装载与库》读书笔记的第三篇，静态链接。 简单来说静态链接将多个目标文件性质相同部分，合并写入到输出目标文件中，然后将符号解析并且对外部引用符号重新定位。 目标文件的链接分为静态链接和动态链接。 静态链接是以多个重定位目标文件和命令参数作为输入，生成一个完全链接的可以加载和运行的可执行目标文件的过程。 这个过程由链接器完成，链接器主要的任务就是符号解析（sysbol re">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-two/linker_static_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-two/linker_static_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-two/linker_static_3.png">
+<meta property="og:updated_time" content="2021-05-05T14:59:36.115Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读书笔记|《程序员的自我修养》- 03 静态链接">
+<meta name="twitter:description" content="这是《程序员自我修养–链接、装载与库》读书笔记的第三篇，静态链接。 简单来说静态链接将多个目标文件性质相同部分，合并写入到输出目标文件中，然后将符号解析并且对外部引用符号重新定位。 目标文件的链接分为静态链接和动态链接。 静态链接是以多个重定位目标文件和命令参数作为输入，生成一个完全链接的可以加载和运行的可执行目标文件的过程。 这个过程由链接器完成，链接器主要的任务就是符号解析（sysbol re">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2021/05/05/linker-read-two/linker_static_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2021/05/05/linker-read-two/">
+
+
+
+
+
+  <title>读书笔记|《程序员的自我修养》- 03 静态链接 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2021/05/05/linker-read-two/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">读书笔记|《程序员的自我修养》- 03 静态链接</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-05T22:00:38+08:00">
+                2021-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这是《程序员自我修养–链接、装载与库》读书笔记的第三篇，静态链接。</p>
+<p><strong>简单来说静态链接将多个目标文件性质相同部分，合并写入到输出目标文件中，然后将符号解析并且对外部引用符号重新定位。</strong></p>
+<p><strong>目标文件的链接分为静态链接和动态链接</strong>。</p>
+<p><strong>静态链接</strong>是以多个重定位目标文件和命令参数作为输入，生成一个完全链接的可以加载和运行的可执行目标文件的过程。</p>
+<p>这个过程由链接器完成，<strong>链接器主要的任务就是符号解析（sysbol resolution） 和重定位（relocation）</strong></p>
+<p><strong>动态链接（Dynamic Linking)</strong> 为了解决静态链接中存在的空间浪费和更新困难的问题，把程序的模块相互分割开来，形成独立文件，不是将它们静态链接到一起。把链接过程推迟到运行时进行，这就是动态链接。</p>
+<h2 id="一、空间与地址分配"><a href="#一、空间与地址分配" class="headerlink" title="一、空间与地址分配"></a>一、空间与地址分配</h2><p>链接器是将多个目标文件相同性质的段合并到一起，并为目标文件分配地址和空间。<br>这里的地址和空间一是指在输出的可执行文件中的空间，二是指在转载后的虚拟地址中的虚拟地址空间。</p>
+<p>链接器分两步链接：</p>
+<ul>
+<li><strong>1.空间与地址分配</strong></li>
+</ul>
+<p>扫描所有的输入目标文件，获得它们的各个段的长度、属性和位置，并且将输入目标文件中的符号表中所有符号定义和符号引用收集起来，统一放到一个全局符号表。</p>
+<ul>
+<li><strong>2.符号解析和重定位</strong></li>
+</ul>
+<p>使用第一步收集到的信息，读取输入文件中段的数据、重定位信息，并且进行符号解析与重定位、调整代码中的地址等。</p>
+<p><img src="/2021/05/05/linker-read-two/linker_static_1.png" width="80%" height="80%"></p>
+<p>例子：</p>
+<h3 id="1-1-符号地址的确定"><a href="#1-1-符号地址的确定" class="headerlink" title="1.1 符号地址的确定"></a>1.1 符号地址的确定</h3><p>Linux 下， ElF 可执行文件默认地址从 0x08048000 开始分配。</p>
+<p>在扫描和空间分配阶段，链接器对空间进行分配，这个时候各个段在链接后的虚拟地址已经确定。各个符号在段内的相对位置是固定的，它们在合并后的位置等于段位置虚拟地址加上偏移地址</p>
+<p><strong>合并后目标文件中的符号地址 = 段虚拟地址 + 偏移地址</strong></p>
+<p><img src="/2021/05/05/linker-read-two/linker_static_2.png" width="80%" height="80%"></p>
+<h2 id="二、符号解析与重定位"><a href="#二、符号解析与重定位" class="headerlink" title="二、符号解析与重定位"></a>二、符号解析与重定位</h2><h3 id="2-1-重定位"><a href="#2-1-重定位" class="headerlink" title="2.1 重定位"></a>2.1 重定位</h3><p>当源文件有外部符号，编译的时候，会把外部符号的地址用 0 替代，所以，把原始目标文件需要重定位。</p>
+<p>链接器根据重定位表（Relocation Table） 获取重定位的信息.</p>
+<p>重定位表在目标文件的 ”.rel.text“ 段</p>
+<p><strong>重新定位入口的结构</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Efl32_Addr r_offset;</span><br><span class="line">    Elf32_Word r_info;</span><br><span class="line">&#125; Elf32_Rel;</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<ul>
+<li>r_offset， 重定位入口的偏移</li>
+<li>r_info， 重定位入口的类型和符号</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a.o:     file format mach-o-x86-64</span><br><span class="line"></span><br><span class="line">RELOCATION RECORDS FOR [.text]:</span><br><span class="line">OFFSET           TYPE              VALUE</span><br><span class="line">000000000000001b BRANCH32          _swap</span><br><span class="line">000000000000000b GOT_LOAD          _shared</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RELOCATION RECORDS FOR [__LD.__compact_unwind]:</span><br><span class="line">OFFSET           TYPE              VALUE</span><br><span class="line">0000000000000000 64                .text</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-符号解析"><a href="#2-2-符号解析" class="headerlink" title="2.2 符号解析"></a>2.2 符号解析</h3><p>目标文件中外部符号时，需要在重定位的时候对这个符号进行解析。</p>
+<p>在重定位时，链接器查找所有输入目标文件的符号组成的全局符号表，找到相应的符号后进行重定位。</p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ld a.o</span><br><span class="line"></span><br><span class="line">Undefined symbols for architecture x86_64:</span><br><span class="line">  &quot;_shared&quot;, referenced from:</span><br><span class="line">      _main in a.o</span><br><span class="line">  &quot;_swap&quot;, referenced from:</span><br><span class="line">      _main in a.o</span><br><span class="line">ld: symbol(s) not found for architecture x86_64</span><br></pre></td></tr></table></figure>
+<p>在 a.c 文件中， <code>shared</code> 和  <code>swap</code> 是 b.c 文件中定义的，直接有 ld 链接 a.o 会发现这两个符号未定义</p>
+<h3 id="2-3-指令修正"><a href="#2-3-指令修正" class="headerlink" title="2.3 指令修正"></a>2.3 指令修正</h3><p>不同的处理器指令对于地址的格式和方式是不一样的，因此一些指令需要修正。</p>
+<p>重定位入口 r_info 成员低 8 位表示重定位入口类型</p>
+<table>
+<thead>
+<tr>
+<th>宏定义</th>
+<th>值</th>
+<th>重定位修正方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R_368_32</td>
+<td>1</td>
+<td>绝对寻址修正 S + A</td>
+</tr>
+<tr>
+<td>R_386_PC32</td>
+<td>2</td>
+<td>相对寻址修正 S + A - P</td>
+</tr>
+</tbody>
+</table>
+<p>A = 保存在被修正位置的值<br>P = 被修正的位置（相对于段开始的偏移量或者虚拟地址），注意，该值可通过 r_offset 计算得到<br>S = 符号的实际地址，即由 r_info</p>
+<p><strong>绝对寻址修正</strong></p>
+<p>绝对修正是 R_368_32 类型<br>修正后的地址是 S +  A;</p>
+<p><strong>相对寻址修正</strong></p>
+<p>相对修正是 R_386_PC32 类型<br>修正后的地址是 S + A - P</p>
+<h2 id="三、弱符号解析"><a href="#三、弱符号解析" class="headerlink" title="三、弱符号解析"></a>三、弱符号解析</h2><p>由于弱符号机制允许同一个符号的定义存在于多个文件中，会导致问题：如果一个弱符号定义在多个目标文件中，它们的类型有不同，就会面临多个符号定义不一致的情况。</p>
+<p>主要分三种情况：</p>
+<ul>
+<li>两个或两个以上强符号类型不一致；</li>
+<li>有一个强符号，其他都是弱符号，出现类型不一致；</li>
+<li>两个或两个以上弱符号类型不一致</li>
+</ul>
+<p>弱符号链接的规则在 .common 段中。</p>
+<p>对第一种情况，链接器会报符号多重定义错误，不需要处理；</p>
+<p>对第二种情况，输出结果中的符号所占空间以强符号的为准；</p>
+<p>对第三种情况，输出结果以输入文件中最大的那个为准；</p>
+<h2 id="四、其他"><a href="#四、其他" class="headerlink" title="四、其他"></a>四、其他</h2><p>编译遇到问题：</p>
+<ul>
+<li>undefined reference to `__stack_chk_fail</li>
+</ul>
+<p><img src="/2021/05/05/linker-read-two/linker_static_3.png" width="80%" height="80%"></p>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/程序员的自我修养/" rel="tag"># 程序员的自我修养</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/28/linker-read-one/" rel="next" title="读书笔记|《程序员的自我修养》- 02 目标文件">
+                <i class="fa fa-chevron-left"></i> 读书笔记|《程序员的自我修养》- 02 目标文件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、空间与地址分配"><span class="nav-number">1.</span> <span class="nav-text">一、空间与地址分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-符号地址的确定"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 符号地址的确定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、符号解析与重定位"><span class="nav-number">2.</span> <span class="nav-text">二、符号解析与重定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-重定位"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-符号解析"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 符号解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-指令修正"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 指令修正</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、弱符号解析"><span class="nav-number">3.</span> <span class="nav-text">三、弱符号解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、其他"><span class="nav-number">4.</span> <span class="nav-text">四、其他</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
