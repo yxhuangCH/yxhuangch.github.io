@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="软件工程,">
+
+
+
+
+  
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="[TOC] 这是极客时间《许式伟的结构课》中的 &amp;lt;70|怎样写设计文档&amp;gt; 的笔记 产品经理和架构师是一体两面，对人的能力要求比较像，但是分工不同，关注的维度不一样产品经理关注的维度，关键词是：用户需求、技术赋能、商业成功架构师的关注维度是，关键词是：用户需求、技术实现、业务迭代 设计是软件工程中的头等大事，我们应该在这里“多浪费点时间”，这样的 ”浪费“ 是最终会得到十倍甚至百倍以上的">
+<meta name="keywords" content="软件工程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何写设计文档">
+<meta property="og:url" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="[TOC] 这是极客时间《许式伟的结构课》中的 &amp;lt;70|怎样写设计文档&amp;gt; 的笔记 产品经理和架构师是一体两面，对人的能力要求比较像，但是分工不同，关注的维度不一样产品经理关注的维度，关键词是：用户需求、技术赋能、商业成功架构师的关注维度是，关键词是：用户需求、技术实现、业务迭代 设计是软件工程中的头等大事，我们应该在这里“多浪费点时间”，这样的 ”浪费“ 是最终会得到十倍甚至百倍以上的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/architecture_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/architecture_2.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/architecture_3.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/architecture_4.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/architecture_5.png">
+<meta property="og:updated_time" content="2021-07-11T12:12:24.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何写设计文档">
+<meta name="twitter:description" content="[TOC] 这是极客时间《许式伟的结构课》中的 &amp;lt;70|怎样写设计文档&amp;gt; 的笔记 产品经理和架构师是一体两面，对人的能力要求比较像，但是分工不同，关注的维度不一样产品经理关注的维度，关键词是：用户需求、技术赋能、商业成功架构师的关注维度是，关键词是：用户需求、技术实现、业务迭代 设计是软件工程中的头等大事，我们应该在这里“多浪费点时间”，这样的 ”浪费“ 是最终会得到十倍甚至百倍以上的">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/architecture_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/">
+
+
+
+
+
+  <title>如何写设计文档 | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2021/07/11/how-to-write-code-design/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何写设计文档</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-11T20:12:12+08:00">
+                2021-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<p>这是极客时间《许式伟的结构课》中的 <a href="https://time.geekbang.org/column/article/185234" target="_blank" rel="noopener">&lt;70|怎样写设计文档&gt;</a> 的笔记</p>
+<p><strong>产品经理和架构师是一体两面，对人的能力要求比较像，但是分工不同，关注的维度不一样<br>产品经理关注的维度，关键词是：用户需求、技术赋能、商业成功<br>架构师的关注维度是，关键词是：用户需求、技术实现、业务迭代</strong></p>
+<p><strong>设计是软件工程中的头等大事，我们应该在这里“多浪费点时间”，这样的 ”浪费“ 是最终会得到十倍甚至百倍以上的回报</strong></p>
+<h2 id="1-文档的大体内容"><a href="#1-文档的大体内容" class="headerlink" title="1. 文档的大体内容"></a>1. 文档的大体内容</h2><p>设计文档包含的内容，大体如下</p>
+<ul>
+<li>现状：我们在哪里，现状是什么样的</li>
+<li>需求：我们的问题或诉求是什么，要如何改进</li>
+<li>需求满足方式：<ul>
+<li>要做成什么样，交付物规格，使用界面（接口）是什么</li>
+<li>怎么做到？交付物的实现原理</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-1-现状"><a href="#1-1-现状" class="headerlink" title="1.1 现状"></a>1.1 现状</h3><p>现状不需要长篇累牍，现状更的多是陈述与我们要做的改变相关的重要事实，侧重于强调这些事实的存在性和重要性。</p>
+<h3 id="1-2-需求"><a href="#1-2-需求" class="headerlink" title="1.2 需求"></a>1.2 需求</h3><p>需求也不需要长篇累牍，陈述对痛点和改进方法即可</p>
+<h3 id="1-3-需求满足方式"><a href="#1-3-需求满足方式" class="headerlink" title="1.3 需求满足方式"></a>1.3 需求满足方式</h3><p>要详细写清楚，把我们的设计方案谈清楚。具体包含交付物规格和实现原理</p>
+<h4 id="1-3-1-交付物规格"><a href="#1-3-1-交付物规格" class="headerlink" title="1.3.1 交付物规格"></a>1.3.1 交付物规格</h4><p>交付物规格或者说使用页面（接口）体现的是别人怎么使用我。<br>如果是产品设计，交付物规格可能是 “产品原型”。<br>架构设计，交付物规格可能是 “网络 API 协议” 或者 “包（package）导出的公开类或函数”</p>
+<h4 id="1-3-2-实现原理"><a href="#1-3-2-实现原理" class="headerlink" title="1.3.2 实现原理"></a>1.3.2 实现原理</h4><p>实现原理，写的是我们是怎样做到的。<br>如果是产品设计，它写的是用户需求对应的 UserStory 设计，也就是业务流具体是怎样完成的。<br>架构设计，它写的是 UserStory 具体如何被我们的程序逻辑所实现的。</p>
+<p><strong>指导思想</strong>是下面的公式</p>
+<blockquote>
+<p> 程序 = 数据结构 + 算法</p>
+</blockquote>
+<p>在写程序实现逻辑时，从数据结构和算法两个维度去描述它。<br>其中数据结构可以是内存数据结构，也可以是外存数据结构，还可以是数据库的表结构。<br>算法是基于数据结构， 它描述的是 UserStory 的具体实现，它可以是 UML 是时序图或者外代码。</p>
+<p>对于模块的详细设计需要做的是</p>
+<ul>
+<li>第一，要交代清楚 “数据结构” 是什么样的</li>
+<li>第二，然后再将一个个 UserStory 的业务流程讲清楚</li>
+</ul>
+<p>在用 UserStory 的时候，画 UML 时序图，在表达上伪代码的设计都是必需的。</p>
+<h4 id="1-3-3-使用界面（接口）"><a href="#1-3-3-使用界面（接口）" class="headerlink" title="1.3.3 使用界面（接口）"></a>1.3.3 使用界面（接口）</h4><p>使用界面，也就是接口，主要关心有两点：</p>
+<ul>
+<li>接口是否足够简单，是否自然体现业务需求</li>
+<li>尽可能避免进行接口变更，接口要向前兼容</li>
+</ul>
+<p>这些接口能够把系统的关键 UserStory 串起来。</p>
+<p>一个方法是对模块的调用接口进行分类，它对外提供的访问接口一般是下面三种：</p>
+<ul>
+<li>常规 DOM API, 即正常的模块功能调用</li>
+<li>事件(Event)的发送与监听</li>
+<li>插件(Plugin)的注册</li>
+</ul>
+<p><strong>如何表达模块间的关系</strong><br>如何表达模块间的关系是非常重要，但是也是件非常复杂的事。<br>一般有以下几种方式表达模块间的关系：</p>
+<ul>
+<li><p>不整体描述模块的关系，而是基于一个个 UserStory 把模块之间的调用关系画出来<br>  这类图并不是表达模块的好选择，因为并没有对模块关系进行抽象。<br>  这类图更多是被用在面向客户介绍 API SDK 的背后实现原理时采用，而不是出现在设计文档。<br>  例如，下图是上传一个文件的业务流程图</p>
+<p>  <img src="/2021/07/11/how-to-write-code-design/architecture_1.png"></p>
+</li>
+<li><p>如果只是对于 UserStory 业务流程的表达，UML 时序图通常是更好的表达方式</p>
+</li>
+<li><p>表达模块关系的视角，可以是从架构分解上看待，可以把系统看着 “一个最小化的核心系统 + 多个彼此正交分解的周边系统” </p>
+<p><img src="/2021/07/11/how-to-write-code-design/architecture_2.png"></p>
+<p><strong>其他常见的几种图</strong></p>
+<ul>
+<li><p>线框图<br><img src="/2021/07/11/how-to-write-code-design/architecture_3.png"></p>
+</li>
+<li><p>流程图<br><img src="/2021/07/11/how-to-write-code-design/architecture_4.png"></p>
+</li>
+<li><p>时序图<br><img src="/2021/07/11/how-to-write-code-design/architecture_5.png"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-4-多个设计方案对比"><a href="#1-4-多个设计方案对比" class="headerlink" title="1.4 多个设计方案对比"></a>1.4 多个设计方案对比</h3><p>有时候一篇设计文档不仅仅只有一个方案，而是有多个可能的需求实现方式，这个时候，在设计文档可以放多个多个方案对比。<br>对比的话，通常需要描述清楚两个设计方案的本质差别，并且从下面的几个维度进行对比：</p>
+<ul>
+<li>方案的易实施性与可维护性</li>
+<li>方案的时间复杂度与空间复杂度</li>
+</ul>
+<p>不同的业务系统倾向性不太一样。<br>对绝大部分业务，我们最关心的是工程效率，所以在方案的易实施性与可维护性为先<br>对于部分成本与性能非常敏感的业务，则通常在保证方案的时间复杂度与空间复杂度达到业务预期的前提下，再考虑工程效率。</p>
+<h2 id="2-参考"><a href="#2-参考" class="headerlink" title="2.参考"></a>2.参考</h2><ul>
+<li><a href="https://time.geekbang.org/column/article/185234" target="_blank" rel="noopener">极客时间《许式伟的架构课  – 70 | 怎么写设计文档？》</a></li>
+<li><a href="https://time.geekbang.org/column/article/88606" target="_blank" rel="noopener">极客时间《软件工程之美 – 16 | 怎样才能写好项目文档？》</a></li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/软件工程/" rel="tag"># 软件工程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/05/25/android-native-ptl-hook/" rel="next" title="Android GOT/PTL Hook">
+                <i class="fa fa-chevron-left"></i> Android GOT/PTL Hook
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-文档的大体内容"><span class="nav-number">1.</span> <span class="nav-text">1. 文档的大体内容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-现状"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 现状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-需求"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-需求满足方式"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 需求满足方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-交付物规格"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1 交付物规格</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-实现原理"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2 实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-使用界面（接口）"><span class="nav-number">1.3.3.</span> <span class="nav-text">1.3.3 使用界面（接口）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-多个设计方案对比"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 多个设计方案对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-参考"><span class="nav-number">2.</span> <span class="nav-text">2.参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
