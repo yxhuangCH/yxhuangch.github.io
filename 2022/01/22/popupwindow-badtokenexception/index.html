@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="[toc] PopupWindow 的 BadTokenException 2.0.0 版本出现这个崩溃 123456789101112131415161718192021222324Fatal Exception: android.view.WindowManager$BadTokenException: Unable to add window -- token null is not val">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PopupWindow 的 BadTokenException">
+<meta property="og:url" content="https://yxhuangch.github.io/2022/01/22/popupwindow-badtokenexception/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="[toc] PopupWindow 的 BadTokenException 2.0.0 版本出现这个崩溃 123456789101112131415161718192021222324Fatal Exception: android.view.WindowManager$BadTokenException: Unable to add window -- token null is not val">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2022/01/22/popupwindow-badtokenexception/bad_token_1.png">
+<meta property="og:updated_time" content="2022-01-22T08:44:37.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PopupWindow 的 BadTokenException">
+<meta name="twitter:description" content="[toc] PopupWindow 的 BadTokenException 2.0.0 版本出现这个崩溃 123456789101112131415161718192021222324Fatal Exception: android.view.WindowManager$BadTokenException: Unable to add window -- token null is not val">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2022/01/22/popupwindow-badtokenexception/bad_token_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2022/01/22/popupwindow-badtokenexception/">
+
+
+
+
+
+  <title>PopupWindow 的 BadTokenException | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2022/01/22/popupwindow-badtokenexception/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PopupWindow 的 BadTokenException</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-01-22T16:37:08+08:00">
+                2022-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[toc]</p>
+<p>PopupWindow 的 BadTokenException</p>
+<p>2.0.0 版本出现这个崩溃</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Fatal Exception: android.view.WindowManager$BadTokenException: Unable to add window -- token null is not valid; is your activity running?</span><br><span class="line">       at android.view.ViewRootImpl.setView(ViewRootImpl.java:890)</span><br><span class="line">       at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:337)</span><br><span class="line">       at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:109)</span><br><span class="line">       at android.widget.PopupWindow.invokePopup(PopupWindow.java:1333)</span><br><span class="line">       at android.widget.PopupWindow.showAsDropDown(PopupWindow.java:1156)</span><br><span class="line">       at androidx.core.widget.PopupWindowCompat.showAsDropDown(PopupWindowCompat.java:69)</span><br><span class="line">       at com.dianyun.pcgo.gift.api.RelativePopupWindow.showOnAnchor(RelativePopupWindow.java:196)</span><br><span class="line">       at com.dianyun.pcgo.gift.api.RelativePopupWindow.showOnAnchor(RelativePopupWindow.java:133)</span><br><span class="line">       at com.dianyun.pcgo.gift.api.RelativePopupWindow.showOnAnchor(RelativePopupWindow.java:108)</span><br><span class="line">       at com.dianyun.pcgo.home.explore.discover.ui.HomeExploreTopRightView.showReceiveGiftTips(HomeExploreTopRightView.java:112)</span><br><span class="line">       at com.dianyun.pcgo.home.explore.discover.ui.HomeExploreTopRightView.access$showReceiveGiftTips(HomeExploreTopRightView.java:42)</span><br><span class="line">       at com.dianyun.pcgo.home.explore.discover.ui.HomeExploreTopRightView$startObserver$$inlined$apply$lambda$1.onChanged(HomeExploreTopRightView.java:81)</span><br><span class="line">       at com.dianyun.pcgo.home.explore.discover.ui.HomeExploreTopRightView$startObserver$$inlined$apply$lambda$1.onChanged(HomeExploreTopRightView.java:42)</span><br><span class="line">       at androidx.lifecycle.LiveData.considerNotify(LiveData.java:133)</span><br><span class="line">       at androidx.lifecycle.LiveData.dispatchingValue(LiveData.java:151)</span><br><span class="line">       at androidx.lifecycle.LiveData.setValue(LiveData.java:309)</span><br><span class="line">       at androidx.lifecycle.MutableLiveData.setValue(MutableLiveData.java:50)</span><br><span class="line">       at com.dianyun.pcgo.home.explore.HomeExploreMainViewModel$queryGiftObtainStatus$1.invokeSuspend(HomeExploreMainViewModel.java:91)</span><br><span class="line">       at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(BaseContinuationImpl.java:33)</span><br><span class="line">       at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.java:106)</span><br><span class="line">       at android.os.Handler.handleCallback(Handler.java:739)</span><br><span class="line">       at android.os.Handler.dispatchMessage(Handler.java:95)</span><br><span class="line">       at android.os.Looper.loop(Looper.java:148)</span><br></pre></td></tr></table></figure>
+<h1 id="1-初步分析"><a href="#1-初步分析" class="headerlink" title="1 初步分析"></a>1 初步分析</h1><p>原始的代码</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">showReceiveGiftTips</span><span class="params">(tips: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">    L.info(TAG, <span class="string">"showReceiveGiftTips tips <span class="variable">$tips</span>"</span>)</span><br><span class="line">    <span class="keyword">val</span> activity = getContextToActivity()</span><br><span class="line">    <span class="keyword">if</span> ((tips.isNotEmpty() &amp;&amp; mHomeReceiveGiftTipsPopupWindow == <span class="literal">null</span></span><br><span class="line">                    &amp;&amp; activity?.isFinishing == <span class="literal">false</span> &amp;&amp; !activity.isDestroyed) &amp;&amp; mVisibleToUser) &#123;</span><br><span class="line">        mHomeReceiveGiftTipsPopupWindow = HomeReceiveGiftTipsPopupWindow(context!!)</span><br><span class="line">        mHomeReceiveGiftTipsPopupWindow!!.setData(tips)</span><br><span class="line">        mHomeReceiveGiftTipsPopupWindow!!.showOnAnchor(</span><br><span class="line">                fl_gift,</span><br><span class="line">                RelativePopupWindow.VerticalPosition.BELOW,</span><br><span class="line">                RelativePopupWindow.HorizontalPosition.CENTER</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们现在找到抛出异常的地方</p>
+<p>ViewRootImpl#setView</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * We have one child</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setView</span><span class="params">(View view, WindowManager.LayoutParams attrs, View panelParentView)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mView == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mView = view;</span><br><span class="line">              mAttachInfo.mDisplayState = mDisplay.getState();</span><br><span class="line">                mDisplayManager.registerDisplayListener(mDisplayListener, mHandler);</span><br><span class="line"></span><br><span class="line">                mViewLayoutDirectionInitial = mView.getRawLayoutDirection();</span><br><span class="line">                mFallbackEventHandler.setView(view);</span><br><span class="line">                mWindowAttributes.copyFrom(attrs);</span><br><span class="line">                <span class="keyword">if</span> (mWindowAttributes.packageName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mWindowAttributes.packageName = mBasePackageName;</span><br><span class="line">                &#125;</span><br><span class="line">                attrs = mWindowAttributes;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">              requestLayout();  &lt;--注意这里</span><br><span class="line">            </span><br><span class="line">              <span class="keyword">int</span> res; <span class="comment">/* = WindowManagerImpl.ADD_OKAY; */</span></span><br><span class="line"></span><br><span class="line">                ...</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    mOrigWindowType = mWindowAttributes.type;</span><br><span class="line">                    mAttachInfo.mRecomputeGlobalAttributes = <span class="keyword">true</span>;</span><br><span class="line">                    collectViewAttributes();</span><br><span class="line">                    res = mWindowSession.addToDisplay(mWindow, mSeq, mWindowAttributes,</span><br><span class="line">                            getHostVisibility(), mDisplay.getDisplayId(), mTmpFrame,</span><br><span class="line">                            mAttachInfo.mContentInsets, mAttachInfo.mStableInsets,</span><br><span class="line">                            mAttachInfo.mOutsets, mAttachInfo.mDisplayCutout, mInputChannel,</span><br><span class="line">                            mTempInsets);</span><br><span class="line">                    setFrame(mTmpFrame);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                    ..</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                </span><br><span class="line">                 <span class="keyword">if</span> (res &lt; WindowManagerGlobal.ADD_OKAY) &#123;</span><br><span class="line">                    mAttachInfo.mRootView = <span class="keyword">null</span>;</span><br><span class="line">                    mAdded = <span class="keyword">false</span>;</span><br><span class="line">                    mFallbackEventHandler.setView(<span class="keyword">null</span>);</span><br><span class="line">                    unscheduleTraversals();</span><br><span class="line">                    setAccessibilityFocus(<span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">                    <span class="keyword">switch</span> (res) &#123;  <span class="comment">//  &lt;------------------ 这里抛出异常</span></span><br><span class="line">                        <span class="keyword">case</span> WindowManagerGlobal.ADD_BAD_APP_TOKEN:</span><br><span class="line">                        <span class="keyword">case</span> WindowManagerGlobal.ADD_BAD_SUBWINDOW_TOKEN:</span><br><span class="line">                            <span class="keyword">throw</span> <span class="keyword">new</span> WindowManager.BadTokenException(</span><br><span class="line">                                    <span class="string">"Unable to add window -- token "</span> + attrs.token</span><br><span class="line">                                    + <span class="string">" is not valid; is your activity running?"</span>);</span><br><span class="line"></span><br><span class="line">                ...</span><br><span class="line">                </span><br><span class="line">                ...</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="2-初步解决"><a href="#2-初步解决" class="headerlink" title="2 初步解决"></a>2 初步解决</h1><p>看到这个问题，一般会认为是 Activity 已经 finished 或者应 destroyed 了，所以我们在前面加判断。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">showReceiveGiftTips</span><span class="params">(tips: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">    L.info(TAG, <span class="string">"showReceiveGiftTips tips <span class="variable">$tips</span>"</span>)</span><br><span class="line">    <span class="keyword">if</span> (!mVisibleToUser) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (tips.isNullOrEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mHomeReceiveGiftTipsPopupWindow != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> activity = getContextToActivity()  <span class="comment">// 这里加了 activity 的判断</span></span><br><span class="line">    <span class="keyword">if</span> (ActivityUtils.activityIsDestroyed(activity)) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    mHomeReceiveGiftTipsPopupWindow = HomeReceiveGiftTipsPopupWindow(context!!)</span><br><span class="line">    mHomeReceiveGiftTipsPopupWindow!!.setData(tips)</span><br><span class="line">    mHomeReceiveGiftTipsPopupWindow!!.showOnAnchor(</span><br><span class="line">            fl_gift,</span><br><span class="line">            RelativePopupWindow.VerticalPosition.BELOW,</span><br><span class="line">            RelativePopupWindow.HorizontalPosition.CENTER</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们开心的修复，在 2.0.1 跟了出去</p>
+<p>然而，还是有问题</p>
+<p><img src="/2022/01/22/popupwindow-badtokenexception/bad_token_1.png"></p>
+<h1 id="3-分析过程"><a href="#3-分析过程" class="headerlink" title="3 分析过程"></a>3 分析过程</h1><p>第一次解决尝试失败，我们在重新审视这个崩溃。</p>
+<p>下面是平时我们遇到的 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">android.view.WindowManager$BadTokenException: Unable to add window — token android.os.BinderProxy@<span class="number">447</span>a6748 is not valid; is your activity running?</span><br><span class="line">at android.view.ViewRoot.setView(ViewRoot.java:<span class="number">468</span>)</span><br><span class="line">at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:<span class="number">177</span>)</span><br><span class="line">at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:<span class="number">91</span>)</span><br><span class="line">at android.view.Window$LocalWindowManager.addView(Window.java:<span class="number">424</span>)</span><br><span class="line">at android.app.Dialog.show(Dialog.java:<span class="number">239</span>)</span><br><span class="line">at android.app.Activity.showDialog(Activity.java:<span class="number">2488</span>)</span><br><span class="line">…</span><br><span class="line">at android.os.Handler.dispatchMessage(Handler.java:<span class="number">99</span>)</span><br></pre></td></tr></table></figure>
+<p>结合抛出的异常信息，我们发现 chikii 抛出的这个 BadTokenException token 的值为空。它和我们平时遇到的 BadTokenException 有点不一样.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WindowManager$BadTokenException: Unable to add window -- token null is not valid; is your activity running?</span><br></pre></td></tr></table></figure>
+<p>这个 token 是 null 就是突破口</p>
+<p>我们先看看这个  token 是从哪里来的</p>
+<h2 id="3-1-PopupWindow-show-的流程"><a href="#3-1-PopupWindow-show-的流程" class="headerlink" title="3.1 PopupWindow#show 的流程"></a>3.1 PopupWindow#show 的流程</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line"></span><br><span class="line">RelativePopupWindow -&gt; RelativePopupWindow: showOnAnchor(anchor)</span><br><span class="line">RelativePopupWindow -&gt; PopupWindow: showAtLocation(parent) ①</span><br><span class="line"></span><br><span class="line">PopupWindow -&gt; PopupWindow: showAtLocation(token) ②  </span><br><span class="line"></span><br><span class="line">PopupWindow -&gt; PopupWindow: createPopupLayoutParams(token): WindowManager.LayoutParams③</span><br><span class="line"></span><br><span class="line">PopupWindow -&gt; PopupWindow: invokePopup(WindowManager.LayoutParams) ④</span><br><span class="line"></span><br><span class="line">PopupWindow -&gt; WindowManagerImpl:addView(View, iewGroup.LayoutParams)</span><br><span class="line"></span><br><span class="line">WindowManagerImpl -&gt; WindowManagerGlobal:addView(View,ViewGroup.LayoutParams ...) ⑤</span><br><span class="line"></span><br><span class="line">WindowManagerGlobal -&gt; ViewRootImpl:setView(view,WindowManager.LayoutParams,panelParentView) ⑥</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p>说明：<br>①<br>PopupWindow#showAtLocation<br>在这个方法拿到 anchor 锚点 View 的 windowToken，然后一路传着下去<br>仍然会</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showAtLocation</span><span class="params">(View parent, <span class="keyword">int</span> gravity, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    mParentRootView = <span class="keyword">new</span> WeakReference&lt;&gt;(parent.getRootView());</span><br><span class="line">    showAtLocation(parent.getWindowToken(), gravity, x, y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>②③<br>创建 WindowManager.LayoutParams</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PopupWindow#showAtLocation</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showAtLocation</span><span class="params">(IBinder token, <span class="keyword">int</span> gravity, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> WindowManager.LayoutParams p = createPopupLayoutParams(token);</span><br><span class="line">    preparePopup(p);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    invokePopup(p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> WindowManager.<span class="function">LayoutParams <span class="title">createPopupLayoutParams</span><span class="params">(IBinder token)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> WindowManager.LayoutParams p = <span class="keyword">new</span> WindowManager.LayoutParams();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    p.token = token;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>④<br>PopupWindow#invokePopup<br>将 DecorView 添加到 WindowManager 中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">invokePopup</span><span class="params">(WindowManager.LayoutParams p)</span> </span>&#123;</span><br><span class="line">      </span><br><span class="line">      ...</span><br><span class="line"></span><br><span class="line">       <span class="keyword">final</span> PopupDecorView decorView = mDecorView;</span><br><span class="line"></span><br><span class="line">       ...</span><br><span class="line"></span><br><span class="line">       mWindowManager.addView(decorView, p);</span><br><span class="line"></span><br><span class="line">       ...</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>⑤<br>WindowManagerGlobal#addView 里面创建 ViewRootImpl 并调用 ViewRootImpl 的 addView 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WindowManagerGlobal#addView </span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addView</span><span class="params">(View view, ViewGroup.LayoutParams      params,Display display, Window parentWindow)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">     ....</span><br><span class="line"></span><br><span class="line">    ViewRootImpl root;</span><br><span class="line"></span><br><span class="line">    root = <span class="keyword">new</span> ViewRootImpl(view.getContext(), display);</span><br><span class="line"></span><br><span class="line">    view.setLayoutParams(wparams);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    root.setView(view, wparams, panelParentView);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>⑥<br>调用 WindowSession.addToDisplay 显示 PopuWindow</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ViewRootImpl#setView</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setView</span><span class="params">(View view, WindowManager.LayoutParams attrs, View panelParentView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mView == <span class="keyword">null</span>) &#123;</span><br><span class="line">                mView = view;</span><br><span class="line"></span><br><span class="line">                ...</span><br><span class="line"></span><br><span class="line">                attrs = mWindowAttributes;</span><br><span class="line"></span><br><span class="line">                ...</span><br><span class="line"></span><br><span class="line">                requestLayout();</span><br><span class="line"></span><br><span class="line">                ...</span><br><span class="line"></span><br><span class="line">                 <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">                    ...</span><br><span class="line">                     <span class="comment">// 调用 WindowSession.addToDisplay 显示 PopupWindow</span></span><br><span class="line">                    res = mWindowSession.addToDisplay(...);</span><br><span class="line"></span><br><span class="line">                &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line"></span><br><span class="line">                    ...</span><br><span class="line"></span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
+<p>现在整个调用的 链路都非常清楚了，调用  HomeReceiveGiftTipsPopupWindow 的 锚点 View 的 token 为空，即<br>fl_gift 的token 为空</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mHomeReceiveGiftTipsPopupWindow = HomeReceiveGiftTipsPopupWindow(context!!)</span><br><span class="line">    mHomeReceiveGiftTipsPopupWindow!!.setData(tips)</span><br><span class="line">    mHomeReceiveGiftTipsPopupWindow!!.showOnAnchor(</span><br><span class="line">            fl_gift,  &lt;---- 这个 View 的 token 为空</span><br><span class="line">            RelativePopupWindow.VerticalPosition.BELOW,</span><br><span class="line">            RelativePopupWindow.HorizontalPosition.CENTER</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-View-的-token-来源"><a href="#3-2-View-的-token-来源" class="headerlink" title="3.2  View 的 token 来源"></a>3.2  View 的 token 来源</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// View# getWindowToken</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> IBinder <span class="title">getWindowToken</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mAttachInfo != <span class="keyword">null</span> ? mAttachInfo.mWindowToken : <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>View 的 Token 是从 mAttachInfo 拿的，因此要知道 mAttachInfo 是怎么来的</p>
+<h3 id="3-2-1-View-AttachInfo"><a href="#3-2-1-View-AttachInfo" class="headerlink" title="3.2.1 View$AttachInfo"></a>3.2.1 View$AttachInfo</h3><p>AttachInfo 是 View 的一个内部类，里面包含信息主要有</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// View$AttachInfo.java</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * A set of information given to a view when it is attached to its parent</span></span><br><span class="line"><span class="comment">     * window.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"> <span class="keyword">final</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AttachInfo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">final</span> IWindowSession mSession;</span><br><span class="line"></span><br><span class="line">            </span><br><span class="line">        <span class="keyword">final</span> IWindow mWindow;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> IBinder mWindowToken;  <span class="comment">// 这个就是要拿的 token</span></span><br><span class="line"></span><br><span class="line">        Display mDisplay;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Callbacks mRootCallbacks;</span><br><span class="line"></span><br><span class="line">        IWindowId mIWindowId;</span><br><span class="line">        WindowId mWindowId;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * The top view of the hierarchy.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        View mRootView;</span><br><span class="line"></span><br><span class="line">        IBinder mPanelParentWindowToken;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> mHardwareAccelerated;</span><br><span class="line">        <span class="keyword">boolean</span> mHardwareAccelerationRequested;</span><br><span class="line">        ThreadedRenderer mThreadedRenderer;</span><br><span class="line">        List&lt;RenderNode&gt; mPendingAnimatingRenderNodes;</span><br><span class="line"></span><br><span class="line">        ....</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>AttachInfo 的创建在 ViewRootImpl </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ViewRootImpl.java</span></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">ViewRootImpl</span><span class="params">(Context context, Display display)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">     ...</span><br><span class="line"></span><br><span class="line">    mWindowSession = WindowManagerGlobal.getWindowSession();</span><br><span class="line"></span><br><span class="line">    mWindow = <span class="keyword">new</span> W(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里创建 mAttachInfo</span></span><br><span class="line">    mAttachInfo = <span class="keyword">new</span> View.AttachInfo(mWindowSession, mWindow, display, <span class="keyword">this</span>, mHandler, <span class="keyword">this</span>,</span><br><span class="line">            context);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-2-AttachInfo-传递给-View-的过程"><a href="#3-2-2-AttachInfo-传递给-View-的过程" class="headerlink" title="3.2.2 AttachInfo 传递给 View 的过程"></a>3.2.2 AttachInfo 传递给 View 的过程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ViewRootImpl#setView</span><br><span class="line">-&gt; ViewRootImpl#requestLayout</span><br><span class="line">-&gt; ViewRootImpl#scheduleTraversals</span><br><span class="line">-&gt; Choreographer#postCallback</span><br><span class="line">-&gt; TraversalRunnable#run</span><br><span class="line">-&gt; ViewRootImpl#doTraversal</span><br><span class="line">-&gt; ViewRootImpl#performTraversals</span><br><span class="line">-&gt; View#dispatchAttachedToWindow(mAttachInfo, 0); // 这里创建好的 AttachInfo 赋值给 View</span><br></pre></td></tr></table></figure>
+<p>View#dispatchAttachedToWindow</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dispatchAttachedToWindow</span><span class="params">(AttachInfo info, <span class="keyword">int</span> visibility)</span> </span>&#123;</span><br><span class="line">       mAttachInfo = info;</span><br><span class="line">       </span><br><span class="line">       ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 View 中的 token 是要经过 View#dispatchAttachedToWindow  方法才能有值的，这要求我们在显示 PopupWindow 的时候，要选择相应的时机。</p>
+<h1 id="4-最终解决"><a href="#4-最终解决" class="headerlink" title="4 最终解决"></a>4 最终解决</h1><p>通过上面的 PopupWindow 的 show 流程和 View 的token 赋值流程的分析，<br>在去看看 为啥我们在第一步加了对 Activity 状态的判断还出现崩溃。</p>
+<p>主要是因为锚点 View 的 token 为空导致的。</p>
+<p>导致 token 为空，也是因为调用 show 的时机不对。</p>
+<p><strong>解决办法是在调用 PopupWindow 的 show 之前先判断一下锚点 View 的 applicationWindowToken ,并且调用的时机也要调整一下，不能在 View 一创建的时候就调用。</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">showReceiveGiftTips</span><span class="params">(tips: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">     ...</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">if</span> (giftIcon.applicationWindowToken == <span class="literal">null</span>) &#123; <span class="comment">// 一 token 判断</span></span><br><span class="line">         L.error(TAG, <span class="string">"showReceiveGiftTips giftIcon.applicationWindowToken return"</span>)</span><br><span class="line">         <span class="keyword">return</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">val</span> activity = getContextToActivity() <span class="comment">// 二 activity 的判断</span></span><br><span class="line">     <span class="keyword">if</span> (ActivityUtils.activityIsDestroyed(activity)) &#123;</span><br><span class="line">         <span class="keyword">return</span></span><br><span class="line">     &#125;</span><br><span class="line">     mHomeReceiveGiftTipsPopupWindow = HomeReceiveGiftTipsPopupWindow(context!!)</span><br><span class="line">     mHomeReceiveGiftTipsPopupWindow!!.setData(tips)</span><br><span class="line">     mHomeReceiveGiftTipsPopupWindow!!.showOnAnchor(fl_gift, ...</span><br><span class="line">     )</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>1. 后续在使用 PopupWindow 的时候要注意调用 show 的时机</strong><br><strong>2. show 之前最好判断一下锚点 View 的 token 和 Activity 的状态</strong></p>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/20/xcrash-note/" rel="next" title="xCrash 分析">
+                <i class="fa fa-chevron-left"></i> xCrash 分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-初步分析"><span class="nav-number">1.</span> <span class="nav-text">1 初步分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-初步解决"><span class="nav-number">2.</span> <span class="nav-text">2 初步解决</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-分析过程"><span class="nav-number">3.</span> <span class="nav-text">3 分析过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-PopupWindow-show-的流程"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 PopupWindow#show 的流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-View-的-token-来源"><span class="nav-number">3.2.</span> <span class="nav-text">3.2  View 的 token 来源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-View-AttachInfo"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 View$AttachInfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-AttachInfo-传递给-View-的过程"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 AttachInfo 传递给 View 的过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-最终解决"><span class="nav-number">4.</span> <span class="nav-text">4 最终解决</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
