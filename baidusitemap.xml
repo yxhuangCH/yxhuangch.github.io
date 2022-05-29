@@ -4,6 +4,23 @@
 
     
   <url>
+    <loc>https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/</loc>
+    <lastmod>2022-05-29T14:18:11.411Z</lastmod>
+    <data>
+        <display>
+        <title>LiveData Cannot add the same observer with different lifecycles</title>
+        <pubTime>2022-05-29T14:15:01.000Z</pubTime>
+        
+        <tag>Android</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://yxhuangch.github.io/2022/05/29/kotlin-coroutine-two/</loc>
     <lastmod>2022-05-29T09:13:04.235Z</lastmod>
     <data>

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="[toc] 1. 崩溃测试在跑 Monkey 的时候，出现了崩溃 12345678910111213141516171819java.lang.IllegalArgumentException: Cannot add the same observer with different lifecycles	at androidx.lifecycle.LiveData.i(LiveData.java:">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LiveData Cannot add the same observer with different lifecycles">
+<meta property="og:url" content="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/index.html">
+<meta property="og:site_name" content="yxhuang">
+<meta property="og:description" content="[toc] 1. 崩溃测试在跑 Monkey 的时候，出现了崩溃 12345678910111213141516171819java.lang.IllegalArgumentException: Cannot add the same observer with different lifecycles	at androidx.lifecycle.LiveData.i(LiveData.java:">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/livedata_img_1.png">
+<meta property="og:image" content="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/livedata_img_2.png">
+<meta property="og:updated_time" content="2022-05-29T14:18:11.411Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LiveData Cannot add the same observer with different lifecycles">
+<meta name="twitter:description" content="[toc] 1. 崩溃测试在跑 Monkey 的时候，出现了崩溃 12345678910111213141516171819java.lang.IllegalArgumentException: Cannot add the same observer with different lifecycles	at androidx.lifecycle.LiveData.i(LiveData.java:">
+<meta name="twitter:image" content="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/livedata_img_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/">
+
+
+
+
+
+  <title>LiveData Cannot add the same observer with different lifecycles | yxhuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yxhuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yxhuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yxhuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LiveData Cannot add the same observer with different lifecycles</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-29T22:15:01+08:00">
+                2022-05-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[toc]</p>
+<h2 id="1-崩溃"><a href="#1-崩溃" class="headerlink" title="1. 崩溃"></a>1. 崩溃</h2><p>测试在跑 Monkey 的时候，出现了崩溃</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalArgumentException: Cannot add the same observer with different lifecycles</span><br><span class="line">	at androidx.lifecycle.LiveData.i(LiveData.java:6)</span><br><span class="line">	at xxxx.HomeCommunityDetailFragment.X0(HomeCommunityDetailFragment.kt:7)</span><br><span class="line">	at com.tcloud.core.ui.baseview.BaseFragment.onCreateView(BaseFragment.java:9)</span><br><span class="line">	at androidx.fragment.app.Fragment.performCreateView(Fragment.java:6)</span><br><span class="line">	at androidx.fragment.app.f.P0(FragmentManager.java:64)</span><br><span class="line">	at androidx.fragment.app.f.M0(FragmentManager.java:6)</span><br><span class="line">	at androidx.fragment.app.a.A(BackStackRecord.java:22)</span><br><span class="line">	at androidx.fragment.app.f.r0(FragmentManager.java:6)</span><br><span class="line">	at androidx.fragment.app.f.s0(FragmentManager.java:14)</span><br><span class="line">	at androidx.fragment.app.f.W0(FragmentManager.java:10)</span><br><span class="line">	at androidx.fragment.app.f.p0(FragmentManager.java:4)</span><br><span class="line">	at androidx.fragment.app.f.i0(FragmentManager.java:4)</span><br><span class="line">	at androidx.fragment.app.f.E(FragmentManager.java:3)</span><br><span class="line">	at androidx.fragment.app.c.c(FragmentController.java:1)</span><br><span class="line">	at androidx.fragment.app.FragmentActivity.onStart(FragmentActivity.java:5)</span><br><span class="line">	at androidx.appcompat.app.AppCompatActivity.onStart(AppCompatActivity.java:1)</span><br><span class="line">     </span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+<p>这个是在 <code>HomeCommunityDetailFragment</code> 的 setListener 方法里面抛出来的</p>
+<h2 id="2-原因"><a href="#2-原因" class="headerlink" title="2. 原因"></a>2. 原因</h2><p>上面对崩溃路径做了还原，但是没有具体的行号，不知道崩溃在哪个 observe。</p>
+<p>对此，我们先看看抛出的异常点。</p>
+<h3 id="2-1-查找抛出异常点"><a href="#2-1-查找抛出异常点" class="headerlink" title="2.1 查找抛出异常点"></a>2.1 查找抛出异常点</h3><p>在 LiveData#observe 的源码中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">observe</span><span class="params">(@NonNull LifecycleOwner owner, @NonNull Observer&lt;? <span class="keyword">super</span> T&gt; observer)</span> </span>&#123;</span><br><span class="line">    assertMainThread(<span class="string">"observe"</span>);</span><br><span class="line">    <span class="keyword">if</span> (owner.getLifecycle().getCurrentState() == DESTROYED) &#123;</span><br><span class="line">        <span class="comment">// ignore</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    LifecycleBoundObserver wrapper = <span class="keyword">new</span> LifecycleBoundObserver(owner, observer);</span><br><span class="line">    ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">    <span class="comment">// 这里抛异常</span></span><br><span class="line">    <span class="keyword">if</span> (existing != <span class="keyword">null</span> &amp;&amp; !existing.isAttachedTo(owner)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Cannot add the same observer"</span></span><br><span class="line">                + <span class="string">" with different lifecycles"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (existing != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    owner.getLifecycle().addObserver(wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面会抛出异常，注释是这样写的</p>
+<blockquote>
+<p>If the given owner, observer tuple is already in the list, the call is ignored. If the observer is already in the list with another owner, LiveData throws an IllegalArgumentException.</p>
+</blockquote>
+<p>大致的意思是如果 observer 已经在其的 owner 里面了，就会抛出异常。<br>从中可以得出的信息是，observer 已经在 map 里面，重复添加导致的异常。</p>
+<p>但是，我们没办法重现现场，无法知道是哪个 observer 重复添加了。<br>没办法重现，那就从日志入手，看看当时崩溃的现场是怎样。</p>
+<h3 id="2-2-分析日志"><a href="#2-2-分析日志" class="headerlink" title="2.2 分析日志"></a>2.2 分析日志</h3><p>经过对崩溃日志的分析和简化后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[D][2022-03-17 +8.0 00:11:02.699][28477, 4874][chikii][, , 0][onCreateView: HomeCommunityDetailFragment&#123;8c00d05 #0 id=0x7f090279&#125;(P:28477)(T:2)(C:BaseFragment)at (BaseFragment.java:1)</span><br><span class="line">[D][2022-03-17 +8.0 00:11:02.708][28477, 4874][chikii][, , 0][onCreateView: HomeCommunityDetailFragment&#123;65317d6 #3 id=0x7f090279&#125;(P:28477)(T:2)(C:BaseFragment)at (BaseFragment.java:1)</span><br><span class="line">[I][2022-03-17 +8.0 00:11:03.115][28477, 4874][chikii][, , 0][-----------onCrash---------------(P:28477)(T:2)(C:PcgoApp)at (PcgoApp.java:1)</span><br></pre></td></tr></table></figure>
+<p>发现在非常短的时间内创建了 HomeCommunityDetailFragment，猜测是不是因为这个原因导致的。</p>
+<h3 id="2-3-重现问题"><a href="#2-3-重现问题" class="headerlink" title="2.3 重现问题"></a>2.3 重现问题</h3><p>根据上面的分析，HomeCommunityDetailFragment 是在 HomeCommunityFragment 中 tab 选中的时候创建的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// `HomeCommunityFragment#setListener`</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">setListener</span><span class="params">()</span></span> &#123;</span><br><span class="line">   </span><br><span class="line">SC.<span class="keyword">get</span>(IHomeService::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>).<span class="title">getHomeCommunityCtrl</span></span>().addUpdateInfoObserver(<span class="keyword">this</span>)</span><br><span class="line">    tabContainerView.setOnTabSelectedListener(<span class="keyword">object</span> : HomeCommunityTabContainerView.OnTabSelectedListener &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onTabSelect</span><span class="params">(tabSelectedBean: <span class="type">HomeCommunityTabContainerView</span>.<span class="type">HomeCommunityTabSelectedBean</span>)</span></span> &#123;</span><br><span class="line">            mCurCommunityId = tabSelectedBean.communityId</span><br><span class="line"></span><br><span class="line">            hideTabFragment(tabSelectedBean.lastTag, tabSelectedBean.lastCommunityId &gt; <span class="number">0</span>)</span><br><span class="line">            showTabFragment(tabSelectedBean.targetTag, tabSelectedBean.targetPath)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onSelectTheSameTab</span><span class="params">(targetTag: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">          ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+<p>我们模拟崩溃的线程，连续调用两次 showTabFragment 方法，这样就可以在很短的时间内创建 <code>HomeCommunityDetailFragment</code> </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">tabContainerView.setOnTabSelectedListener(<span class="keyword">object</span> : HomeCommunityTabContainerView.OnTabSelectedListener &#123;</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onTabSelect</span><span class="params">(tabSelectedBean: <span class="type">HomeCommunityTabContainerView</span>.<span class="type">HomeCommunityTabSelectedBean</span>)</span></span> &#123;</span><br><span class="line">            mCurCommunityId = tabSelectedBean.communityId</span><br><span class="line"></span><br><span class="line">            hideTabFragment(tabSelectedBean.lastTag, tabSelectedBean.lastCommunityId &gt; <span class="number">0</span>)</span><br><span class="line">            showTabFragment(tabSelectedBean.targetTag, tabSelectedBean.targetPath)</span><br><span class="line">            showTabFragment(tabSelectedBean.targetTag, tabSelectedBean.targetPath) <span class="comment">// ← 这里 重复调用</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onSelectTheSameTab</span><span class="params">(targetTag: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">          ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+<p>然后在启动 app　后创建　HomeCommunityDetailFragment　的过程中出现了崩溃</p>
+<p><img src="/2022/05/29/livedata-add-some-observer-error/livedata_img_1.png"></p>
+<p>上面重现的现场和日志中的崩溃堆栈一致,根据现场的日志发现崩溃的地方是在 238 行</p>
+<p><img src="/2022/05/29/livedata-add-some-observer-error/livedata_img_2.png"></p>
+<h3 id="2-4-分析问题"><a href="#2-4-分析问题" class="headerlink" title="2.4 分析问题"></a>2.4 分析问题</h3><p>找到了崩溃点、并且能重现现场那就好办了，下面要研究为什么会出现这个崩溃</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mViewModel.joinTipsObserver.observe(<span class="keyword">this</span>, &#123;</span><br><span class="line">	ScrollTextDialogFragment.show(it)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>根据注释</p>
+<blockquote>
+<p>If the given owner, observer tuple is already in the list, the call is ignored. If the observer is already in the list with another owner, LiveData throws an IllegalArgumentException.</p>
+</blockquote>
+<p>难得我们的 observer 会重复添加，但是我们明明是创建了两个 HomeCommunityDetailFragment， 所以，这里应该也是不同的 observer 才符合逻辑的。</p>
+<p>可问题出在哪了呢</p>
+<p>百思不得其解，在 google 的帮助下找到了一些线索</p>
+<p>在这个<a href="https://stackoverflow.com/questions/47025233/android-lifecycle-library-cannot-add-the-same-observer-with-different-lifecycle" target="_blank" rel="noopener">问答</a>下 和 这篇文章 <a href="https://jorgecastillo.dev/kotlin-sam-conversions" target="_blank" rel="noopener">Support for Kotlin SAM in release 1.4</a> 可以得出的结论，<strong>Kotlin 的 lambda 表达式里面如果仅仅只有 final 的静态变量或者静态函数。那么为了让每次使用的时候减少内存的分配，编译器会将里面的内容用一个全局的单例。</strong></p>
+<p>对于上面的这个结论是否正确，我们先看下面 kotlin 代码生成的字节码</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> mViewModel.joinTipsObserver.observe(<span class="keyword">this</span>, &#123;</span><br><span class="line">ScrollTextDialogFragment.show(it)</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure>
+<p>对应的字节码生成是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LINENUMBER 238 L6</span><br><span class="line"> ALOAD 0</span><br><span class="line"> INVOKESPECIAL xxxxHomeCommunityDetailFragment.getMViewModel ()LxxxxHomeCommunityDetailViewModel;</span><br><span class="line"> INVOKEVIRTUAL xxxxHomeCommunityDetailViewModel.getJoinTipsObserver ()Landroidx/lifecycle/MutableLiveData;</span><br><span class="line"> ALOAD 0</span><br><span class="line"> CHECKCAST androidx/lifecycle/LifecycleOwner</span><br><span class="line"> GETSTATIC xxxxHomeCommunityDetailFragment$setListener$7.INSTANCE : LxxxxHomeCommunityDetailFragment$setListener$7;</span><br><span class="line"> CHECKCAST androidx/lifecycle/Observer</span><br><span class="line"> INVOKEVIRTUAL androidx/lifecycle/MutableLiveData.observe (Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Observer;)V</span><br></pre></td></tr></table></figure>
+<p>从上面的字节码我们可以得知：</p>
+<ul>
+<li>1.定义了一个匿名内部类 <code>HomeCommunityDetailFragment$setListener$7</code></li>
+<li>2.获取一个上面这个匿名内部类的单例 <code>HomeCommunityDetailFragment$setListener$7.INSTANCE</code></li>
+<li>3.将 这个匿名内部类转成 Observer, 传递给 MutableLiveData.observe 函数</li>
+</ul>
+<p>根据字节码的分析上面的结论是正确的。</p>
+<h2 id="3-解决"><a href="#3-解决" class="headerlink" title="3. 解决"></a>3. 解决</h2><p>已经知道了因为崩溃的原因，那剩下的就是要把它解决。</p>
+<p>思路就是：崩溃的原因是使用了一个全局的单例导致的，那我们可以尝试，不让编译器生成一个单例，而是让它每次都生成一个对象，这样虽然没法优化内存，但是可以解决我们的问题。</p>
+<h3 id="3-1-方法一：不使用-lambda-表达式"><a href="#3-1-方法一：不使用-lambda-表达式" class="headerlink" title="3.1 方法一：不使用 lambda 表达式"></a>3.1 方法一：不使用 lambda 表达式</h3><p>第一个方式是不使用 lambda 表达式，还是用接口方法的形式, 添加的是 <code>Observer</code> 匿名内部类</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mViewModel.joinTipsObserver.observe(<span class="keyword">this</span>, <span class="keyword">object</span> :Observer&lt;String&gt;&#123;</span><br><span class="line">	<span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onChanged</span><span class="params">(string: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">		string?.let &#123;</span><br><span class="line">			ScrollTextDialogFragment.show(it)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>然后看生成的字节码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LINENUMBER 238 L6</span><br><span class="line">   ALOAD 0</span><br><span class="line">   INVOKESPECIAL xxx/HomeCommunityDetailFragment.getMViewModel ()Lxxx/HomeCommunityDetailViewModel;</span><br><span class="line">   INVOKEVIRTUAL xxx/HomeCommunityDetailViewModel.getJoinTipsObserver ()Landroidx/lifecycle/MutableLiveData;</span><br><span class="line">   ALOAD 0</span><br><span class="line">   CHECKCAST androidx/lifecycle/LifecycleOwner</span><br><span class="line">   NEW xxx/HomeCommunityDetailFragment$setListener$7</span><br><span class="line">   DUP</span><br><span class="line">   INVOKESPECIAL xxx/HomeCommunityDetailFragment$setListener$7.&lt;init&gt; ()V</span><br><span class="line">   CHECKCAST androidx/lifecycle/Observer</span><br><span class="line">   INVOKEVIRTUAL androidx/lifecycle/MutableLiveData.observe (Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Observer;)V</span><br></pre></td></tr></table></figure>
+<p>在上面的字节码，我们可以看到，现在是 NEW  <code>HomeCommunityDetailFragment$setListener$7</code> 的对象<br>然后是将这个对象传入到 MutableLiveData.observe 函数中。<br>这点与使用 lambda 使用一个单例是完全不同。</p>
+<p>跑一下，没有出现崩溃，证明这个方法是可行的。</p>
+<p>当然这样的写法，也有它的问题，就是每次 observe 的值变化的时候，都会生成一个新的对象，没有内存优化的效果。</p>
+<h3 id="3-2-方法二：引用一个外部非-final或者非-static-的变量或方法"><a href="#3-2-方法二：引用一个外部非-final或者非-static-的变量或方法" class="headerlink" title="3.2 方法二：引用一个外部非 final或者非 static 的变量或方法"></a>3.2 方法二：引用一个外部非 final或者非 static 的变量或方法</h3><p>我们在 lambda 的表达式内引用一个外部非 final或者非 static 的变量或方法，让lambda 的表达式内引不仅仅是final 的静态变量或者静态函数，也可以避免生成一个单例。<br>我们添加一个 <code>unused</code> 的一个变量</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> unused = <span class="string">"unused"</span></span><br><span class="line">mViewModel.joinTipsObserver.observe(<span class="keyword">this</span>, &#123;</span><br><span class="line">	L.info(TAG, <span class="string">"joinTipsObserver <span class="variable">$unused</span>"</span>)</span><br><span class="line">	ScrollTextDialogFragment.show(it)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>查看生成的字节码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">L6</span><br><span class="line">    LINENUMBER 238 L6</span><br><span class="line">    NEW kotlin/jvm/internal/Ref$ObjectRef</span><br><span class="line">    DUP</span><br><span class="line">    INVOKESPECIAL kotlin/jvm/internal/Ref$ObjectRef.&lt;init&gt; ()V</span><br><span class="line">    ASTORE 1</span><br><span class="line">    ALOAD 1</span><br><span class="line">    LDC &quot;unused&quot;</span><br><span class="line">    PUTFIELD kotlin/jvm/internal/Ref$ObjectRef.element : Ljava/lang/Object;</span><br><span class="line">   L7</span><br><span class="line">    LINENUMBER 239 L7</span><br><span class="line">    ALOAD 0</span><br><span class="line">    INVOKESPECIAL xxx/HomeCommunityDetailFragment.getMViewModel ()Lxxx/HomeCommunityDetailViewModel;</span><br><span class="line">    INVOKEVIRTUAL xxxx/HomeCommunityDetailViewModel.getJoinTipsObserver ()Landroidx/lifecycle/MutableLiveData;</span><br><span class="line">    ALOAD 0</span><br><span class="line">    CHECKCAST androidx/lifecycle/LifecycleOwner</span><br><span class="line">    NEW xxx/HomeCommunityDetailFragment$setListener$7</span><br><span class="line">    DUP</span><br><span class="line">    ALOAD 1</span><br><span class="line">    INVOKESPECIAL xxx/HomeCommunityDetailFragment$setListener$7.&lt;init&gt; (Lkotlin/jvm/internal/Ref$ObjectRef;)V</span><br><span class="line">    CHECKCAST androidx/lifecycle/Observer</span><br><span class="line">    INVOKEVIRTUAL androidx/lifecycle/MutableLiveData.observe (Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Observer;)V</span><br></pre></td></tr></table></figure>
+<p>在上面的字节码可以看到：</p>
+<ul>
+<li><ol>
+<li>在 238 行生成一个 ObjectRef 的对象， 然后将常量池中的 <code>unused</code> 字符串赋值给 ObjectRef.element</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>在 239 行，也是 NEW <code>HomeCommunityDetailFragment$setListener$7</code> 的一个匿名内部类</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>再将这个生成的匿名对象转成 Observer，然传入到 MutableLiveData.observe 函数中。</li>
+</ol>
+</li>
+</ul>
+<p>再跑一下，也没有出现崩溃，证明这个方法也是可行的。</p>
+<h2 id="4-避坑"><a href="#4-避坑" class="headerlink" title="4. 避坑"></a>4. 避坑</h2><p>经过上面的分析，当我们在使用 lambda 表达式的时候，要注意，<strong>如果表达式如果仅仅只有 final 的静态变量或者静态函数，那么为了让每次使用的时候减少内存的分配，编译器会将里面的内容用一个全局的单例</strong>。 </p>
+<p>这个优化是没有问题，但是在 LiveData#observe 的使用情况下会出现坑。</p>
+<p>后续使用的时候需要注意，避免在 lambda 的表达式内仅仅只使用 final 的静态变量或者静态函数。</p>
+<p>更近一步，智永看看能不能在 detekt 加上这个检测，避免类似的问题再次出现。</p>
+<h2 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h2><ul>
+<li><a href="https://stackoverflow.com/questions/47025233/android-lifecycle-library-cannot-add-the-same-observer-with-different-lifecycle" target="_blank" rel="noopener">Android lifecycle library: Cannot add the same observer with different lifecycles</a></li>
+<li><a href="https://jorgecastillo.dev/kotlin-sam-conversions" target="_blank" rel="noopener">Support for Kotlin SAM in release 1.4</a></li>
+</ul>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="yxhuang wechat" style="width: 200px; max-width: 100%">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/05/29/kotlin-coroutine-two/" rel="next" title="Koltin 协程 (二)">
+                <i class="fa fa-chevron-left"></i> Koltin 协程 (二)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yxhuang">
+          <p class="site-author-name" itemprop="name">yxhuang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">41</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-崩溃"><span class="nav-number">1.</span> <span class="nav-text">1. 崩溃</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-原因"><span class="nav-number">2.</span> <span class="nav-text">2. 原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-查找抛出异常点"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 查找抛出异常点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-分析日志"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 分析日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-重现问题"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 重现问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-分析问题"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 分析问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-解决"><span class="nav-number">3.</span> <span class="nav-text">3. 解决</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-方法一：不使用-lambda-表达式"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 方法一：不使用 lambda 表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-方法二：引用一个外部非-final或者非-static-的变量或方法"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 方法二：引用一个外部非 final或者非 static 的变量或方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-避坑"><span class="nav-number">4.</span> <span class="nav-text">4. 避坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-参考"><span class="nav-number">5.</span> <span class="nav-text">5. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yxhuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
