@@ -83,6 +83,8 @@
 
 
 
+  
+
 
   <link rel="alternate" href="/atom.xml" title="yxhuang" type="application/atom+xml">
 
@@ -106,7 +108,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/livedata_img_1.png">
 <meta property="og:image" content="https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/livedata_img_2.png">
-<meta property="og:updated_time" content="2022-05-29T14:18:11.411Z">
+<meta property="og:updated_time" content="2022-05-29T14:29:35.508Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LiveData Cannot add the same observer with different lifecycles">
 <meta name="twitter:description" content="[toc] 1. 崩溃测试在跑 Monkey 的时候，出现了崩溃 12345678910111213141516171819java.lang.IllegalArgumentException: Cannot add the same observer with different lifecycles	at androidx.lifecycle.LiveData.i(LiveData.java:">
@@ -427,7 +429,6 @@
 <h2 id="4-避坑"><a href="#4-避坑" class="headerlink" title="4. 避坑"></a>4. 避坑</h2><p>经过上面的分析，当我们在使用 lambda 表达式的时候，要注意，<strong>如果表达式如果仅仅只有 final 的静态变量或者静态函数，那么为了让每次使用的时候减少内存的分配，编译器会将里面的内容用一个全局的单例</strong>。 </p>
 <p>这个优化是没有问题，但是在 LiveData#observe 的使用情况下会出现坑。</p>
 <p>后续使用的时候需要注意，避免在 lambda 的表达式内仅仅只使用 final 的静态变量或者静态函数。</p>
-<p>更近一步，智永看看能不能在 detekt 加上这个检测，避免类似的问题再次出现。</p>
 <h2 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h2><ul>
 <li><a href="https://stackoverflow.com/questions/47025233/android-lifecycle-library-cannot-add-the-same-observer-with-different-lifecycle" target="_blank" rel="noopener">Android lifecycle library: Cannot add the same observer with different lifecycles</a></li>
 <li><a href="https://jorgecastillo.dev/kotlin-sam-conversions" target="_blank" rel="noopener">Support for Kotlin SAM in release 1.4</a></li>

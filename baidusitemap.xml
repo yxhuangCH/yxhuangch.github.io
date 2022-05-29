@@ -5,7 +5,7 @@
     
   <url>
     <loc>https://yxhuangch.github.io/2022/05/29/livedata-add-some-observer-error/</loc>
-    <lastmod>2022-05-29T14:18:11.411Z</lastmod>
+    <lastmod>2022-05-29T14:29:35.508Z</lastmod>
     <data>
         <display>
         <title>LiveData Cannot add the same observer with different lifecycles</title>
